@@ -1,0 +1,8 @@
+---
+bad_version: absolutely_random_version
+no_kind: datasets
+what_specs:
+  - name: esol
+
+---
+other_document_keys: "ignore"

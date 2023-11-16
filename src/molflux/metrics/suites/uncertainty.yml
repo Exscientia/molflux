@@ -1,0 +1,15 @@
+---
+version: v1
+kind: metrics
+specs:
+    - name: uncertainty_based_rejection
+
+    - name: coefficient_of_variation
+
+    - name: prediction_interval_coverage
+
+    - name: prediction_interval_width
+
+    - name: gaussian_nll
+
+    - name: expected_calibration_error

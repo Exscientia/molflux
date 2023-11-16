@@ -1,0 +1,25 @@
+---
+version: v1
+kind: metrics
+specs:
+    - name: explained_variance
+
+    - name: max_error
+
+    - name: mean_absolute_error
+
+    - name: mean_squared_error
+
+    - name: mean_squared_error
+      config:
+        tag: "root_mean_squared_error"
+      presets:
+        root: True
+
+    - name: median_absolute_error
+
+    - name: r2
+
+    - name: spearman
+
+    - name: pearson

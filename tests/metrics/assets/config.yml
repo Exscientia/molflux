@@ -1,0 +1,15 @@
+---
+version: v1
+kind: metrics
+specs:
+
+  - name: explained_variance
+
+  - name: mean_squared_error
+    config:
+      tag: custom_metric
+    presets:
+      root: True
+
+---
+other_document_keys: "ignore"

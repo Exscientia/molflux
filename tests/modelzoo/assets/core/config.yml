@@ -1,0 +1,14 @@
+---
+version: v1
+kind: models
+specs:
+
+  - name: random_forest_regressor
+
+  - name: random_forest_classifier
+    config:
+      tag: custom_classifier
+      max_features: log2
+
+---
+other_document_keys: "ignore"

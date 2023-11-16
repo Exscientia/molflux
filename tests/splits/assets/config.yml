@@ -1,0 +1,15 @@
+---
+version: v1
+kind: splits
+specs:
+
+  - name: shuffle_split
+
+  - name: k_fold
+    config:
+      tag: custom_k_fold
+    presets:
+      n_splits: 5
+
+---
+other_document_keys: "ignore"

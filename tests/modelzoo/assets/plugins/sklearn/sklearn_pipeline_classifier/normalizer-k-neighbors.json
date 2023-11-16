@@ -1,0 +1,7 @@
+[
+    {"class_name": "sklearn.preprocessing.Normalizer", "hyperparameters": null},
+    {
+        "class_name": "sklearn.neighbors.KNeighborsClassifier",
+        "hyperparameters": {"p": 2, "n_neighbors": 2}
+    }
+]
