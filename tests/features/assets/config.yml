@@ -1,0 +1,15 @@
+---
+version: v1
+kind: representations
+specs:
+
+  - name: character_count
+
+  - name: character_count
+    config:
+      tag: custom_descriptor
+    presets:
+      without_hs: true
+
+---
+other_document_keys: "ignore"

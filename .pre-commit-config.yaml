@@ -1,0 +1,89 @@
+# Pre-commit configuration file
+#
+# If it's your first time run:
+#   $ python -m pre_commit install --hook-type pre-commit --hook-type pre-push
+#
+# To run these hooks locally:
+#   $ python -m pre_commit run --all-files
+#
+# To update these hooks:
+#   $ python -m pre_commit autoupdate
+#
+# References:
+#   https://pre-commit.com/index.html
+
+repos:
+
+  # core consistency checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+        args: [ --allow-multiple-documents ]
+      - id: detect-aws-credentials
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: pretty-format-json
+        args: [ --no-sort-keys, --autofix ]
+      - id: trailing-whitespace
+
+  # validate pyproject.toml file
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.12.2
+    hooks:
+      - id: validate-pyproject
+
+  # some useful and quality-of-life checks for Dockerfiles
+  - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
+    rev: v0.1.0
+    hooks:
+      - id: dockerfilelint
+
+  # some useful and quality-of-life checks for shell scripts
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.2
+    hooks:
+      - id: shellcheck
+
+  # fix spelling
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.4
+    hooks:
+      - id: codespell
+        additional_dependencies:
+          - tomli
+
+  # ensure commit messages format consistency
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: 3.1.0
+    hooks:
+      - id: commitizen
+
+  # code quality checks
+  - repo: local
+    hooks:
+      - id: linting
+        name: linting
+        entry: python -m nox -s linting_check-3.11
+        pass_filenames: false
+        language: system
+        types: [ python ]
+        require_serial: true
+        stages: [ push ]
+      - id: formatting
+        name: formatting
+        entry: python -m nox -s formatting_check-3.11
+        files: 'src|tests|noxfile.py'
+        pass_filenames: false
+        language: system
+        types: [ python ]
+        require_serial: true
+        stages: [ push ]

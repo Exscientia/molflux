@@ -1,0 +1,11 @@
+[
+    {"class_name": "sklearn.decomposition.PCA", "hyperparameters": {"n_components": 3}},
+    {
+        "class_name": "sklearn.feature_selection.SelectKBest",
+        "hyperparameters": {"k": 2}
+    },
+    {
+        "class_name": "sklearn.svm.SVC",
+        "hyperparameters": {"C": 1.0, "probability": true}
+    }
+]

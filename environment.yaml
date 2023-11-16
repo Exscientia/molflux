@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+- python=3.11
+- pip>=21.0
+- pip:
+  - -e .[dev] --constraint pinned-versions/3.11/lockfile.core.txt

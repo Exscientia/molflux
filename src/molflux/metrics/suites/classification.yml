@@ -1,0 +1,15 @@
+---
+version: v1
+kind: metrics
+specs:
+    - name: accuracy
+
+    - name: balanced_accuracy
+
+    - name: precision
+
+    - name: recall
+
+    - name: f1_score
+
+    - name: matthews_corrcoef

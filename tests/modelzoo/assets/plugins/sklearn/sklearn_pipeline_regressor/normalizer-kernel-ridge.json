@@ -1,0 +1,7 @@
+[
+    {"class_name": "sklearn.preprocessing.Normalizer", "hyperparameters": null},
+    {
+        "class_name": "sklearn.kernel_ridge.KernelRidge",
+        "hyperparameters": {"alpha": 1.0}
+    }
+]

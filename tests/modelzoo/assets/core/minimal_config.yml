@@ -1,0 +1,5 @@
+---
+version: v1
+kind: models
+specs:
+  - name: random_forest_regressor

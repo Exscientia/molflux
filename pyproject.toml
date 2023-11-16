@@ -1,0 +1,444 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=64.0.0", "setuptools_scm>=6.2.0"]
+
+[project]
+name = 'molflux'
+description = 'A foundational package for molecular predictive modelling'
+readme = 'README.md'
+requires-python = '>= 3.8'
+authors = [{name = 'Exscientia'}]
+maintainers = [{name = 'Exscientia'}]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Science/Research',
+    'Natural Language :: English',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Typing :: Typed',
+]
+
+dynamic = ['version']
+
+dependencies = [
+    'boto3',
+    'botocore',
+    'cloudpathlib[s3]',
+    'colorama',
+    'datasets>=2.14.5',
+    'evaluate',
+    'fsspec>=2022.5.0',
+    'h5py',
+    'joblib',
+    'mergedeep',
+    'more-itertools',
+    'numpy',
+    'pandas',
+    'pyarrow>=11.0.0',
+    'pydantic>=1.9.0,<2.0.0',
+    'python-dateutil',
+    'pyyaml',
+    'qlient',
+    'requests',
+    'scikit-learn>=1.2.1',
+    'scipy>=1.7.0',
+    'tenacity',
+    'thefuzz[speedup]',
+    'tqdm',
+    'typing-extensions; python_version < "3.9.2"'
+]
+
+[project.optional-dependencies]
+openeye = [
+    'openeye-toolkits<2023.0.0; python_version == "3.8"',  # openeye 2023 not supported on python 3.8
+    'openeye-toolkits',
+]
+rdkit = [
+    'mhfp',
+    'rdkit>=2023.9.1',  # for SpacialScore (SPS) 2D descriptor
+]
+catboost = [
+    'catboost>=1.2.0; python_version >= "3.11"',
+    'catboost',
+]
+ensemble = [
+    'scikit-learn>=1.2.1',
+]
+lightning = [
+    'torch>=2.0,<2.1',
+    'lightning>=2.1'
+]
+mapie = [
+    'mapie',
+    'scikit-learn>=1.2.1',
+]
+pyod = [
+    'combo',
+    'pyod',
+]
+pystan = [
+    'pystan',
+]
+sklearn = [
+    'scikit-learn>=1.2.1',
+]
+xgboost = [
+    'scikit-learn>=1.2.1',
+    'xgboost<2.0.0',  # flip pin once codebase upgraded to new >= 2.0.0 API
+]
+dev = [
+    'nox',
+    'pre-commit',
+]
+docs = [
+    'matplotlib',
+    'sphinx!=5.1.0',
+    'sphinx-sitemap',
+    'sphinx-inline-tabs',
+    'exs-sphinx-rse==0.5.2',
+    'jupytext>=1.11.2',
+    'myst-nb',
+]
+tests = [
+    'coverage[toml]',
+    'pytest',
+    'moto[server]',
+    'pytest',
+    'pytest-lazy-fixture',
+    'mock',
+]
+typing = [
+    'mypy',
+    'types-PyYAML',
+    'types-setuptools',
+    'types-python-dateutil',
+    'types-mock',
+    'types-requests',
+]
+
+### Datasets entry points
+
+[project.entry-points.'fsspec.specs']
+s3 = 'molflux.datasets.filesystems.S3FileSystem'
+
+[project.entry-points.'molflux.datasets.plugins.core']
+esol = 'molflux.datasets.builders.esol.esol'
+ani1x = 'molflux.datasets.builders.ani1x.ani1x'
+gdb9 = 'molflux.datasets.builders.gdb9.gdb9'
+pcqm4m_v2 = 'molflux.datasets.builders.pcqm4m_v2.pcqm4m_v2'
+spice = 'molflux.datasets.builders.spice.spice'
+
+### Features entry points
+
+[project.entry-points.'molflux.features.plugins.core']
+# generic
+exploded = 'molflux.features.representations.core.generic.exploded:Exploded'
+character_count = 'molflux.features.representations.core.generic.character_count:CharacterCount'
+
+[project.entry-points.'molflux.features.plugins.openeye']
+# canonical
+canonical_oemol = 'molflux.features.representations.openeye.canonical.oemol:CanonicalOemol'
+canonical_smiles = 'molflux.features.representations.openeye.canonical.smiles:CanonicalSmiles'
+# descriptors
+aromatic_ring_count = 'molflux.features.representations.openeye.descriptors.aromatic_ring_count:AromaticRingCount'
+molecular_weight = 'molflux.features.representations.openeye.descriptors.molecular_weight:MolecularWeight'
+net_charge = 'molflux.features.representations.openeye.descriptors.net_charge:NetCharge'
+num_acceptors = 'molflux.features.representations.openeye.descriptors.num_acceptors:NumAcceptors'
+num_donors = 'molflux.features.representations.openeye.descriptors.num_donors:NumDonors'
+rotatable_bonds = 'molflux.features.representations.openeye.descriptors.rotatable_bonds:RotatableBonds'
+tpsa = 'molflux.features.representations.openeye.descriptors.tpsa:TPSA'
+x_log_p = 'molflux.features.representations.openeye.descriptors.x_log_p:XLogP'
+# fingerprints
+circular = 'molflux.features.representations.openeye.fingerprints.circular:Circular'
+lingo = 'molflux.features.representations.openeye.fingerprints.lingo:Lingo'
+maccs = 'molflux.features.representations.openeye.fingerprints.maccs:MACCS'
+path = 'molflux.features.representations.openeye.fingerprints.path:Path'
+tree = 'molflux.features.representations.openeye.fingerprints.tree:Tree'
+# shape
+hermite = 'molflux.features.representations.openeye.shape.hermite:Hermite'
+# sd
+sd_feature = 'molflux.features.representations.openeye.sd.sd_feature:SDFeature'
+
+
+[project.entry-points.'molflux.features.plugins.rdkit']
+# descriptors
+rdkit_descriptors_2d = 'molflux.features.representations.rdkit.descriptors.rdkit_descriptors_2d:RdkitDescriptors_2d'
+# fingerprints
+atom_pair_unfolded = 'molflux.features.representations.rdkit.fingerprints.atom_pair_unfolded:AtomPairUnfolded'
+avalon = 'molflux.features.representations.rdkit.fingerprints.avalon:Avalon'
+graphscan = 'molflux.features.representations.rdkit.fingerprints.graphscan:Graphscan'
+layered = 'molflux.features.representations.rdkit.fingerprints.layered:Layered'
+maccs_rdkit = 'molflux.features.representations.rdkit.fingerprints.maccs:MACCSRdkit'
+mhfp = 'molflux.features.representations.rdkit.fingerprints.mhfp:MHFP'
+mhfp_unfolded = 'molflux.features.representations.rdkit.fingerprints.mhfp_unfolded:MHFPUnfolded'
+morgan = 'molflux.features.representations.rdkit.fingerprints.morgan:Morgan'
+morgan_unfolded = 'molflux.features.representations.rdkit.fingerprints.morgan_unfolded:MorganUnfolded'
+pattern = 'molflux.features.representations.rdkit.fingerprints.pattern:Pattern'
+topological = 'molflux.features.representations.rdkit.fingerprints.topological:Topological'
+topological_torsion_unfolded = 'molflux.features.representations.rdkit.fingerprints.topological_torsion_unfolded:TopologicalTorsionUnfolded'
+toxicophores = 'molflux.features.representations.rdkit.fingerprints.toxicophores:Toxicophores'
+# reaction
+drfp = 'molflux.features.representations.rdkit.reaction.drfp:DRFP'
+### Splits entry points
+
+[project.entry-points.'molflux.splits.plugins.core']
+ordered_split = 'molflux.splits.strategies.core.ordered_split:OrderedSplit'
+stratified_ordered_split = 'molflux.splits.strategies.core.stratified_ordered_split:StratifiedOrderedSplit'
+group_k_fold = 'molflux.splits.strategies.core.group_k_fold:GroupKFold'
+group_shuffle_split = 'molflux.splits.strategies.core.group_shuffle_split:GroupShuffleSplit'
+k_fold = 'molflux.splits.strategies.core.k_fold:KFold'
+leave_one_group_out = 'molflux.splits.strategies.core.leave_one_group_out:LeaveOneGroupOut'
+leave_p_groups_out = 'molflux.splits.strategies.core.leave_p_groups_out:LeavePGroupsOut'
+linear_split = 'molflux.splits.strategies.core.linear_split:LinearSplit'
+shuffle_split = 'molflux.splits.strategies.core.shuffle_split:ShuffleSplit'
+stratified_k_fold = 'molflux.splits.strategies.core.stratified_k_fold:StratifiedKFold'
+stratified_shuffle_split = 'molflux.splits.strategies.core.stratified_shuffle_split:StratifiedShuffleSplit'
+time_series_split = 'molflux.splits.strategies.core.time_series_split:TimeSeriesSplit'
+
+[project.entry-points.'molflux.splits.plugins.openeye']
+scaffold = 'molflux.splits.strategies.openeye.scaffold:Scaffold'
+
+[project.entry-points.'molflux.splits.plugins.rdkit']
+scaffold_rdkit = 'molflux.splits.strategies.rdkit.scaffold:Scaffold'
+tanimoto_rdkit = 'molflux.splits.strategies.rdkit.tanimoto:Tanimoto'
+
+### Modelzoo entry points
+
+[project.entry-points.'molflux.modelzoo.plugins.core']
+average_regressor = 'molflux.modelzoo.models.core.average_regressor:AverageRegressor'
+
+[project.entry-points.'molflux.modelzoo.plugins.catboost']
+cat_boost_regressor = 'molflux.modelzoo.models.catboost.catboost_regressor:CatBoostRegressor'
+cat_boost_classifier = 'molflux.modelzoo.models.catboost.catboost_classifier:CatBoostClassifier'
+
+[project.entry-points.'molflux.modelzoo.plugins.ensemble']
+ensemble_regressor = 'molflux.modelzoo.models.ensemble.ensemble_regressor:EnsembleRegressor'
+ensemble_classifier = 'molflux.modelzoo.models.ensemble.ensemble_classifier:EnsembleClassifier'
+
+[project.entry-points.'molflux.modelzoo.plugins.fortuna']
+fortuna_mlp_regressor = 'molflux.modelzoo.models.fortuna.fortuna_mlp_regressor:FortunaMLPRegressor'
+
+[project.entry-points.'molflux.modelzoo.plugins.lightning']
+lightning_mlp_regressor = 'molflux.modelzoo.models.lightning.mlp_regressor.mlp_model:LightningMLPRegressor'
+
+[project.entry-points.'molflux.modelzoo.plugins.mapie']
+mapie_regressor = 'molflux.modelzoo.models.mapie.mapie_regressor:MapieRegressor'
+
+[project.entry-points.'molflux.modelzoo.plugins.pyod']
+abod_detector = 'molflux.modelzoo.models.pyod.abod_detector:ABODDetector'
+cblof_detector = 'molflux.modelzoo.models.pyod.cblof_detector:CBLOFDetector'
+hbos_detector = 'molflux.modelzoo.models.pyod.hbos_detector:HBOSDetector'
+isolation_forest_detector = 'molflux.modelzoo.models.pyod.isolation_forest_detector:IsolationForestDetector'
+knn_detector = 'molflux.modelzoo.models.pyod.knn_detector:KNNDetector'
+mcd_detector = 'molflux.modelzoo.models.pyod.mcd_detector:MCDDetector'
+ocsvm_detector = 'molflux.modelzoo.models.pyod.ocsvm_detector:OCSVMDetector'
+pca_detector = 'molflux.modelzoo.models.pyod.pca_detector:PCADetector'
+
+[project.entry-points.'molflux.modelzoo.plugins.pystan']
+sparse_linear_regressor = 'molflux.modelzoo.models.pystan.sparse_linear_regressor:SparseLinearRegressor'
+
+[project.entry-points.'molflux.modelzoo.plugins.sklearn']
+corrected_nb_classifier = 'molflux.modelzoo.models.sklearn.corrected_nb_classifier:CorrectedNBClassifier'
+coverage_nb_classifier = 'molflux.modelzoo.models.sklearn.coverage_nb_classifier:CoverageNBClassifier'
+bernoulli_nb_classifier = 'molflux.modelzoo.models.sklearn.bernoulli_nb_classifier:BernoulliNBClassifier'
+dummy_classifier = 'molflux.modelzoo.models.sklearn.dummy_classifier:DummyClassifier'
+extra_trees_classifier = 'molflux.modelzoo.models.sklearn.extra_trees_classifier:ExtraTreesClassifier'
+extra_trees_regressor = 'molflux.modelzoo.models.sklearn.extra_trees_regressor:ExtraTreesRegressor'
+gradient_boosting_classifier = 'molflux.modelzoo.models.sklearn.gradient_boosting_classifier:GradientBoostingClassifier'
+gradient_boosting_regressor = 'molflux.modelzoo.models.sklearn.gradient_boosting_regressor:GradientBoostingRegressor'
+kernel_ridge_regressor = 'molflux.modelzoo.models.sklearn.kernel_ridge_regressor:KernelRidgeRegressor'
+knn_classifier = 'molflux.modelzoo.models.sklearn.knn_classifier:KNNClassifier'
+knn_regressor = 'molflux.modelzoo.models.sklearn.knn_regressor:KNNRegressor'
+linear_discriminant_analysis_classifier = 'molflux.modelzoo.models.sklearn.linear_discriminant_analysis_classifier:LinearDiscriminantAnalysisClassifier'
+linear_regressor = 'molflux.modelzoo.models.sklearn.linear_regressor:LinearRegressor'
+logistic_regressor = 'molflux.modelzoo.models.sklearn.logistic_regressor:LogisticRegressor'
+mlp_classifier = 'molflux.modelzoo.models.sklearn.mlp_classifier:MLPClassifier'
+mlp_regressor = 'molflux.modelzoo.models.sklearn.mlp_regressor:MLPRegressor'
+pipeline_pilot_nb_classifier = 'molflux.modelzoo.models.sklearn.pipeline_pilot_nb_classifier:PipelinePilotNBClassifier'
+pls_regressor = 'molflux.modelzoo.models.sklearn.pls_regressor:PLSRegressor'
+random_forest_regressor = 'molflux.modelzoo.models.sklearn.random_forest_regressor:RandomForestRegressor'
+random_forest_classifier = 'molflux.modelzoo.models.sklearn.random_forest_classifier:RandomForestClassifier'
+ridge_regressor = 'molflux.modelzoo.models.sklearn.ridge_regressor:RidgeRegressor'
+sklearn_pipeline_classifier = 'molflux.modelzoo.models.sklearn.sklearn_pipeline.sklearn_pipeline_classifier:SklearnPipelineClassifier'
+sklearn_pipeline_regressor = 'molflux.modelzoo.models.sklearn.sklearn_pipeline.sklearn_pipeline_regressor:SklearnPipelineRegressor'
+support_vector_classifier = 'molflux.modelzoo.models.sklearn.support_vector_classifier:SupportVectorClassifier'
+support_vector_regressor = 'molflux.modelzoo.models.sklearn.support_vector_regressor:SupportVectorRegressor'
+
+[project.entry-points.'molflux.modelzoo.plugins.xgboost']
+xg_boost_regressor = 'molflux.modelzoo.models.xgboost.xgboost_regressor:XGBoostRegressor'
+xg_boost_classifier = 'molflux.modelzoo.models.xgboost.xgboost_classifier:XGBoostClassifier'
+
+
+### Metrics entry points
+
+[project.entry-points.'molflux.metrics.plugins.classification']
+accuracy = 'molflux.metrics.classification.accuracy:Accuracy'
+balanced_accuracy = 'molflux.metrics.classification.balanced_accuracy:BalancedAccuracy'
+diversity_roc = 'molflux.metrics.classification.diversity_roc:DiversityRoc'
+f1_score = 'molflux.metrics.classification.f1_score:F1Score'
+matthews_corrcoef = 'molflux.metrics.classification.matthews_corrcoef:MatthewsCorrcoef'
+precision = 'molflux.metrics.classification.precision:Precision'
+average_precision = 'molflux.metrics.classification.average_precision:AveragePrecision'
+recall = 'molflux.metrics.classification.recall:Recall'
+roc_auc = 'molflux.metrics.classification.roc_auc:RocAuc'
+top_k_accuracy = 'molflux.metrics.classification.top_k_accuracy:TopKAccuracy'
+top_k_accuracy_roc = 'molflux.metrics.classification.top_k_accuracy_roc:TopKAccuracyRoc'
+validity_roc = 'molflux.metrics.classification.validity_roc:ValidityRoc'
+
+[project.entry-points.'molflux.metrics.plugins.regression']
+explained_variance = 'molflux.metrics.regression.explained_variance:ExplainedVariance'
+max_error = 'molflux.metrics.regression.max_error:MaxError'
+mean_absolute_error = 'molflux.metrics.regression.mean_absolute_error:MeanAbsoluteError'
+mean_squared_error = 'molflux.metrics.regression.mean_squared_error:MeanSquaredError'
+median_absolute_error = 'molflux.metrics.regression.median_absolute_error:MedianAbsoluteError'
+pearson = 'molflux.metrics.regression.pearson:Pearson'
+proportion_within_fold = 'molflux.metrics.regression.proportion_within_fold:ProportionWithinFold'
+r2 = 'molflux.metrics.regression.r2:R2'
+spearman = 'molflux.metrics.regression.spearman:Spearman'
+
+[project.entry-points.'molflux.metrics.plugins.uncertainty']
+coefficient_of_variation = 'molflux.metrics.uncertainty.coefficient_of_variation:CoefficientOfVariation'
+expected_calibration_error = 'molflux.metrics.uncertainty.expected_calibration_error:ExpectedCalibrationError'
+gaussian_nll = 'molflux.metrics.uncertainty.gaussian_nll:GaussianNLL'
+prediction_interval_coverage = 'molflux.metrics.uncertainty.prediction_interval_coverage:PredictionIntervalCoverage'
+prediction_interval_width = 'molflux.metrics.uncertainty.prediction_interval_width:PredictionIntervalWidth'
+uncertainty_based_rejection = 'molflux.metrics.uncertainty.uncertainty_based_rejection:UncertaintyBasedRejection'
+
+[project.urls]
+documentation = 'https://github.com/exscientia/molflux/issues'  # TODO: add docs url
+repository = 'https://github.com/exscientia/molflux.git'
+issue-tracker = 'https://github.com/exscientia/molflux/issues'
+changelog = 'https://github.com/exscientia/molflux/src/main/CHANGELOG.md'
+
+[tool.black]
+include = '/src/.*\.pyi?$|/tests/.*\.pyi?$|/docs/.*\.pyi?$'
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311']
+
+[tool.coverage.paths]
+source = ['src/molflux/', '.cache/nox/*/lib/*/site-packages/molflux/']
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.coverage.run]
+branch = true
+source_pkgs = ['molflux']
+
+[tool.isort]
+known_first_party = "molflux"
+profile = "black"
+src_paths = ["src", "tests"]
+
+[tool.mypy]
+cache_dir = ".cache/mypy_cache"
+disallow_incomplete_defs = true
+disallow_subclassing_any = false
+disallow_untyped_decorators = false
+disallow_untyped_defs = true
+explicit_package_bases = true
+files = ['src/', 'tests/', 'noxfile.py']
+ignore_missing_imports = true
+mypy_path = 'src'
+namespace_packages = true
+no_implicit_optional = true
+plugins = ['pydantic.mypy']
+warn_redundant_casts =true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_ignores = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+check_untyped_defs = true
+disallow_untyped_defs = false
+module = 'tests.*'
+
+[[tool.mypy.overrides]]
+check_untyped_defs = true
+disallow_untyped_decorators = false
+disallow_untyped_defs = false
+module = 'noxfile'
+
+[tool.pytest.ini_options]
+addopts = "-rv --doctest-modules --color=yes"
+cache_dir = ".cache/pytest_cache"
+log_cli = true
+log_cli_level = "WARNING"
+log_cli_format = "%(levelname)s:%(name)s: %(message)s"
+minversion = "6.0"
+norecursedirs = [
+    'src/molflux/datasets/builders',
+    'src/molflux/features/representations',
+    'src/molflux/splits/strategies',
+    'src/molflux/modelzoo/models',
+    'tests/*/*/mock_data',
+]
+testpaths = ['src', 'tests']
+
+[tool.ruff]
+cache-dir = ".cache/ruff"
+line-length = 88
+src = ["src/molflux", "tests"]
+namespace-packages = ["src/molflux"]
+respect-gitignore = true
+show-fixes = true
+select = [ # https://beta.ruff.rs/docs/rules/
+    # "A",  # flake8-builtins
+    # "ARG", # flake8-unused-arguments
+    "B", # flake8-bugbear
+    # "BLE", # flake8-blind-except
+    "COM", # flake8-commas
+    "C4", # flake8-comprehensions
+    # "C90", # mccabe
+    # "D", # pydocstyle
+    "DTZ", # flake8-datetimz
+    "E",  # pycodestyle error
+    # "ERA", # eradicate
+    "F", # Pyflakes
+    # "G", # flake8-logging-format
+    "I", # isort
+    # "ISC", # flake8-implicit-str-concat
+    # "N", # pep8-naming
+    # "NPY", # NumPy-specific rules
+    "Q", # flake8-quotes
+    "PD", # pandas-vet
+    # "PIE", # flake8-pie
+    # "PL", # Pylint
+    # "PT", # flake8-pytest-style
+    # "PTH", # flake8-use-pathlib
+    "RSE",  # flake8-raise
+    "RUF", # Ruff-specific rules
+    "S", # flake8-bandit
+    # "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    # "TRY", # tryceratops
+    "T20", # flake8-print
+    "UP", # pyupgrade
+    "W", # pycodestyle warning
+    "YTT", # flake8-2020
+]
+ignore = ["E501", "S101", "PD901", "PD003"]
+
+[tool.ruff.per-file-ignores]
+"docs/source/conf.py" = ["ERA"]
+"src/molflux/__init__.py" = ["F401"]
+"src/molflux/*/__init__.py" = ["F401"]
+"tests/*" = ["ARG001", "D", "S101", "PLR2004"]
+"noxfile.py" = ["T201"]
+
+[tool.ruff.isort]
+known-first-party = ["molflux"]
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.setuptools_scm]
+local_scheme = "dirty-tag"
+write_to = "src/molflux/version.py"

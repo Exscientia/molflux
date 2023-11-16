@@ -1,0 +1,7 @@
+[
+    {"class_name": "sklearn.preprocessing.StandardScaler", "hyperparameters": null},
+    {
+        "class_name": "sklearn.ensemble.RandomForestRegressor",
+        "hyperparameters": {"n_estimators": 500, "random_state": 0}
+    }
+]
