@@ -1,0 +1,43 @@
+name: Quality and Typing Checks
+
+on:
+  workflow_call:
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Linting check
+        run: |
+          pip install nox
+          nox -s linting_check-3.11
+      - name: Formatting check
+        run: |
+          pip install nox
+          nox -s formatting_check-3.11
+
+  typing-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Typing check
+        run: |
+          pip install nox
+          nox -s typing_check-${{ matrix.python-version }}

@@ -113,6 +113,9 @@ for v in SUBMODULE_EXTRAS.values():
 
 EXTRAS = list(set(EXTRAS))
 
+# skip openeye in github actions (cannot pip install)
+EXTRAS.remove("openeye")
+
 INVERTED_SUBMODULE_EXTRAS = {}
 for extra in EXTRAS:
     doctests_target_dir_core = []
