@@ -1,0 +1,10 @@
+name: Alpha release CI Actions
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  publish-package:
+    uses: ./.github/workflows/publish-package.yaml

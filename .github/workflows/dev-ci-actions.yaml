@@ -1,0 +1,11 @@
+name: Dev CI Actions
+
+on:
+  pull_request:
+
+jobs:
+  quality-checks:
+    uses: ./.github/workflows/quality-typing-checks.yaml
+  test-run-pinned:
+    uses: ./.github/workflows/pinned-tests.yaml
+    needs: [quality-checks]

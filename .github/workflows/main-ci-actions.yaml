@@ -1,0 +1,12 @@
+name: Main CI Actions
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  quality-checks:
+    uses: ./.github/workflows/quality-typing-checks.yaml
+  test-run-pinned:
+    uses: ./.github/workflows/pinned-tests.yaml
+    needs: [quality-checks]

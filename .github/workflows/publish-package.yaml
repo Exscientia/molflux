@@ -1,0 +1,24 @@
+name: Publish package
+
+on:
+  workflow_call:
+
+jobs:
+  publish-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Build package
+        run: |
+          pip install nox
+          nox -s dist_build-3.11
+      - name: Deploy package
+        run: |
+          pip install twine
+          python -m twine upload --verbose -u __token__ -p ${{ secrets.EXS_PYPI_TOKEN }} dist/*
