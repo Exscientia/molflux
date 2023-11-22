@@ -10,3 +10,33 @@
 ---
 
 Documentation, PyPI publishing, CI coming soon
+
+## What is molflux?
+`molflux` is a machine learning framework for molecular data. It can be used across a range of tasks but is especially useful for building and exploring models for molecular property prediction.
+
+The package has been developed by researchers and engineers working in the AI team of Exscientia.
+
+## Installation
+### With pip
+```bash
+pip install molflux
+```
+
+#### Optional Dependencies
+Some functionalities in `molflux` require additional dependencies, which you can install as needed:
+
+  ```bash
+  pip install molflux[rdkit]
+  ```
+  ```bash
+  pip install molflux[lightning]
+  ```
+
+## Documentation
+TODO: add link
+
+## Contribution guidelines
+TODO
+
+## License
+[MIT License](LICENSE)
