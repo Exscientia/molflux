@@ -104,6 +104,8 @@ docs = [
     'sphinx_design',
     'jupytext>=1.11.2',
     'myst-nb',
+    'rdkit>=2023.9.1',
+    'matplotlib'
 ]
 tests = [
     'coverage[toml]',
