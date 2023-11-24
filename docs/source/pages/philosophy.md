@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# What is MolFLux?
+# What is MolFlux?
 
 ## Background
 

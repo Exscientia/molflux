@@ -10,13 +10,26 @@ kernelspec:
   name: python3
 ---
 
-# The Standard API
+# Standardisation
 
 A driving principle of the ``molflux`` package is standardisation. In this section, we demonstrate and describe the unified
 API of the package. Learning to use the following functionality gives the user immediate knowledge of how to use all parts
 of the package. Each of the following methods can be imported from the relevant submodule (for example
 ``from molflux.datasets import load_from_dict`).
 
+## Browsing
+
+To start, we first introduce the basic browsing functionality of the submodules. Each submodule has a ``list_*`` function
+that returns a dictionary of available objects (datasets, representations, models, etc...). These are
+
+1) ``list_datasets``
+2) ``list_representations``
+3) ``list_splits``
+4) ``list_models``
+5) ``list_metrics``
+
+The dictionaries returned are grouped by the optional dependency required for the objects (key) and the list of available
+objects (value).
 
 ## Loading
 
