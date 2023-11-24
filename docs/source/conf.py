@@ -1,0 +1,48 @@
+# Configuration file for the Sphinx documentation builder.
+#
+# For the full list of built-in configuration values, see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+# -- Project information -----------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+
+project = "molflux"
+copyright = "2023, Exscientia"
+author = "Exscientia"
+
+# -- General configuration ---------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.extlinks",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
+    "myst_nb",
+    "sphinx_design",
+    "sphinx_sitemap",
+    "sphinx_inline_tabs",
+]
+
+templates_path = ["_templates"]
+exclude_patterns = []
+
+
+# -- Options for HTML output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+
+html_theme = "sphinx_book_theme"
+html_static_path = ["_static"]
+html_baseurl = ""  # TODO: Fill in docs page url
+
+html_title = "MolFlux"
+html_logo = "_static/logo.png"
+
+html_theme_options = {
+    "repository_url": "https://github.com/Exscientia/molflux",
+    "use_repository_button": True,
+    "home_page_in_toc": True,
+}
