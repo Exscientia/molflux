@@ -129,11 +129,13 @@ def test_save_dataset_to_s3(
 @pytest.mark.parametrize(
     ("path", "format", "filesystem"),
     [
-        ("s3://my/bucket/data.parquet", "parquet", fsspec.filesystem("file")),
-        ("my/data.parquet", "parquet", fsspec.filesystem("s3")),
+        ("s3://my/bucket/data.parquet", "parquet", "file"),
+        ("my/data.parquet", "parquet", "s3"),
     ],
 )
 def test_save_dataset_with_mismatched_filesystem_raises(
+    fixture_mock_s3_client,
+    fixture_mock_s3_filesystem,
     fixture_mock_dataset,
     path,
     format,
@@ -143,7 +145,12 @@ def test_save_dataset_with_mismatched_filesystem_raises(
     local filesystem (local) raises (and vice-versa)."""
     dataset = fixture_mock_dataset
     with pytest.raises(ValueError, match="Incompatible filesystem"):
-        save_dataset_to_store(dataset, path=str(path), format=format, fs=filesystem)
+        save_dataset_to_store(
+            dataset,
+            path=str(path),
+            format=format,
+            fs=fsspec.filesystem(filesystem),
+        )
 
 
 @pytest.mark.parametrize(
