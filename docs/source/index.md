@@ -46,6 +46,10 @@ caption: Datasets
 ---
 pages/datasets/intro
 pages/datasets/basic_usage
+pages/datasets/loading
+pages/datasets/saving
+pages/datasets/featurising
+pages/datasets/splitting
 ```
 
 ```{toctree}
@@ -56,6 +60,8 @@ maxdepth: 2
 caption: Features
 ---
 pages/features/intro
+pages/features/basic_usage
+pages/features/how_to_add_reps
 ```
 
 ```{toctree}
@@ -66,6 +72,9 @@ maxdepth: 2
 caption: Splits
 ---
 pages/splits/intro
+pages/splits/basic_usage
+pages/splits/how_to_add_splits
+pages/splits/gallery
 ```
 
 ```{toctree}
@@ -76,6 +85,9 @@ maxdepth: 2
 caption: ModelZoo
 ---
 pages/modelzoo/intro
+pages/modelzoo/basic_usage
+pages/modelzoo/uncertainty
+pages/modelzoo/how_to_add_models
 ```
 
 ```{toctree}
@@ -86,6 +98,8 @@ maxdepth: 2
 caption: Metrics
 ---
 pages/metrics/intro
+pages/metrics/basic_usage
+pages/metrics/how_to_add_metrics
 ```
 
 ```{toctree}
@@ -93,9 +107,12 @@ pages/metrics/intro
 hidden:
 glob:
 maxdepth: 2
-caption: Core
+caption: Productionising
 ---
-pages/core/intro
+pages/production/intro
+pages/production/featurisation
+pages/production/models
+pages/production/tracking
 ```
 
 ```{toctree}

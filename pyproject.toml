@@ -96,16 +96,18 @@ dev = [
     'pre-commit',
 ]
 docs = [
-    'matplotlib',
     'sphinx!=5.1.0',
     'sphinx-sitemap',
     'sphinx-inline-tabs',
     'sphinx-book-theme',
     'sphinx_design',
+    'sphinx-toolbox',
     'jupytext>=1.11.2',
     'myst-nb',
     'rdkit>=2023.9.1',
-    'matplotlib'
+    'matplotlib',
+    'catboost>=1.2.0',
+    'mapie',
 ]
 tests = [
     'coverage[toml]',
