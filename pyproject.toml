@@ -104,6 +104,7 @@ docs = [
     'sphinx-toolbox',
     'jupytext>=1.11.2',
     'myst-nb',
+    'ipywidgets',
     'rdkit>=2023.9.1',
     'matplotlib',
     'catboost>=1.2.0',

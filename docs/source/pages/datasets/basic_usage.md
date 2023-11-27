@@ -187,7 +187,7 @@ from molflux.datasets import load_dataset
 
 dataset = load_dataset('esol')
 
-print(dataset.to_pandas())
+dataset.to_pandas()
 ```
 
 You can also save and load the datasets to disk or to the cloud (s3)
