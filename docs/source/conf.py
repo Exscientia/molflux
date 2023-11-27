@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
+    "sphinx_toolbox.confval",
     "myst_nb",
     "sphinx_design",
     "sphinx_sitemap",
@@ -44,5 +45,7 @@ html_logo = "_static/logo.png"
 html_theme_options = {
     "repository_url": "https://github.com/Exscientia/molflux",
     "use_repository_button": True,
-    "home_page_in_toc": True,
+    "use_sidenotes": True,
+    "show_nav_level": 0,
+    "collapse_navigation": True,
 }

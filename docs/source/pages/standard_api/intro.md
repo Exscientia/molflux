@@ -12,6 +12,15 @@ kernelspec:
 
 # Standardisation
 
+```{contents} On this page
+---
+local: true
+backlinks: none
+---
+```
+
+{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
+
 A driving principle of the ``molflux`` package is standardisation. In this section, we demonstrate and describe the unified
 API of the package. Learning to use the following functionality gives the user immediate knowledge of how to use all parts
 of the package. Each of the following methods can be imported from the relevant submodule (for example

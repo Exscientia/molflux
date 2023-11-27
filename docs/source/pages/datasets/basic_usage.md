@@ -12,14 +12,23 @@ kernelspec:
 
 # Basic usage
 
+```{contents} On this page
+---
+local: true
+backlinks: none
+---
+```
+
+{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
+
 In this section, we will quickly illustrate how to use ``molflux.datasets``. These examples will provide you with a starting
-point. Much of the low level functionality is already documented in the ``huggingface`` docs (LINK). Here, we will only go
-through the added functionality.
+point. Much of the low level functionality is already documented in the ``huggingface`` docs [datasets](https://huggingface.co/docs/datasets/index).
+Here, we will only go through the basics and the added functionality from ``molflux``.
 
 
 ## Exploration
 
-First, let's have a look at what datasets are available for use. To view what's available, you can run the `list_datasets` function:
+First, we use the ``list_datasets`` function to browse what datasets are available.
 
 ```{code-cell} ipython3
 
@@ -32,7 +41,14 @@ print(catalogue)
 
 This returns a list of available datasets by their name.
 
+```{tip}
+On top of these drug discovery datasets, you can also access all datasets from the huggingface [registry](https://huggingface.co/datasets) (for example,
+the MNIST dataset). Follow along with the rest of this page with your favourite dataset from there!
+```
+
 ## Loading datasets
+
+### Loading using ``load_dataset``
 
 Loading a dataset is very simple. You just need to run `load_dataset` with a given dataset name:
 
@@ -46,8 +62,13 @@ print(dataset)
 
 By printing the loaded dataset, you can see minimal information about it like the column names and number of datapoints.
 
-You can also load a dataset from a config. A dataset config is a dictionary specifying the dataset to be
-loaded. A config dictionary must have the following format
+```{tip}
+You can also see more information about the dataset from its ``dataset.info``.
+```
+
+### Loading using ``load_from_dict``
+
+Datasets can also be loaded by specifying a config dictionary. A config dictionary must have the following format
 ```{code-block} python
 dataset_config_dict = {
     'name': '<name of the dataset>',
@@ -56,9 +77,7 @@ dataset_config_dict = {
 ```
 
 The ``name`` key specifies the ``name``  of the dataset to load from the catalogue. The ``config`` key
-specifies the arguments that are needed for instantiating the dataset.
-
-To load a dataset from a config
+specifies the arguments that are needed for instantiating the dataset. The dataset can then be loaded by doing
 
 ```{code-cell} ipython3
 
@@ -71,6 +90,8 @@ config = {
 dataset = load_from_dict(config)
 print(dataset)
 ```
+
+### Loading using ``load_from_dicts``
 
 For convenience, you can also load a group of dataset all at once by specifying a list of configs.
 
@@ -91,9 +112,11 @@ datasets = load_from_dicts(config)
 print(datasets)
 ```
 
+### Loading using ``load_from_yaml``
+
 Finally, you can load datasets from a yaml file. You can use a single yaml file which includes configs for all the ``molflux``
-submodules and the ``molflux.datasets.load_from_yaml`` will know how to extract the relevant part it needs. To do so, you need to define a yaml file with the
-following example format
+submodules and the ``molflux.datasets.load_from_yaml`` will know how to extract the relevant part it needs for the dataset.
+To do so, you need to define a yaml file with the following example format
 
 ```{code-block} yaml
 
@@ -106,8 +129,8 @@ specs:
 
 ```
 It consists of a version (this is the version of the config format, for now just ``v1``), ``kind`` of config (in this case
-``datasets``), and ``config``. ``config`` is where the dataset initialisation keyword arguments are defined. The yaml file can include
-configs for other ``molflux`` packages as well. To load this yaml file, you can simply do
+``datasets``), and ``specs``. ``specs`` is where the dataset initialisation keyword arguments are defined. The yaml file can include
+configs for other ``molflux`` packages as well (see LINK Standard API for more info). To load this yaml file, you can simply do
 
 
 ```{code-block} ipython3
@@ -119,14 +142,15 @@ datasets = load_from_yaml(path_to_yaml_file)
 print(datasets)
 ```
 
+
 ## Working with datasets
 
 ``molflux.datasets`` was designed to supplement the HuggingFace [datasets](https://huggingface.co/docs/datasets/index) library,
-giving you access to our internal catalogue of datasets, and to a number of convenience utility functions. The datasets
+giving you access to our additional catalogue of datasets and to a number of convenience utility functions. The datasets
 returned by e.g. `molflux.datasets.load_dataset()` are actually native huggingface datasets, with all of the associated
-functionalities.
+functionality.
 
-You can find complete documentation on how to work with hugginface datasets [online](https://huggingface.co/docs/datasets/index), or
+You can find complete documentation on how to work with huggingface datasets [online](https://huggingface.co/docs/datasets/index), or
 even check out their official [training course](https://huggingface.co/course/chapter5/1?fw=pt)! The rest of this
 tutorial will simply show you a couple of examples of some of the most basic functionalities available.
 
@@ -180,7 +204,9 @@ dataset = load_dataset_from_store("my/data/dataset.parquet")
 
 ```{seealso}
 
-For more information on how to save and load datasets to disk, checkout these two how to guides:
+For more information on how to save, load (from disk), featurise, and split datasets, checkout these guides:
 * [How to save datasets](saving.md)
 * [How to load datasets](loading.md)
+* [How to featurise datasets](featurising.md)
+* [How to split datasets](splitting.md)
 ```
