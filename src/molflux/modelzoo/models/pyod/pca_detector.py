@@ -131,7 +131,6 @@ SVDSolver = Literal["auto", "full", "arpack", "randomized"]
 
 
 class Config:
-    extra = "forbid"
     arbitrary_types_allowed = True
     smart_union = True
 

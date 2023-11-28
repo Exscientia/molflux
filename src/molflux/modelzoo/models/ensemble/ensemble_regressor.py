@@ -66,7 +66,6 @@ random_state : int, RandomState or None, optional (default=None)
 
 class Config:
     arbitrary_types_allowed = True
-    extra = "forbid"
 
 
 @dataclass(config=Config)

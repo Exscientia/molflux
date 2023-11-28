@@ -138,7 +138,6 @@ MaxFeaturesCallable = Literal["sqrt", "log2"]
 
 
 class Config:
-    extra = "forbid"
     arbitrary_types_allowed = True
     smart_union = True
 

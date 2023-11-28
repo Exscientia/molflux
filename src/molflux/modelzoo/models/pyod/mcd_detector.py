@@ -73,7 +73,6 @@ random_state : int, np.random.Generator instance or None, optional (default=None
 
 class Config:
     arbitrary_types_allowed = True
-    extra = "forbid"
 
 
 @dataclass(config=Config)
