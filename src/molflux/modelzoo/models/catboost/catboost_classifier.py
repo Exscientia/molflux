@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Type, Union
 
 from pydantic.dataclasses import dataclass
@@ -151,6 +152,7 @@ LossFunctions = Literal["Logloss", "CrossEntropy"]
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -266,6 +268,10 @@ class CatBoostClassifier(
         the column is a column of arrays (for example a column of fingerprints), it
         is assumed that each array molflux is a categorical column of its own.
     """
+
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
 
     @property
     def _config_builder(self) -> Type[CatBoostClassifierConfig]:

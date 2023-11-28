@@ -1,4 +1,5 @@
-from typing import Callable, Dict, Literal, Optional, Type, Union
+from dataclasses import asdict
+from typing import Any, Callable, Dict, Literal, Optional, Type, Union
 
 from pydantic.dataclasses import dataclass
 
@@ -106,6 +107,7 @@ Method = Literal["largest", "mean", "median"]
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -122,6 +124,10 @@ class KNNDetectorConfig(PyODModelConfig):
 
 
 class KNNDetector(PyODClassificationMixin, PyODModelBase[KNNDetectorConfig]):
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
+
     @property
     def _config_builder(self) -> Type[KNNDetectorConfig]:
         return KNNDetectorConfig

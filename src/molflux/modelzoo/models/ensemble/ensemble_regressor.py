@@ -1,5 +1,6 @@
 import os
 from copy import copy
+from dataclasses import asdict
 from typing import Any, Dict, List, Optional, Type
 
 import numpy as np
@@ -65,6 +66,7 @@ random_state : int, RandomState or None, optional (default=None)
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -129,6 +131,10 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
         self.keep_original = config["keep_original"]
         self.shuffle_data = config["shuffle_data"]
         self.random_state = config["random_state"]
+
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
 
     def _config(self) -> EnsembleRegressorConfig:
         return EnsembleRegressorConfig()
