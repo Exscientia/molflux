@@ -1,4 +1,5 @@
-from typing import Literal, Type, Union
+from dataclasses import asdict
+from typing import Any, Dict, Literal, Type, Union
 
 from pydantic.dataclasses import dataclass
 
@@ -55,6 +56,7 @@ BinningMethod = Literal["auto"]
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -66,6 +68,10 @@ class HBOSDetectorConfig(PyODModelConfig):
 
 
 class HBOSDetector(PyODClassificationMixin, PyODModelBase[HBOSDetectorConfig]):
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
+
     @property
     def _config_builder(self) -> Type[HBOSDetectorConfig]:
         return HBOSDetectorConfig

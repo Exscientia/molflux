@@ -1,4 +1,5 @@
-from typing import Literal, Type, Union
+from dataclasses import asdict
+from typing import Any, Dict, Literal, Type, Union
 
 import numpy as np
 from pydantic.dataclasses import dataclass
@@ -89,6 +90,7 @@ Auto = Literal["auto"]
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -107,6 +109,10 @@ class IsolationForestDetector(
     PyODClassificationMixin,
     PyODModelBase[IsolationForestDetectorConfig],
 ):
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
+
     @property
     def _config_builder(self) -> Type[IsolationForestDetectorConfig]:
         return IsolationForestDetectorConfig

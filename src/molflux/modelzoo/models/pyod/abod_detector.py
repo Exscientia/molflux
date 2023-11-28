@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Any, Literal, Type
+from dataclasses import asdict
+from typing import TYPE_CHECKING, Any, Dict, Literal, Type
 
 from pydantic.dataclasses import dataclass
 
@@ -61,6 +62,7 @@ Method = Literal["default", "fast"]
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -71,6 +73,10 @@ class ABODDetectorConfig(PyODModelConfig):
 
 
 class ABODDetector(PyODClassificationMixin, PyODModelBase[ABODDetectorConfig]):
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
+
     @property
     def _config_builder(self) -> Type[ABODDetectorConfig]:
         return ABODDetectorConfig

@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from typing import Any, Callable, Dict, Literal, Tuple, Type
 
 import numpy as np
@@ -44,6 +45,7 @@ _DEVIATION_METHOD_DICT: Dict[str, Callable] = {
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -59,6 +61,10 @@ class AverageRegressor(
     SamplingMixin,
     ModelBase[AverageRegressorConfig],
 ):
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
+
     @property
     def _config_builder(self) -> Type[AverageRegressorConfig]:
         return AverageRegressorConfig
