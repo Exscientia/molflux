@@ -45,3 +45,7 @@ for fold in folds:
     # do anything you want!
     print(fold)
 ```
+
+```{seealso}
+There is also a complete workflow example that also covers how datasets and splitting are integrated: [ESOL Training](../tutorials/esol_training.html#featurising).
+```

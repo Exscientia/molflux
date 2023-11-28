@@ -25,7 +25,7 @@ In this section, we will illustrate how to use ``molflux.modelzoo``. These examp
 point.
 
 
-## Exploration
+## Browsing
 
 First, lets' have a look at what model architectures are available for use. To view what's available you can do
 
@@ -43,7 +43,9 @@ This returns our catalogue of available model architectures (organised by the de
 ```{seealso}
 [How to add your own model](how_to_add_models.md) if you would like to add your own model to the catalogue
 ```
-
+ For instance, `molflux.modelzoo.list_models()` returns as one item in the dictionary: 
+`'xgboost': ['xg_boost_classifier', 'xg_boost_regressor']`. In order to be able to use the two models `xg_boost_classifier` 
+and `xg_boost_regressor`, you would do: ``pip install molflux[xgboost]``.
 
 ## Loading a model architecture
 

@@ -26,9 +26,9 @@ In this section, we will illustrate how to use ``molflux.splits``. These example
 point.
 
 
-## Exploration
+## Browsing
 
-First, lets' have a look at what splitting strategies are available for use. These are conveniently categorised (for example,
+First, let's have a look at what splitting strategies are available for use. These are conveniently categorised (for example,
 into ``core``, ``rdkit``, etc.). To view what's available you can do
 
 ```{code-cell} ipython3

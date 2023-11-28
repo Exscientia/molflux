@@ -16,7 +16,7 @@ In this section, we will illustrate how to use ``molflux.metrics``. These exampl
 point.
 
 
-## Exploration
+## Browsing
 
 First, lets' have a look at what metrics are available for use. These are conveniently categorised (for example,
 into ``regression``, ``classification``, etc.). To view what's available you can do

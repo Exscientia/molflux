@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Load a dataset
+# More data loading options
 
 ```{contents} On this page
 ---
@@ -26,10 +26,10 @@ Your data can be stored in various places; they can be in the `molflux.datasets`
 on the huggingface datasets hub, and in in-memory data structures like Arrow tables, Python dictionaries, and Pandas
 DataFrames. Wherever a dataset is stored, ``molflux.datasets`` can load it.
 
-## HuggingFace Hub
+## Hugging Face Hub
 
 Datasets are loaded from a dataset loading script that downloads and generates the dataset. However, you can also load a
-dataset from any dataset repository on the HuggingFace Hub without a loading script!
+dataset from any dataset repository on the Hugging Face Hub without a loading script!
 You just need to use the {func}`molflux.datasets.load_dataset` function to load the dataset.
 
 For example, try loading the files from this demo repository by providing the repository namespace and dataset name. This
@@ -53,7 +53,7 @@ dataset = load_dataset(
 )
 ```
 
-## The molflux catalogue
+## The MolFlux catalogue
 
 Similarly, to load a dataset from the ``molflux`` catalogue:
 
