@@ -74,11 +74,11 @@ print(metric)
 
 Let's break this down.
 
-This specific metric is build on top of HuggingFace metrics. This is not necessary and you can override it if you wish and
-build your own metric from scratch. Here, we use HuggingFace metrics because they provide a lot of convenient features.
+This specific metric is build on top of Hugging Face metrics. This is not necessary and you can override it if you wish and
+build your own metric from scratch. Here, we use Hugging Face metrics because they provide a lot of convenient features.
 
 Start by creating a class (you can name it whatever you like, the class name has nothing to do with
-how the metric will appear in ``molflux.metrics``). If you wish to use the HuggingFace features, then the class must inherit
+how the metric will appear in ``molflux.metrics``). If you wish to use the Hugging Face features, then the class must inherit
 ``HFMetric`` from ``molflux.metrics``.
 
 Next, since we are adding this metric temporarily, you need to register it (basically make it available in ``molflux.metrics``) by

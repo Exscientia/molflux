@@ -26,7 +26,7 @@ point. Much of the low level functionality is already documented in the ``huggin
 Here, we will only go through the basics and the added functionality from ``molflux``.
 
 
-## Exploration
+## Browsing
 
 First, we use the ``list_datasets`` function to browse what datasets are available.
 
@@ -145,7 +145,7 @@ print(datasets)
 
 ## Working with datasets
 
-``molflux.datasets`` was designed to supplement the HuggingFace [datasets](https://huggingface.co/docs/datasets/index) library,
+``molflux.datasets`` was designed to supplement the Hugging Face [datasets](https://huggingface.co/docs/datasets/index) library,
 giving you access to our additional catalogue of datasets and to a number of convenience utility functions. The datasets
 returned by e.g. `molflux.datasets.load_dataset()` are actually native huggingface datasets, with all of the associated
 functionality.

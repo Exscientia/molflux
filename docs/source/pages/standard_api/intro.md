@@ -21,10 +21,11 @@ backlinks: none
 
 {sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
 
-A driving principle of the ``molflux`` package is standardisation. In this section, we demonstrate and describe the unified
+A driving principle of the ``molflux`` package is standardisation across all of its five submodules: 
+`datasets`, `features`, `splits`, `modelzoo`, `metrics`. In this section, we demonstrate and describe the unified
 API of the package. Learning to use the following functionality gives the user immediate knowledge of how to use all parts
 of the package. Each of the following methods can be imported from the relevant submodule (for example
-``from molflux.datasets import load_from_dict`).
+`from molflux.datasets import list_datasets`).
 
 ## Browsing
 
@@ -38,7 +39,12 @@ that returns a dictionary of available objects (datasets, representations, model
 5) ``list_metrics``
 
 The dictionaries returned are grouped by the optional dependency required for the objects (key) and the list of available
-objects (value).
+objects (value). For more information, see the respective browsing-sections in the \
+documentation:  [datasets](../datasets/basic_usage.md#browsing),
+                [features](../features/basic_usage.md#browsing),
+                [splits](../splits/basic_usage.md#browsing),
+                [modelzoo](../modelzoo/basic_usage.md#browsing),
+                [metrics](../metrics/basic_usage.md#browsing).
 
 ## Loading
 
@@ -53,7 +59,12 @@ The ``load_*`` is the simplest method of the API. It can be used to load the obj
 5) ``load_metric``
 
 The pattern is ``load_*(name: str, **kwargs)`` where ``name`` is a string name of the object and ``kwargs`` are optional
-object specific kwargs.
+object specific kwargs. For more information, see the respective loading-sections in the \
+documentation:  [datasets](../datasets/basic_usage.md#loading-datasets),
+                [features](../features/basic_usage.md#loading-representations),
+                [splits](../splits/basic_usage.md#loading-splitting-strategies),
+                [modelzoo](../modelzoo/basic_usage.md#loading-a-model-architecture),
+                [metrics](../metrics/basic_usage.md#loading-metrics).
 
 ### ``load_from_dict``
 

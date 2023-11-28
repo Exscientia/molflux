@@ -26,7 +26,7 @@ In this section, we will illustrate how to use ``molflux.features``. These examp
 point.
 
 
-## Exploration
+## Browsing
 
 First, lets' have a look at what representations are available for use. These are conveniently categorised (for example,
 into ``core``, ``rdkit``, etc.). To view what's available you can do

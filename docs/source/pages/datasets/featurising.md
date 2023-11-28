@@ -32,11 +32,15 @@ featurised_dataset = featurise_dataset.featurise_dataset(
 This returns a new datasets with the required features as new columns (if you use multiple representations all at once using
 the ``load_from_dicts`` method of ``molflux.features``, then they will each create a new column with their computed features).
 
-Under the hood, this is done using the ``map`` functionality of HuggingFace datasets. You can pass some ``kwargs`` to control
+Under the hood, this is done using the ``map`` functionality of Hugging Face datasets. You can pass some ``kwargs`` to control
 the featurisation. The full set of ``kwargs`` can be found [here](https://huggingface.co/docs/datasets/v2.3.2/en/package_reference/main_classes#datasets.Dataset.map)
 but the most useful ones are
 - batch_size (int, optional, default 1000): the size of the batches.
 - num_proc (int, optional, default None): maximum number of processes for featurisation.
+
+```{seealso}
+There is also a complete workflow example that also covers how datasets and featurization are integrated: [ESOL Training](../tutorials/esol_training.html#featurising).
+```
 
 ## Tweaking the featurised columns' names
 
