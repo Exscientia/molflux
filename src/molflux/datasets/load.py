@@ -1,4 +1,3 @@
-import warnings
 from typing import Any, Dict, Iterable, Literal, Optional, Union, overload
 
 import datasets
@@ -44,26 +43,12 @@ def load_dataset_builder(
     """
 
     # Check first if this is a custom builder name, and resolve path
-    is_custom_builder = name in BUILDERS_CATALOGUE
-    if is_custom_builder:
+    if name in BUILDERS_CATALOGUE:
         name = get_dataset_builder_path(name)
 
-    with warnings.catch_warnings():
-        # for our custom builders, ignore warning from missing huggingface hub repo card metadata [MLOPS-1125]
-        if is_custom_builder:
-            warnings.filterwarnings(
-                "ignore",
-                message="Repo card metadata block was not found",
-                category=UserWarning,
-                module="huggingface_hub.repocard",
-            )
-
-        hf_builder = datasets.load_dataset_builder(
-            path=name,
-            name=config_name,
-            **kwargs,
-        )
-        return hf_builder
+    # TODO: possibly disable hub lookup to avoid leaking sensitive data in dataset names
+    hf_builder = datasets.load_dataset_builder(path=name, name=config_name, **kwargs)
+    return hf_builder
 
 
 @overload
@@ -151,26 +136,17 @@ def load_dataset(
     """
 
     # Check first if this is a custom builder name, and resolve path
-    is_custom_builder = name in BUILDERS_CATALOGUE
-    if is_custom_builder:
+    if name in BUILDERS_CATALOGUE:
         name = get_dataset_builder_path(name)
 
-    with warnings.catch_warnings():
-        # for our custom builders, ignore warning from missing huggingface hub repo card metadata [MLOPS-1125]
-        if is_custom_builder:
-            warnings.filterwarnings(
-                "ignore",
-                message="Repo card metadata block was not found",
-                category=UserWarning,
-                module="huggingface_hub.repocard",
-            )
-        return datasets.load_dataset(
-            path=name,
-            name=config_name,
-            split=split,
-            streaming=streaming,
-            **kwargs,
-        )
+    # TODO: possibly disable hub lookup to avoid leaking sensitive data in dataset names
+    return datasets.load_dataset(
+        path=name,
+        name=config_name,
+        split=split,
+        streaming=streaming,
+        **kwargs,
+    )
 
 
 def _load_from_spec(spec: Spec) -> Union[Dataset, DatasetDict]:

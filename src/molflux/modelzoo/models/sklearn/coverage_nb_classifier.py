@@ -44,7 +44,6 @@ class_prior : array-like of shape (n_classes,), default=None
 
 class Config:
     arbitrary_types_allowed = True
-    extra = "forbid"
 
 
 @dataclass(config=Config)

@@ -79,7 +79,6 @@ PredictionsStrategy = Literal[
 
 
 class Config:
-    extra = "forbid"
     arbitrary_types_allowed = True
     smart_union = True
 

@@ -191,7 +191,6 @@ def _as_mapie_estimator(model: Any) -> Any:
 
 class Config:
     arbitrary_types_allowed = True
-    extra = "forbid"
 
 
 @dataclass(config=Config)

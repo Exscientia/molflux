@@ -83,7 +83,6 @@ SolverT = Literal["svd", "lsqr", "eigen"]
 
 class Config:
     arbitrary_types_allowed = True
-    extra = "forbid"
 
 
 @dataclass(config=Config)
