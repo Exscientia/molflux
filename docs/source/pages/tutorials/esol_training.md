@@ -121,11 +121,89 @@ scores = regression_suite.compute(
     predictions=preds["random_forest_regressor::log_solubility"],
 )
 
-print(json.dumps(scores, indent=4))
+print(json.dumps({k: round(v, 2) for k, v in scores.items()}, indent=4))
 
 plt.scatter(
     split_featurised_dataset["test"]["log_solubility"],
     preds["random_forest_regressor::log_solubility"],
+)
+plt.xlabel("True values")
+plt.ylabel("Predicted values")
+plt.show()
+```
+
+# ESOL training using a yaml file
+All configs for above pipeline can also be put in a single yaml file:
+```{code-cell} ipython3
+:tags: [hide-input]
+import yaml
+yaml_file_path = "esol_training.yaml"
+with open(yaml_file_path, 'r') as file:
+    documents = list(yaml.safe_load_all(file))
+    for doc in documents:
+        print(yaml.dump(doc))
+```
+
+We can now run the same pipeline with the settings in the yaml file using the `load_from_yaml` logic for all submodules:
+
+```{code-cell} ipython3
+import json
+import matplotlib.pyplot as plt
+from molflux.datasets import load_from_yaml as load_dataset_from_yaml
+from molflux.features import load_from_yaml as load_representations_from_yaml
+from molflux.datasets import featurise_dataset
+from molflux.splits import load_from_yaml as load_split_from_yaml
+from molflux.datasets import split_dataset
+from molflux.modelzoo import load_from_yaml as load_model_from_yaml
+from molflux.metrics import load_suite
+
+yaml_file_path = "esol_training.yaml"
+
+# Load the dataset
+dataset = load_dataset_from_yaml(yaml_file_path)  # List with a single item is returned.
+dataset = list(dataset.values())[0]
+
+# Load the representations
+featuriser = load_representations_from_yaml(yaml_file_path)
+
+# Featurise the dataset
+featurised_dataset = featurise_dataset(
+    dataset, column="smiles", representations=featuriser
+)
+
+# Load the split strategy
+strategies = load_split_from_yaml(yaml_file_path)  # Dictionary with one entry returned.
+split_strategy = list(strategies.values())[0]
+
+# Split the dataset
+split_featurised_dataset = next(split_dataset(featurised_dataset, split_strategy))
+
+# Load the model
+models = load_model_from_yaml(yaml_file_path)
+model = list(models.values())[0]
+model_name = list(models.keys())[0]
+y_label = model.y_features[0]
+
+# Train the model
+model.train(split_featurised_dataset["train"])
+
+# Predict the test set
+preds = model.predict(split_featurised_dataset["test"])
+
+# Compute metrics
+regression_suite = load_suite("regression")
+
+scores = regression_suite.compute(
+    references=split_featurised_dataset["test"][f"{y_label}"],
+    predictions=preds[f"{model_name}::{y_label}"],
+)
+
+print(json.dumps({k: round(v, 2) for k, v in scores.items()}, indent=4))
+
+# Plot true vs predicted values
+plt.scatter(
+    split_featurised_dataset["test"][f"{y_label}"],
+    preds[f"{model_name}::{y_label}"],
 )
 plt.xlabel("True values")
 plt.ylabel("Predicted values")

@@ -39,7 +39,7 @@ but the most useful ones are
 - num_proc (int, optional, default None): maximum number of processes for featurisation.
 
 ```{seealso}
-There is also a complete workflow example that also covers how datasets and featurization are integrated: [ESOL Training](../tutorials/esol_training.html#featurising).
+There is also a complete workflow example that also covers how datasets and featurization are integrated: [ESOL Training](../tutorials/esol_training.md#featurising).
 ```
 
 ## Tweaking the featurised columns' names

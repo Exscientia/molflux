@@ -47,5 +47,5 @@ for fold in folds:
 ```
 
 ```{seealso}
-There is also a complete workflow example that also covers how datasets and splitting are integrated: [ESOL Training](../tutorials/esol_training.html#featurising).
+There is also a complete workflow example that also covers how datasets and splitting are integrated: [ESOL Training](../tutorials/esol_training.md#featurising).
 ```
