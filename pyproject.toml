@@ -102,6 +102,7 @@ docs = [
     'sphinx-book-theme',
     'sphinx_design',
     'sphinx-toolbox',
+    'sphinx_togglebutton',
     'jupytext>=1.11.2',
     'myst-nb',
     'ipywidgets',
