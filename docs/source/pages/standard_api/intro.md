@@ -131,3 +131,7 @@ specs:
 ```
 
 where each submodule can take a list of configs for each object to load.
+
+```{seealso}
+On how to configue an entire workflow with a single yaml file, see: [ESOL Training Yaml Example](../tutorials/esol_training.md#esol-training-using-a-yaml-file).
+```
