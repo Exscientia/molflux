@@ -22,6 +22,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
     "sphinx_toolbox.confval",
+    "sphinx_togglebutton",
     "myst_nb",
     "sphinx_design",
     "sphinx_sitemap",
@@ -47,5 +48,18 @@ html_theme_options = {
     "use_repository_button": True,
     "use_sidenotes": True,
     "show_nav_level": 0,
-    "collapse_navigation": True,
+    "icon_links": [
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/molflux/",
+            "icon": "https://img.shields.io/pypi/v/molflux",
+            "type": "url",
+        },
+        {
+            "name": "Python",
+            "url": "https://docs.python.org/3/whatsnew/index.html",
+            "icon": "https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue.svg",
+            "type": "url",
+        },
+    ],
 }
