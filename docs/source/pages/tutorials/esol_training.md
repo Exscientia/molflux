@@ -134,14 +134,45 @@ plt.show()
 
 # ESOL training using a yaml file
 All configs for above pipeline can also be put in a single yaml file:
-```{code-cell} ipython3
-:tags: [hide-input]
-import yaml
-yaml_file_path = "esol_training.yaml"
-with open(yaml_file_path, 'r') as file:
-    documents = list(yaml.safe_load_all(file))
-    for doc in documents:
-        print(yaml.dump(doc))
+```yaml
+---
+version: v1
+kind: datasets
+specs:
+  - name: esol
+    config: { }
+---
+version: v1
+kind: representations
+specs:
+  - name: morgan
+    config: { }
+  - name: maccs_rdkit
+    config: { }
+---
+version: v1
+kind: splits
+specs:
+  - name: shuffle_split
+    presets:
+      train_fraction: 0.8
+      validation_fraction: 0.0
+      test_fraction: 0.2
+---
+version: v1
+kind: models
+specs:
+  - name: random_forest_regressor
+    config:
+      x_features: [ 'smiles::morgan', 'smiles::maccs_rdkit' ]
+      y_features: [ 'log_solubility' ]
+---
+version: v1
+kind: metrics
+specs:
+  - name: regression
+    config: { }
+
 ```
 
 We can now run the same pipeline with the settings in the yaml file using the `load_from_yaml` logic for all submodules:
@@ -160,8 +191,8 @@ from molflux.metrics import load_suite
 yaml_file_path = "esol_training.yaml"
 
 # Load the dataset
-dataset = load_dataset_from_yaml(yaml_file_path)  # List with a single item is returned.
-dataset = list(dataset.values())[0]
+dataset = load_dataset_from_yaml(yaml_file_path)  # A dictionary with a single dataset is returned
+dataset = dataset["dataset-0"]
 
 # Load the representations
 featuriser = load_representations_from_yaml(yaml_file_path)
@@ -172,17 +203,15 @@ featurised_dataset = featurise_dataset(
 )
 
 # Load the split strategy
-strategies = load_split_from_yaml(yaml_file_path)  # Dictionary with one entry returned.
-split_strategy = list(strategies.values())[0]
+strategies = load_split_from_yaml(yaml_file_path)  # A dictionary with a single strategy is returned
+split_strategy = strategies["shuffle_split"]
 
 # Split the dataset
 split_featurised_dataset = next(split_dataset(featurised_dataset, split_strategy))
 
 # Load the model
 models = load_model_from_yaml(yaml_file_path)
-model = list(models.values())[0]
-model_name = list(models.keys())[0]
-y_label = model.y_features[0]
+model = models["random_forest_regressor"]
 
 # Train the model
 model.train(split_featurised_dataset["train"])
@@ -194,16 +223,16 @@ preds = model.predict(split_featurised_dataset["test"])
 regression_suite = load_suite("regression")
 
 scores = regression_suite.compute(
-    references=split_featurised_dataset["test"][f"{y_label}"],
-    predictions=preds[f"{model_name}::{y_label}"],
+    references=split_featurised_dataset["test"]["log_solubility"],
+    predictions=preds["random_forest_regressor::log_solubility"],
 )
 
 print(json.dumps({k: round(v, 2) for k, v in scores.items()}, indent=4))
 
 # Plot true vs predicted values
 plt.scatter(
-    split_featurised_dataset["test"][f"{y_label}"],
-    preds[f"{model_name}::{y_label}"],
+    split_featurised_dataset["test"]["log_solubility"],
+    preds["random_forest_regressor::log_solubility"],
 )
 plt.xlabel("True values")
 plt.ylabel("Predicted values")

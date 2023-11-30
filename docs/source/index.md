@@ -34,7 +34,7 @@ glob:
 maxdepth: 2
 caption: Tutorials
 ---
-pages/tutorials/index
+pages/tutorials/esol_training
 ```
 
 ```{toctree}
