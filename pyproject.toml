@@ -129,6 +129,7 @@ s3 = 'molflux.datasets.filesystems.S3FileSystem'
 [project.entry-points.'molflux.datasets.plugins.core']
 esol = 'molflux.datasets.builders.esol.esol'
 ani1x = 'molflux.datasets.builders.ani1x.ani1x'
+ani2x = 'molflux.datasets.builders.ani2x.ani2x'
 gdb9 = 'molflux.datasets.builders.gdb9.gdb9'
 pcqm4m_v2 = 'molflux.datasets.builders.pcqm4m_v2.pcqm4m_v2'
 spice = 'molflux.datasets.builders.spice.spice'

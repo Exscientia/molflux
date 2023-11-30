@@ -48,7 +48,7 @@ class SPICE(datasets.GeneratorBasedBuilder):
             features=datasets.Features(
                 {
                     "mol_bytes": datasets.Value("binary"),
-                    "dft_total_energy": datasets.Value("float32"),
+                    "dft_total_energy": datasets.Value("float64"),
                     "dft_total_gradient": datasets.Sequence(
                         feature=datasets.Sequence(
                             feature=datasets.Value(dtype="float64", id=None),
@@ -58,7 +58,7 @@ class SPICE(datasets.GeneratorBasedBuilder):
                         length=-1,
                         id=None,
                     ),
-                    "formation_energy": datasets.Value("float32"),
+                    "formation_energy": datasets.Value("float64"),
                     "smiles": datasets.Value("string"),
                     "subset": datasets.Value("string"),
                 },
