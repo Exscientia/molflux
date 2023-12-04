@@ -1,4 +1,5 @@
-from typing import Optional, Type, Union
+from dataclasses import asdict
+from typing import Any, Dict, Optional, Type, Union
 
 import numpy as np
 from pydantic.dataclasses import dataclass
@@ -72,6 +73,7 @@ random_state : int, np.random.Generator instance or None, optional (default=None
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -84,6 +86,10 @@ class MCDDetectorConfig(PyODModelConfig):
 
 
 class MCDDetector(PyODClassificationMixin, PyODModelBase[MCDDetectorConfig]):
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
+
     @property
     def _config_builder(self) -> Type[MCDDetectorConfig]:
         return MCDDetectorConfig
