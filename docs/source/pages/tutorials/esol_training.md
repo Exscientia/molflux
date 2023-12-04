@@ -31,6 +31,7 @@ print(dataset)
 print(dataset[0])
 ```
 
+The loaded dataset is an instance of a HuggingFace ``Dataset`` (for more info, checkout the [docs](https://huggingface.co/docs/datasets/index)).
 You can see that there are two columns: ``smiles`` and ``log_solubility``.
 
 
@@ -127,6 +128,7 @@ plt.scatter(
     split_featurised_dataset["test"]["log_solubility"],
     preds["random_forest_regressor::log_solubility"],
 )
+plt.plot([-10, 0], [-10, 0], c='r')
 plt.xlabel("True values")
 plt.ylabel("Predicted values")
 plt.show()
@@ -234,6 +236,7 @@ plt.scatter(
     split_featurised_dataset["test"]["log_solubility"],
     preds["random_forest_regressor::log_solubility"],
 )
+plt.plot([-10, 0], [-10, 0], c='r')
 plt.xlabel("True values")
 plt.ylabel("Predicted values")
 plt.show()

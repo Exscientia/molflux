@@ -43,8 +43,8 @@ This returns our catalogue of available model architectures (organised by the de
 ```{seealso}
 [How to add your own model](how_to_add_models.md) if you would like to add your own model to the catalogue
 ```
- For instance, `molflux.modelzoo.list_models()` returns as one item in the dictionary: 
-`'xgboost': ['xg_boost_classifier', 'xg_boost_regressor']`. In order to be able to use the two models `xg_boost_classifier` 
+ For instance, `molflux.modelzoo.list_models()` returns as one item in the dictionary:
+`'xgboost': ['xg_boost_classifier', 'xg_boost_regressor']`. In order to be able to use the two models `xg_boost_classifier`
 and `xg_boost_regressor`, you would do: ``pip install molflux[xgboost]``.
 
 ## Loading a model architecture
@@ -287,8 +287,12 @@ predictions = model.predict(test_data)
 print(predictions)
 ```
 
-This returns a dictionary of your model's predictions!
+This returns a dictionary of your model's predictions! Models can also support different inference methods. For example,
+some classification models support the ``predict_proba`` method which returns the probabilities of the classes
 
+```python
+probabilities = model.predict_proba(test_data)
+```
 
 ## Saving/Loading a model
 
@@ -307,7 +311,9 @@ save_to_store("path_to_my_model/", model)
 The ``save_to_store`` function takes the path and the model to save. It can save to local disk or to an s3 location.
 
 ```{note}
-Recommend using prod saving ..., link to core
+For models intended for production level usage, we recommend that they are saved as described in the [productionising](../production/models.md)
+section. Along with the model, this also save the featurisation metadata and a snapshot of the environment the model was
+built in.
 ```
 
 ### Loading

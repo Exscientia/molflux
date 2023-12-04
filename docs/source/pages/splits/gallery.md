@@ -32,7 +32,7 @@ The original `sklearn` [notebook](https://scikit-learn.org/stable/auto_examples/
 
 ```{code-cell} ipython3
 ---
-tags: [remove-input]
+tags: [hide-input]
 ---
 import numpy as np
 import matplotlib.pyplot as plt
@@ -59,7 +59,7 @@ To begin, we'll visualize our data:
 
 ```{code-cell} ipython3
 ---
-tags: [remove-input]
+tags: [hide-input]
 ---
 # Generate the class/group data
 n_points = 100
@@ -111,7 +111,7 @@ the validation set (in grey), and the test set (in red).
 
 ```{code-cell} ipython3
 ---
-tags: [remove-input]
+tags: [hide-input]
 ---
 def plot_cv_indices(cv, X, y, group, ax, n_splits, lw=10):
     """Create a sample plot for indices of a cross-validation object."""
@@ -170,7 +170,7 @@ Let's see how it looks for the `k_fold` cross-validation object:
 
 ```{code-cell} ipython3
 ---
-tags: [remove-input]
+tags: [hide-input]
 ---
 fig, ax = plt.subplots(figsize=figsize)
 strategy = load_splitting_strategy("k_fold")
@@ -186,7 +186,7 @@ consideration. We can change this by using either:
 
 ```{code-cell} ipython3
 ---
-tags: [remove-input]
+tags: [hide-input]
 ---
 strategies = ["stratified_k_fold", "group_k_fold"]
 
@@ -207,7 +207,7 @@ Note how some use the group/class information while others do not:
 
 ```{code-cell} ipython3
 ---
-tags: [remove-input]
+tags: [hide-input]
 ---
 strategies = ["group_k_fold", "group_shuffle_split", "k_fold", "linear_split", "shuffle_split", "stratified_k_fold", "stratified_shuffle_split", "time_series_split"]
 

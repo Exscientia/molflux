@@ -1,7 +1,7 @@
 MolFlux
 =======
 
-**MolFlux** is a foundational package for molecular property prediction.
+**MolFlux** is a foundational package for molecular predictive modelling.
 
 ```{note}
    These docs are under active dev
