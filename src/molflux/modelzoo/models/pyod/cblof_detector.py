@@ -1,4 +1,5 @@
-from typing import Any, Literal, Type, Union
+from dataclasses import asdict
+from typing import Any, Dict, Literal, Type, Union
 
 import numpy as np
 from pydantic.dataclasses import dataclass
@@ -95,6 +96,7 @@ Method = Literal["default", "fast"]
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -110,6 +112,10 @@ class CBLOFDetectorConfig(PyODModelConfig):
 
 
 class CBLOFDetector(PyODClassificationMixin, PyODModelBase[CBLOFDetectorConfig]):
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
+
     @property
     def _config_builder(self) -> Type[CBLOFDetectorConfig]:
         return CBLOFDetectorConfig

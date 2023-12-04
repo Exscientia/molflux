@@ -1,6 +1,7 @@
 import os
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional, Protocol
+from dataclasses import asdict
+from typing import Any, Dict, List, Optional, Protocol
 
 import joblib
 import numpy as np
@@ -94,6 +95,10 @@ class SKLearnModelBase(ModelBase[_ModelConfigT], ABC):
             display_name: task_predictions.tolist()
             for display_name, task_predictions in zip(display_names, y_predict.T)
         }
+
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
 
     def as_dir(self, directory: str) -> None:
         """Serialises a pre-trained model in a directory."""

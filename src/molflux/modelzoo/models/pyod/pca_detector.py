@@ -1,4 +1,5 @@
-from typing import Literal, Optional, Type, Union
+from dataclasses import asdict
+from typing import Any, Dict, Literal, Optional, Type, Union
 
 import numpy as np
 from pydantic.dataclasses import dataclass
@@ -130,6 +131,7 @@ SVDSolver = Literal["auto", "full", "arpack", "randomized"]
 
 
 class Config:
+    extra = "forbid"
     arbitrary_types_allowed = True
     smart_union = True
 
@@ -150,6 +152,10 @@ class PCADetectorConfig(PyODModelConfig):
 
 
 class PCADetector(PyODClassificationMixin, PyODModelBase[PCADetectorConfig]):
+    @property
+    def config(self) -> Dict[str, Any]:
+        return asdict(self.model_config)
+
     @property
     def _config_builder(self) -> Type[PCADetectorConfig]:
         return PCADetectorConfig

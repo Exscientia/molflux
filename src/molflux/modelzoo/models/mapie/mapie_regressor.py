@@ -1,5 +1,5 @@
 import warnings
-from copy import copy
+from dataclasses import asdict
 from typing import Any, Dict, Final, Literal, Optional, Tuple, Type, Union
 
 import numpy as np
@@ -191,6 +191,7 @@ def _as_mapie_estimator(model: Any) -> Any:
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
@@ -229,7 +230,7 @@ class MapieRegressor(
     @property
     def config(self) -> Dict[str, Any]:
         # handle unserializable config fields
-        config = copy(self.model_config.__dict__)
+        config = asdict(self.model_config)
         config["estimator"] = _UNLINKED_FLAG
         return config
 

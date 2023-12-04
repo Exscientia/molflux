@@ -24,6 +24,7 @@ ProbabilityConversionMethod = Literal["linear", "unify"]
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)
