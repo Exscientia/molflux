@@ -10,4 +10,6 @@ The ``datasets`` submodule is meant to address all of these issues. It is a libr
 multiple sources. Whether you are looking for public datasets (such as PDBBind or QM9) or just easy access to saved data,
 ``datasets`` provides a standard and modular interface for accessing and manipulating these datasets!
 
-It is built on top of [huggingface ``datasets``](https://huggingface.co/docs/datasets/index).
+It is built on top of [huggingface ``datasets``](https://huggingface.co/docs/datasets/index). The huggingface ``datasets``
+package is versatile, fast, and efficient. It can handle many data types and its built-in functionality allows for scalable
+and fast data manipulation and handling.

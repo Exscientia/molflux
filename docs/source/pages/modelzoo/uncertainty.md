@@ -42,7 +42,7 @@ models implement additional functionalities:
     while their spread indicates how uncertain the model is about this input.
   4) `calibrate_uncertainty(data, **kwargs)` - calibrates the uncertainty of this model to an external/validation dataset
 
-You can check whether a model implements any of these methods by using the appropriate `supports_x()` utility function:
+You can check whether a model implements any of these methods by using the appropriate `supports_*` utility function:
 
 ```{code-cell} ipython3
 from molflux.modelzoo import load_model, supports_prediction_interval
@@ -61,8 +61,8 @@ Similarly, `supports_std`, `supports_sampling`, and `supports_uncertainty_calibr
 
 ### Quick example - CatBoost Models
 
-The typical example for a model with implemented uncertainty methods is a CatBoost Model.
-Gaussian processes are distributions over functions such that predictions can be characterized by a mean and covariance.
+A typical example for a model with implemented uncertainty methods is the CatBoost Model. This model architecture can
+return both a mean and standard deviation prediction.
 
 In the example below, we will train and predict using a CatBoost, and then use some of the
 functions defined above to get a measure of the model uncertainty.
@@ -113,7 +113,7 @@ fitted `k` times.
 2. In two steps - first, training an underlying model on training data, then
 calibrating the uncertainty of it on a validation dataset
 
-Both of these are possible with our Mapie implementation.
+Both of these are possible with our [Mapie](https://github.com/scikit-learn-contrib/MAPIE) implementation.
 
 ```{note}
 This functionality is still work in progress.
