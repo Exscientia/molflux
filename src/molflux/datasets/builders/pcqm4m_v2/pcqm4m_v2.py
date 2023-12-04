@@ -56,7 +56,7 @@ class PCQM4MV2(datasets.GeneratorBasedBuilder):
                 {
                     "mol_bytes": datasets.Value("binary"),
                     "smiles": datasets.Value("string"),
-                    "homo_lumo_gap": datasets.Value("float32"),
+                    "homo_lumo_gap": datasets.Value("float64"),
                 },
             ),
             homepage=_HOMEPAGE,
