@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# ESOL Training
+# ESOL regression
 
 In this tutorial we provide a simple example of training a random forest model on the ESOL dataset. We require the ``rdkit``
 package, so make sure to ``pip install 'molflux[rdkit]'`` to follow along!
@@ -190,7 +190,7 @@ from molflux.datasets import split_dataset
 from molflux.modelzoo import load_from_yaml as load_model_from_yaml
 from molflux.metrics import load_suite
 
-yaml_file_path = "esol_training.yaml"
+yaml_file_path = "esol_reg.yaml"
 
 # Load the dataset
 dataset = load_dataset_from_yaml(yaml_file_path)  # A dictionary with a single dataset is returned
