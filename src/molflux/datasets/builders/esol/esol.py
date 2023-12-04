@@ -22,7 +22,7 @@ class ESOL(datasets.GeneratorBasedBuilder):
             features=datasets.Features(
                 {
                     "smiles": datasets.Value("string"),
-                    "log_solubility": datasets.Value("float32"),
+                    "log_solubility": datasets.Value("float64"),
                 },
             ),
             homepage=_HOMEPAGE,

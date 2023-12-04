@@ -51,24 +51,24 @@ class ANI1X(datasets.GeneratorBasedBuilder):
                 {
                     "mol_bytes": datasets.Value("binary"),
                     "chemical_formula": datasets.Value("string"),
-                    "ccsd(t)_cbs.energy": datasets.Value("float32"),
-                    "hf_dz.energy": datasets.Value("float32"),
-                    "hf_qz.energy": datasets.Value("float32"),
-                    "hf_tz.energy": datasets.Value("float32"),
-                    "mp2_dz.corr_energy": datasets.Value("float32"),
-                    "mp2_qz.corr_energy": datasets.Value("float32"),
-                    "mp2_tz.corr_energy": datasets.Value("float32"),
-                    "npno_ccsd(t)_dz.corr_energy": datasets.Value("float32"),
-                    "npno_ccsd(t)_tz.corr_energy": datasets.Value("float32"),
-                    "tpno_ccsd(t)_dz.corr_energy": datasets.Value("float32"),
+                    "ccsd(t)_cbs.energy": datasets.Value("float64"),
+                    "hf_dz.energy": datasets.Value("float64"),
+                    "hf_qz.energy": datasets.Value("float64"),
+                    "hf_tz.energy": datasets.Value("float64"),
+                    "mp2_dz.corr_energy": datasets.Value("float64"),
+                    "mp2_qz.corr_energy": datasets.Value("float64"),
+                    "mp2_tz.corr_energy": datasets.Value("float64"),
+                    "npno_ccsd(t)_dz.corr_energy": datasets.Value("float64"),
+                    "npno_ccsd(t)_tz.corr_energy": datasets.Value("float64"),
+                    "tpno_ccsd(t)_dz.corr_energy": datasets.Value("float64"),
                     "wb97x_dz.cm5_charges": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                     ),
                     "wb97x_dz.dipole": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                         length=-1,
                     ),
-                    "wb97x_dz.energy": datasets.Value("float32"),
+                    "wb97x_dz.energy": datasets.Value("float64"),
                     "wb97x_dz.forces": datasets.Sequence(
                         feature=datasets.Sequence(
                             feature=datasets.Value(dtype="float64", id=None),
@@ -79,17 +79,17 @@ class ANI1X(datasets.GeneratorBasedBuilder):
                         id=None,
                     ),
                     "wb97x_dz.hirshfeld_charges": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                     ),
                     "wb97x_dz.quadrupole": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                         length=-1,
                     ),
                     "wb97x_tz.dipole": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                         length=-1,
                     ),
-                    "wb97x_tz.energy": datasets.Value("float32"),
+                    "wb97x_tz.energy": datasets.Value("float64"),
                     "wb97x_tz.forces": datasets.Sequence(
                         feature=datasets.Sequence(
                             feature=datasets.Value(dtype="float64", id=None),
@@ -100,19 +100,19 @@ class ANI1X(datasets.GeneratorBasedBuilder):
                         id=None,
                     ),
                     "wb97x_tz.mbis_charges": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                     ),
                     "wb97x_tz.mbis_dipoles": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                     ),
                     "wb97x_tz.mbis_octupoles": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                     ),
                     "wb97x_tz.mbis_quadrupoles": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                     ),
                     "wb97x_tz.mbis_volumes": datasets.Sequence(
-                        datasets.Value("float32"),
+                        datasets.Value("float64"),
                     ),
                 },
             ),
