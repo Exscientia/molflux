@@ -12,14 +12,6 @@ kernelspec:
 
 # Basic usage
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
-
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
 
 In this section, we will illustrate how to use ``molflux.modelzoo``. These examples will provide you with a starting
 point.
@@ -52,7 +44,7 @@ and `xg_boost_regressor`, you would do: ``pip install molflux[xgboost]``.
 Loading a model architecture of your choice is very simple. For example, to load a `random_forest_regressor` from the
 catalogue:
 
-```python
+```{code-cell} ipython3
 
 from molflux.modelzoo import load_model
 
@@ -68,7 +60,7 @@ short description of the model, and get some extra information about the model's
 
 To load a model with non-default configuration parameters, you can simply supply them at load time:
 
-```python
+```{code-cell} ipython3
 
 from molflux.modelzoo import load_model
 
@@ -110,7 +102,7 @@ should hold the dictionary of configuration arguments to initialise the model wi
 
 You can also load multiple models all at once using a list of config dictionaries. This is done as follows
 
-```python
+```{code-cell} ipython3
 
 from molflux.modelzoo import load_from_dicts
 
@@ -139,9 +131,9 @@ list_of_configs = [
         }
 ]
 
-modelzoo = load_from_dicts(list_of_configs)
+models = load_from_dicts(list_of_configs)
 
-print(modelzoo)
+print(models)
 ```
 
 
@@ -206,7 +198,7 @@ of your choice).
 Our model's interfaces accept any dataframe-like objects that implement the
 [Dataframe Interchange Protocol](https://data-apis.org/dataframe-protocol/latest/purpose_and_scope.html) as input data:
 these include pandas dataframes, pyarrow tables, vaex dataframes, cudf dataframes, and many other popular dataframe
-libraries... We also support huggingface [datasets](https://huggingface.co/docs/datasets/index) as inputs for seamless
+libraries... We also support HuggingFace [datasets](https://huggingface.co/docs/datasets/index) as inputs for seamless
 integration with our datasets users. If you are used to working with other in-memory data representations,
 you will need to convert them before feeding them to our models. That being said, please do get in touch with us,
 as we would love to best support your workflows.
@@ -327,8 +319,3 @@ model = load_from_store("path_to_my_model/")
 ```
 
 This can load from local disk and s3.
-
-```{note}
-The ``molflux`` package also builds on top of the above saving/loading methods to package up models for production.
-See [Productionising models](../production/models.md)
-```

@@ -1,7 +1,7 @@
 MolFlux
 =======
 
-**MolFlux** is a foundational package for molecular predictive modelling. From data, to features, to models, MolFlux
+**MolFlux** is a foundational package for molecular predictive modelling. From data to features to models, MolFlux
 provides you with a complete ecosystem for building and handling machine learning models!
 
 ````{grid} 2
@@ -23,7 +23,7 @@ Get started with loading, handling, and manipulating datasets.
 Features are an important part of building machine learning models. Learn how to use them here!
 ```
 ```{grid-item-card} 🔀 [Splits](pages/splits/intro.md)
-There are many ways to split you data for model validation.
+There are many ways to split your data for model benchmarking.
 ```
 ````
 
@@ -65,6 +65,7 @@ caption: Tutorials
 ---
 pages/tutorials/esol_reg
 pages/tutorials/esol_cls
+pages/tutorials/esol_uncertainty
 ```
 
 ```{toctree}

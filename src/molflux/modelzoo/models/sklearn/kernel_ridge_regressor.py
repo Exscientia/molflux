@@ -74,6 +74,7 @@ kernel_params : mapping of str to any, default=None
 
 class Config:
     arbitrary_types_allowed = True
+    extra = "forbid"
 
 
 @dataclass(config=Config)

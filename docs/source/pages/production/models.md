@@ -3,12 +3,6 @@
 ``molflux`` models can be stored into a standard format for packaging machine learning models that can be
 used in a variety of our downstream tools - for example, real-time serving through a REST API or local batch inference.
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
 
 ## Storage Format
 

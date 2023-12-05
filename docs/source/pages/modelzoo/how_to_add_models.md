@@ -17,14 +17,6 @@ at some point with your own awesome model architecture, and eventually make it a
 the package. In this guide, we will go through several ways of doing this, depending on the level of integration that
 you would like to achieve.
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
-
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
 
 ## A model that quacks like a duck
 

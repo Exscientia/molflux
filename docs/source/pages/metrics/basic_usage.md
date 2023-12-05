@@ -105,7 +105,7 @@ config = {
 
 metric = load_from_dict(config)
 
-print(metric)
+print(metric.state)
 ```
 
 You can also load multiple metrics all at once using a list of config dictionaries. This is done as follows

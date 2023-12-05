@@ -7,7 +7,7 @@ import h5py
 import datasets
 from molflux.datasets.typing import ExamplesGenerator
 
-from .ani2x_configs import FEATURES, LEVELS_OF_THEORY, URL_DICT
+from .ani2x_configs import FEATURES, LEVEL_OF_THEORY, URL_DICT
 
 _BASE_URL = "https://zenodo.org/records/10108942"
 
@@ -26,7 +26,7 @@ _DESCRIPTION = """
 @dataclass
 class ANI2XConfig(datasets.BuilderConfig):
     backend: Literal["openeye", "rdkit"] = "rdkit"
-    level_of_theory: LEVELS_OF_THEORY = "wB97X/631Gd"
+    level_of_theory: LEVEL_OF_THEORY = "wB97X/631Gd"
 
 
 class ANI2X(datasets.GeneratorBasedBuilder):

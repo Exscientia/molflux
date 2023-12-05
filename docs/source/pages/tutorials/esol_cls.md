@@ -12,8 +12,8 @@ kernelspec:
 
 # ESOL classification
 
-In this tutorial we provide a simple example of training a random forest classifier on the ESOL dataset. We require the ``rdkit``
-package, so make sure to ``pip install 'molflux[rdkit]'`` to follow along!
+In this tutorial we provide a simple example of training a random forest classifier on the [ESOL dataset](https://pubs.acs.org/doi/10.1021/ci034243x),
+a dataset of molecules and their aqueous solubility. We require the ``rdkit`` package, so make sure to ``pip install 'molflux[rdkit]'`` to follow along!
 
 
 ## Loading the ESOL dataset
@@ -28,12 +28,12 @@ dataset = load_dataset("esol")
 
 print(dataset)
 
-print(dataset[0])
+dataset[0]
 ```
 
 The loaded dataset is an instance of a HuggingFace ``Dataset`` (for more info, checkout the [docs](https://huggingface.co/docs/datasets/index)).
 You can see that there are two columns: ``smiles`` and ``log_solubility``. This is originally a regression dataset, but we'll
-threshold it to make it into a classification dataset
+threshold it at ``-3`` to make it into a classification dataset
 
 ```{code-cell} ipython3
 dataset = dataset.add_column(
@@ -103,7 +103,7 @@ print(split_featurised_dataset)
 We can now turn to training the model! We choose the ``random_forest_classifier`` (which we access from the ``sklearn`` package).
 To do so, we need to define the model config and the ``x_features`` and the ``y_features``.
 
-Once trained, we will get some predictions and compute some metrics!
+Once trained, we will get some predictions and compute some metrics and the confusion matrix!
 
 ```{code-cell} ipython3
 import json

@@ -12,17 +12,8 @@ kernelspec:
 
 # Basic usage
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
-
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
-
 In this section, we will quickly illustrate how to use ``molflux.datasets``. These examples will provide you with a starting
-point. Much of the low level functionality is already documented in the ``huggingface`` docs [datasets](https://huggingface.co/docs/datasets/index).
+point. Much of the low level functionality is already documented in the HuggingFace ``dataset`` [docs](https://huggingface.co/docs/datasets/index).
 Here, we will only go through the basics and the added functionality from ``molflux``.
 
 
@@ -42,7 +33,7 @@ print(catalogue)
 This returns a list of available datasets by their name.
 
 ```{tip}
-On top of these drug discovery datasets, you can also access all datasets from the huggingface [registry](https://huggingface.co/datasets) (for example,
+On top of these drug discovery datasets, you can also access all datasets from the HuggingFace [registry](https://huggingface.co/datasets) (for example,
 the MNIST dataset). Follow along with the rest of this page with your favourite dataset from there!
 ```
 
@@ -88,7 +79,7 @@ config = {
 }
 
 dataset = load_from_dict(config)
-print(dataset)
+dataset
 ```
 
 ### Loading using ``load_from_dicts``
@@ -130,27 +121,25 @@ specs:
 ```
 It consists of a version (this is the version of the config format, for now just ``v1``), ``kind`` of config (in this case
 ``datasets``), and ``specs``. ``specs`` is where the dataset initialisation keyword arguments are defined. The yaml file can include
-configs for other ``molflux`` packages as well (see LINK Standard API for more info). To load this yaml file, you can simply do
+configs for other ``molflux`` packages as well (see [Standard API](../standard_api/intro.md#load-from-yaml) for more info).
+To load this yaml file, you can simply do
 
 
 ```{code-block} ipython3
-
 from molflux.datasets import load_from_yaml
 
 datasets = load_from_yaml(path_to_yaml_file)
-
-print(datasets)
 ```
 
 
 ## Working with datasets
 
-``molflux.datasets`` was designed to supplement the Hugging Face [datasets](https://huggingface.co/docs/datasets/index) library,
-giving you access to our additional catalogue of datasets and to a number of convenience utility functions. The datasets
-returned by e.g. `molflux.datasets.load_dataset()` are actually native huggingface datasets, with all of the associated
+``molflux.datasets`` was designed to supplement the HuggingFace [datasets](https://huggingface.co/docs/datasets/index) library,
+giving you access to our additional catalogue of datasets and to a number of convenient utility functions. The datasets
+returned by e.g. `molflux.datasets.load_dataset()` are actually native HuggingFace datasets, with all of the associated
 functionality.
 
-You can find complete documentation on how to work with huggingface datasets [online](https://huggingface.co/docs/datasets/index), or
+You can find complete documentation on how to work with HuggingFace datasets [online](https://huggingface.co/docs/datasets/index), or
 even check out their official [training course](https://huggingface.co/course/chapter5/1?fw=pt)! The rest of this
 tutorial will simply show you a couple of examples of some of the most basic functionalities available.
 

@@ -10,10 +10,11 @@ kernelspec:
   name: python3
 ---
 
-# ESOL regression
+# ESOL uncertainty
 
 In this tutorial we provide a simple example of training a random forest model on the [ESOL dataset](https://pubs.acs.org/doi/10.1021/ci034243x),
-a dataset of molecules and their aqueous solubility. We require the ``rdkit`` package, so make sure to ``pip install 'molflux[rdkit]'`` to follow along!
+and adding an uncertainty estimator using [Mapie](https://github.com/scikit-learn-contrib/MAPIE) on top. We require the ``rdkit``
+and ``mapie`` packages, so make sure to ``pip install 'molflux[rdkit,mapie]'`` to follow along!
 
 
 ## Loading the ESOL dataset
@@ -61,8 +62,8 @@ You can see that we now have two extra columns for each fingerprint we used.
 
 ## Splitting
 
-Next, we need to split the dataset. For this, we use the simple ``shuffle_split`` (random split) with 80% training and
-20% test. To split the dataset, we use the ``split_dataset`` function from ``molflux.datasets``.
+Next, we need to split the dataset. For this, we use the simple ``shuffle_split`` (random split) with 70% training,
+10% validation, and 20% test. To split the dataset, we use the ``split_dataset`` function from ``molflux.datasets``.
 
 ```{code-cell} ipython3
 
@@ -73,8 +74,8 @@ shuffle_strategy = load_split_from_dict(
     {
         "name": "shuffle_split",
         "presets": {
-            "train_fraction": 0.8,
-            "validation_fraction": 0.0,
+            "train_fraction": 0.7,
+            "validation_fraction": 0.1,
             "test_fraction": 0.2,
         }
     }
@@ -134,112 +135,54 @@ plt.ylabel("Predicted values")
 plt.show()
 ```
 
-# ESOL training using a yaml file
-All configs for above pipeline can also be put in a single yaml file:
-````{toggle}
-```yaml
----
-version: v1
-kind: datasets
-specs:
-  - name: esol
-    config: { }
----
-version: v1
-kind: representations
-specs:
-  - name: morgan
-    config: { }
-  - name: maccs_rdkit
-    config: { }
----
-version: v1
-kind: splits
-specs:
-  - name: shuffle_split
-    presets:
-      train_fraction: 0.8
-      validation_fraction: 0.0
-      test_fraction: 0.2
----
-version: v1
-kind: models
-specs:
-  - name: random_forest_regressor
-    config:
-      x_features: [ 'smiles::morgan', 'smiles::maccs_rdkit' ]
-      y_features: [ 'log_solubility' ]
----
-version: v1
-kind: metrics
-specs:
-  - name: regression
-    config: { }
+## Adding a Mapie uncertainty estimator on top
 
-```
-````
+Once the random forest model is trained, we can build a Mapie estimator on top. For more information, check out the [uncertainty
+for models](../modelzoo/uncertainty.md) section.
 
-We can now run the same pipeline with the settings in the yaml file using the `load_from_yaml` logic for all submodules:
+To build the Mapie model, you can first train a random forest model and then calibrate a Mapie model on the validation
+set as follows
 
 ```{code-cell} ipython3
-import json
-import matplotlib.pyplot as plt
-from molflux.datasets import load_from_yaml as load_dataset_from_yaml
-from molflux.features import load_from_yaml as load_representations_from_yaml
-from molflux.datasets import featurise_dataset
-from molflux.splits import load_from_yaml as load_split_from_yaml
-from molflux.datasets import split_dataset
-from molflux.modelzoo import load_from_yaml as load_model_from_yaml
-from molflux.metrics import load_suite
 
-yaml_file_path = "esol_reg.yaml"
-
-# Load the dataset
-dataset = load_dataset_from_yaml(yaml_file_path)  # A dictionary with a single dataset is returned
-dataset = dataset["dataset-0"]
-
-# Load the representations
-featuriser = load_representations_from_yaml(yaml_file_path)
-
-# Featurise the dataset
-featurised_dataset = featurise_dataset(
-    dataset, column="smiles", representations=featuriser
+mapie_model = load_model_from_dict(
+    {
+        "name": "mapie_regressor",
+        "config": {
+            "x_features": model.x_features,
+            "y_features": model.y_features,
+            "estimator": model,
+            "cv": "prefit",
+        }
+    }
 )
 
-# Load the split strategy
-strategies = load_split_from_yaml(yaml_file_path)  # A dictionary with a single strategy is returned
-split_strategy = strategies["shuffle_split"]
+mapie_model.calibrate_uncertainty(split_featurised_dataset["validation"])
 
-# Split the dataset
-split_featurised_dataset = next(split_dataset(featurised_dataset, split_strategy))
-
-# Load the model
-models = load_model_from_yaml(yaml_file_path)
-model = models["random_forest_regressor"]
-
-# Train the model
-model.train(split_featurised_dataset["train"])
-
-# Predict the test set
-preds = model.predict(split_featurised_dataset["test"])
-
-# Compute metrics
-regression_suite = load_suite("regression")
-
-scores = regression_suite.compute(
-    references=split_featurised_dataset["test"]["log_solubility"],
-    predictions=preds["random_forest_regressor::log_solubility"],
+preds, intervals = mapie_model.predict_with_prediction_interval(
+    split_featurised_dataset["test"],
+    confidence=0.9,
 )
 
-print(json.dumps({k: round(v, 2) for k, v in scores.items()}, indent=4))
+xs = split_featurised_dataset["test"]["log_solubility"]
+ys = preds["mapie_regressor::log_solubility"]
+y_intervals = intervals["mapie_regressor::log_solubility::prediction_interval"]
 
-# Plot true vs predicted values
-plt.scatter(
-    split_featurised_dataset["test"]["log_solubility"],
-    preds["random_forest_regressor::log_solubility"],
+yerrs = [
+    [abs(y - y_in[0])  for y, y_in in zip(ys, y_intervals)],
+    [abs(y - y_in[1])  for y, y_in in zip(ys, y_intervals)],
+]
+
+plt.errorbar(
+    x=xs,
+    y=ys,
+    yerr=yerrs,
+    fmt='o',
 )
 plt.plot([-9, 2], [-9, 2], c='r')
 plt.xlabel("True values")
 plt.ylabel("Predicted values")
 plt.show()
 ```
+
+And finally you get some error bars!

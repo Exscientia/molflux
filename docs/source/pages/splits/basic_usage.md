@@ -13,15 +13,6 @@ kernelspec:
 # Basic usage
 
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
-
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
-
 In this section, we will illustrate how to use ``molflux.splits``. These examples will provide you with a starting
 point.
 
@@ -93,7 +84,7 @@ config = {
 
 strategy = load_from_dict(config)
 
-print(strategy)
+print(strategy.state)
 ```
 
 For convenience, you can also load a group of strategies all at once by specifying a list of configs.

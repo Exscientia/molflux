@@ -3,12 +3,6 @@
 The ``molflux`` tracking API lets you log parameters, metrics, and other output files when running your machine
 learning code.
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
 
 ## Tracking API
 
