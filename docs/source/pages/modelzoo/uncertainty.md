@@ -12,14 +12,6 @@ kernelspec:
 
 # Uncertainty for models
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
-
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
 
 Hopefully you have already read the [basic usage](basic_usage.md) and [ESOL tutorial](../tutorials/esol_training.md) and
 are now ready to learn about how to use ``molflux.modelzoo`` models that provide uncertainty measures.

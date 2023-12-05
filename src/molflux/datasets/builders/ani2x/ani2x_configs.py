@@ -25,7 +25,7 @@ URL_DICT: Dict[str, Dict[str, str]] = {
     },
 }
 
-LEVELS_OF_THEORY = Literal[
+LEVEL_OF_THEORY = Literal[
     "wB97X/631Gd",
     "wB97X/def2TZVPP",
     "wB97MD3BJ/def2TZVPP",

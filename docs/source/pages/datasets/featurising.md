@@ -35,11 +35,11 @@ the ``load_from_dicts`` method of ``molflux.features``, then they will each crea
 Under the hood, this is done using the ``map`` functionality of Hugging Face datasets. You can pass some ``kwargs`` to control
 the featurisation. The full set of ``kwargs`` can be found [here](https://huggingface.co/docs/datasets/v2.3.2/en/package_reference/main_classes#datasets.Dataset.map)
 but the most useful ones are
-- batch_size (int, optional, default 1000): the size of the batches.
-- num_proc (int, optional, default None): maximum number of processes for featurisation.
+- ``batch_size Optional[int] = 1000``: the size of the batches.
+- ``num_proc: Optional[int] = None``: maximum number of processes for featurisation.
 
 ```{seealso}
-There is also a complete workflow example that also covers how datasets and featurization are integrated: [ESOL Training](../tutorials/esol_training.md#featurising).
+There is also a complete workflow example that also covers how datasets and featurization are integrated: [ESOL Training](../tutorials/esol_reg.md#featurising).
 ```
 
 ## Tweaking the featurised columns' names
@@ -83,20 +83,32 @@ custom naming template will be applied).
 The `display_names` argument can also accept a templated string that will be dynamically injected with context available
 at runtime. This is useful if you would like the datasets to be featurised according to a specific formatting convention:
 
-```python
+```{code-cell} ipython3
 display_names = "{source_column}>>{feature_name}"
 
+featurised_dataset = featurise_dataset(
+    dataset=dataset,
+    column="smiles",
+    representations=representations,
+    display_names=display_names
+)
+
 print(featurised_dataset.column_names)
->>> ['smiles', 'log_solubility', 'smile>>morgan', 'smile>>character_count', 'smile>>maccs_rdkit']
 ```
 
 For the time being, `source_column` and `feature_name` are the only keys that can be requested from the context.
 
 You can also mix and match the features shown above:
 
-```python
+```{code-cell} ipython3
 display_names = [["my_circular_fingerprint"], ["{source_column}>>{feature_name}"], [None]]
 
+featurised_dataset = featurise_dataset(
+    dataset=dataset,
+    column="smiles",
+    representations=representations,
+    display_names=display_names
+)
+
 print(featurised_dataset.column_names)
->>> ['smiles', 'log_solubility', 'my_circular_fingerprint', 'smiles<<character_count', 'smiles>>maccs_rdkit']
 ```

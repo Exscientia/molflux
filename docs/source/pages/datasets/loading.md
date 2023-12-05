@@ -12,24 +12,15 @@ kernelspec:
 
 # More data loading options
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
 
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
-
-
-Your data can be stored in various places; they can be in the `molflux.datasets` catalogue, on your local machine's disk,
-on the huggingface datasets hub, and in in-memory data structures like Arrow tables, Python dictionaries, and Pandas
+Your datasets can be stored in various places; they can be in the `molflux.datasets` catalogue, on your local machine's disk,
+on a remote disk, on the HuggingFace datasets hub, and in in-memory data structures like Arrow tables, Python dictionaries, and Pandas
 DataFrames. Wherever a dataset is stored, ``molflux.datasets`` can load it.
 
-## Hugging Face Hub
+## HuggingFace Hub
 
 Datasets are loaded from a dataset loading script that downloads and generates the dataset. However, you can also load a
-dataset from any dataset repository on the Hugging Face Hub without a loading script!
+dataset from any dataset repository on the HuggingFace Hub without a loading script!
 You just need to use the {func}`molflux.datasets.load_dataset` function to load the dataset.
 
 For example, try loading the files from this demo repository by providing the repository namespace and dataset name. This
@@ -63,8 +54,7 @@ from molflux.datasets import load_dataset
 dataset = load_dataset("esol")
 ```
 
-Remember that you can have a look at the datasets available in the catalogue with {func}`molflux.datasets.list_datasets`
-
+Remember that you can have a look at the datasets available in the catalogue by doing
 ```{code-cell} ipython3
 from molflux.datasets import list_datasets
 
@@ -75,7 +65,7 @@ print(catalogue)
 ## Persisted file formats
 
 Datasets can also be loaded from local files stored on your computer or in the cloud. The datasets are most likely
-stored as a parquet, csv, json, or txt file. The {func}`molflux.datasets.load_dataset_from_store` function can load each
+stored as a ``parquet``, ``csv``, ``json``, or ``txt`` files. The {func}`molflux.datasets.load_dataset_from_store` function can load each
 of these file types
 
 ```{hint}
@@ -217,4 +207,4 @@ dataset = load_dataset_from_store("my/dataset/dir")
 ## In-memory data
 
 To create a datasets directly from in-memory data structures like Arrow Tables, Python dictionaries and Pandas DataFrames
-you can use directly huggingface's `datasets.Dataset` and `datasets.DatasetDict` [class methods](https://huggingface.co/docs/datasets/loading#inmemory-data).
+you can use directly HuggingFace's `datasets.Dataset` and `datasets.DatasetDict` [class methods](https://huggingface.co/docs/datasets/loading#inmemory-data).

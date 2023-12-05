@@ -26,13 +26,13 @@ dataset = load_dataset("esol")
 folds = split_dataset(dataset, strategy=splitting_strategy)
 ```
 
-This returns a generator of folds. A fold is a `datasets.DadtasetDict` dictionary of datasets with the split names as
+This returns a generator of folds. A fold is a `datasets.DatasetDict` dictionary of datasets with the split names as
 keys and `datasets.Dataset` datasets as values. To generate each fold, just iterate through the generator or manually
 yield from the generator using ``next``.
 
 In practice, the following example should get you started:
 
-```python
+```{code-cell} ipython3
 from molflux.datasets import load_dataset, split_dataset
 from molflux.splits import load_splitting_strategy
 
@@ -47,5 +47,5 @@ for fold in folds:
 ```
 
 ```{seealso}
-There is also a complete workflow example that also covers how datasets and splitting are integrated: [ESOL Training](../tutorials/esol_training.md#featurising).
+There is also a complete workflow example that also covers how datasets and splitting are integrated: [ESOL Training](../tutorials/esol_reg.md#splitting).
 ```

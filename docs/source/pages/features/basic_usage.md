@@ -13,15 +13,6 @@ kernelspec:
 # Basic usage
 
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
-
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
-
 In this section, we will illustrate how to use ``molflux.features``. These examples will provide you with a starting
 point.
 
@@ -87,14 +78,14 @@ config = {
     'name': 'morgan',
     'presets':
         {
-            'length': 16,
-            'diameter': 4,
+            'n_bits': 16,
+            'radius': 3,
         },
 }
 
 representation = load_from_dict(config)
 
-print(representation)
+print(representation.state)
 ```
 
 For convenience, you can also load a group of representations all at once by specifying a list of configs.
@@ -206,7 +197,7 @@ This will return a dictionary with all the features (where the ``tags`` as the k
 
 ```{note}
 The ``molflux`` package also builds on top of the above featurising methods to reproduce featurisation in production.
-See [Productionising featurisation](../production/featurisation.md)
+See [Productionising featurisation](../production/featurisation.md).
 ```
 
 

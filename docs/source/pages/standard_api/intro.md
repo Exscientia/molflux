@@ -12,16 +12,8 @@ kernelspec:
 
 # Standardisation
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
 
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
-
-A driving principle of the ``molflux`` package is standardisation across all of its five submodules: 
+A driving principle of the ``molflux`` package is standardisation across all of its five submodules:
 `datasets`, `features`, `splits`, `modelzoo`, `metrics`. In this section, we demonstrate and describe the unified
 API of the package. Learning to use the following functionality gives the user immediate knowledge of how to use all parts
 of the package. Each of the following methods can be imported from the relevant submodule (for example
@@ -39,7 +31,7 @@ that returns a dictionary of available objects (datasets, representations, model
 5) ``list_metrics``
 
 The dictionaries returned are grouped by the optional dependency required for the objects (key) and the list of available
-objects (value). For more information, see the respective browsing-sections in the \
+objects (value). For more information, see the respective browsing sections in the \
 documentation:  [datasets](../datasets/basic_usage.md#browsing),
                 [features](../features/basic_usage.md#browsing),
                 [splits](../splits/basic_usage.md#browsing),
@@ -50,7 +42,8 @@ documentation:  [datasets](../datasets/basic_usage.md#browsing),
 
 ### ``load_*``
 
-The ``load_*`` is the simplest method of the API. It can be used to load the objects of any of the five main submodules
+The ``load_*`` is the most straightforward loading method of the API. It can be used to load the objects of any of the
+five main submodules
 
 1) ``load_datasets``
 2) ``load_representation``
@@ -59,24 +52,19 @@ The ``load_*`` is the simplest method of the API. It can be used to load the obj
 5) ``load_metric``
 
 The pattern is ``load_*(name: str, **kwargs)`` where ``name`` is a string name of the object and ``kwargs`` are optional
-object specific kwargs. For more information, see the respective loading-sections in the \
-documentation:  [datasets](../datasets/basic_usage.md#loading-datasets),
-                [features](../features/basic_usage.md#loading-representations),
-                [splits](../splits/basic_usage.md#loading-splitting-strategies),
-                [modelzoo](../modelzoo/basic_usage.md#loading-a-model-architecture),
-                [metrics](../metrics/basic_usage.md#loading-metrics).
+object specific kwargs.
 
 ### ``load_from_dict``
 
 Although the ``load_*`` function can load the required objects, specifying kwargs directly can become tedious. In general,
-we recommend to use a config driven approach to load objects. This is done via the ``load_from_dict`` method which expects
+we recommend using a config driven approach to load objects. This is done via the ``load_from_dict`` method which expects
 a config dictionary in the following format
 
 ```{code-block} python
 {
   "name": <string name of object>,
   "config": <dictionary of kwargs used at instantiation>,
-  "presets": <dictionary of kwargs used at usage>,
+  "presets": <dictionary of kwargs used at the relevant method call>,
 }
 ```
 
@@ -133,5 +121,12 @@ specs:
 where each submodule can take a list of configs for each object to load.
 
 ```{seealso}
-On how to configue an entire workflow with a single yaml file, see: [ESOL Training Yaml Example](../tutorials/esol_training.md#esol-training-using-a-yaml-file).
+For an explicit example of using a single yaml file, see the [ESOL regression example using yaml](../tutorials/esol_reg.md#esol-training-using-a-yaml-file).
 ```
+
+For more information, see the respective loading sections in the \
+documentation:  [datasets](../datasets/basic_usage.md#loading-datasets),
+                [features](../features/basic_usage.md#loading-representations),
+                [splits](../splits/basic_usage.md#loading-splitting-strategies),
+                [modelzoo](../modelzoo/basic_usage.md#loading-a-model-architecture),
+                [metrics](../metrics/basic_usage.md#loading-metrics).

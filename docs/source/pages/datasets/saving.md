@@ -12,15 +12,6 @@ kernelspec:
 
 # Save a dataset
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
-
-{sub-ref}`wordcount-words` words | {sub-ref}`wordcount-minutes` min read
-
 
 Your data can be stored in various places; on your local machine's disk, or as in in-memory data structures like Arrow
 tables, Python dictionaries and Pandas DataFrames. This guide will show you how to do this.

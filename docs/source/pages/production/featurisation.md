@@ -4,12 +4,6 @@ The production featurisation metadata is built on top of the `molflux.features` 
 that the featurisation process performed at model training time, can be replicated across all downstream environments -
 for example, when performing real-time model serving through a REST API or when querying models for local batch inference.
 
-```{contents} On this page
----
-local: true
-backlinks: none
----
-```
 
 ## Featurisation Metadata
 
@@ -60,7 +54,7 @@ from molflux.core import featurise_dataset
 featurised_dataset = featurise_dataset(dataset, featurisation_metadata=featurisation_metadata)
 ```
 
-You can also pass any `map_kwargs` that the huggingface `map` method takes in the `featurise_dataset` function, for example:
+You can also pass any `map_kwargs` that the HuggingFace `map` method takes in the `featurise_dataset` function, for example:
 
 ```python
 featurised_dataset = featurise_dataset(dataset, featurisation_metadata=featurisation_metadata, num_proc=4, batch_size=100)

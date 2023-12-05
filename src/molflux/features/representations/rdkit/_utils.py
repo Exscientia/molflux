@@ -55,10 +55,10 @@ class RDKitLogContext:
         self._apply_log_status(self.previous_status)
 
 
-def rdkit_mol_from_smiles(smiles: str, *args: Any, **kwargs: Any) -> Chem.Mol:
+def rdkit_mol_from_smiles(smiles: str) -> Chem.Mol:
     """Returns a Chem.Mol object representing the input SMILES string."""
     try:
-        mol = Chem.MolFromSmiles(smiles, *args, **kwargs)
+        mol = Chem.MolFromSmiles(smiles)
         if mol is None:
             raise RuntimeError(f"Error parsing {smiles} using RDKit")
         return mol
