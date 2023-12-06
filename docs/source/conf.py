@@ -41,9 +41,12 @@ html_static_path = ["_static"]
 html_baseurl = ""  # TODO: Fill in docs page url
 
 html_title = "MolFlux"
-html_logo = "_static/logo.png"
 
 html_theme_options = {
+   "logo": {
+      "image_dark": "_static/MolFlux_logo_final_MolFlux Logo mark with name 2 colours.svg",
+      "image_light": "_static/MolFlux_logo_final_MolFlux Logo mark with name grey.svg",
+    },
     "repository_url": "https://github.com/Exscientia/molflux",
     "use_repository_button": True,
     "use_sidenotes": True,
@@ -53,12 +56,6 @@ html_theme_options = {
             "name": "PyPI",
             "url": "https://pypi.org/project/molflux/",
             "icon": "https://img.shields.io/pypi/v/molflux",
-            "type": "url",
-        },
-        {
-            "name": "Python",
-            "url": "https://docs.python.org/3/whatsnew/index.html",
-            "icon": "https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue.svg",
             "type": "url",
         },
     ],
