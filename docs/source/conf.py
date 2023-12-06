@@ -43,9 +43,9 @@ html_baseurl = ""  # TODO: Fill in docs page url
 html_title = "MolFlux"
 
 html_theme_options = {
-   "logo": {
-      "image_dark": "_static/MolFlux_logo_final_MolFlux Logo mark with name 2 colours.svg",
-      "image_light": "_static/MolFlux_logo_final_MolFlux Logo mark with name grey.svg",
+    "logo": {
+        "image_dark": "_static/MolFlux_logo_final_MolFlux Logo mark with name 2 colours.svg",
+        "image_light": "_static/MolFlux_logo_final_MolFlux Logo mark with name grey.svg",
     },
     "repository_url": "https://github.com/Exscientia/molflux",
     "use_repository_button": True,
