@@ -6,6 +6,7 @@ from rdkit import Chem
 import datasets
 from molflux.datasets import load_dataset
 from molflux.datasets.builders.ani2x.ani2x import ANI2X
+from molflux.datasets.builders.ani2x.ani2x_configs import FEATURES
 from molflux.datasets.catalogue import list_datasets
 
 dataset_name = "ani2x"
@@ -86,6 +87,7 @@ def test_dataset_has_correct_num_rows(level_of_theory):
     """That the built dataset has correct num rows."""
 
     dataset = load_dataset(dataset_name, backend_name, level_of_theory=level_of_theory)
+    assert set(dataset.column_names) == set(FEATURES[level_of_theory].keys())
 
     assert len(dataset) == 10
 

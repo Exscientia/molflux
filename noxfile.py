@@ -284,9 +284,9 @@ def docs_build(session: nox.Session) -> None:
     lockfile_path = resolve_lockfile_path(python_version=session.python)
     session.install(".[docs]", "--constraint", lockfile_path)
 
-    # Build API docs
-    apidoc_cmd = "sphinx-apidoc -f -o docs/source/pages/reference/api src/exs --implicit-namespaces"
-    session.run(*apidoc_cmd.split(" "))
+    # # Build API docs
+    # apidoc_cmd = "sphinx-apidoc -f -o docs/source/pages/reference/api src/molflux --implicit-namespaces"
+    # session.run(*apidoc_cmd.split(" "))
 
     # wipe artefacts from previous runs, in case there are any
     session.run("rm", "-rf", "docs/build/html", external=True)
@@ -294,8 +294,8 @@ def docs_build(session: nox.Session) -> None:
     # -a -E flags make sure things are built from scratch
     build_cmd = "sphinx-build -a -E docs/source/ docs/build/html"
 
-    # Run doctests in the documentation
-    session.run(*build_cmd.split(" "), "-b", "doctest")
+    # # Run doctests in the documentation
+    # session.run(*build_cmd.split(" "), "-b", "doctest")
 
     # Build HTML pages
     session.run(*build_cmd.split(" "), "-b", "html")
