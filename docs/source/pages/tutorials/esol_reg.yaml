@@ -1,0 +1,37 @@
+---
+version: v1
+kind: datasets
+specs:
+  - name: esol
+    config: { }
+---
+version: v1
+kind: representations
+specs:
+  - name: morgan
+    config: { }
+  - name: maccs_rdkit
+    config: { }
+---
+version: v1
+kind: splits
+specs:
+  - name: shuffle_split
+    presets:
+      train_fraction: 0.8
+      validation_fraction: 0.0
+      test_fraction: 0.2
+---
+version: v1
+kind: models
+specs:
+  - name: random_forest_regressor
+    config:
+      x_features: [ 'smiles::morgan', 'smiles::maccs_rdkit' ]
+      y_features: [ 'log_solubility' ]
+---
+version: v1
+kind: metrics
+specs:
+  - name: regression
+    config: { }
