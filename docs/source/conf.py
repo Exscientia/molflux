@@ -38,7 +38,8 @@ exclude_patterns = []
 
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
-html_baseurl = ""  # TODO: Fill in docs page url
+html_baseurl = "https://exscientia.github.io/molflux/"
+html_favicon = "_static/MolFlux_logo_final_MolFlux logo mark.svg"
 
 html_title = "MolFlux"
 

@@ -36,7 +36,7 @@ pip install molflux[rdkit]
 
 ## Documentation
 
-TODO: add link
+To learn more about how to use ``molflux``, see the [documentation](https://exscientia.github.io/molflux/).
 
 ## Contribution guidelines
 
