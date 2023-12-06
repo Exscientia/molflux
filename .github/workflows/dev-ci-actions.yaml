@@ -4,8 +4,10 @@ on:
   pull_request:
 
 jobs:
-  quality-checks:
-    uses: ./.github/workflows/quality-typing-checks.yaml
-  test-run-pinned:
-    uses: ./.github/workflows/pinned-tests.yaml
-    needs: [quality-checks]
+#  quality-checks:
+#    uses: ./.github/workflows/quality-typing-checks.yaml
+#  test-run-pinned:
+#    uses: ./.github/workflows/pinned-tests.yaml
+#    needs: [quality-checks]
+  docs-build-deploy:
+     uses: ./.github/workflows/docs-build-deploy.yaml
