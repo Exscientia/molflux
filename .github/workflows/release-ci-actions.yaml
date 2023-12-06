@@ -1,0 +1,22 @@
+name: Alpha release CI Actions
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  quality-checks:
+    uses: ./.github/workflows/quality-typing-checks.yaml
+  test-run-pinned:
+    uses: ./.github/workflows/pinned-tests.yaml
+    needs: [ quality-checks ]
+  docs-build:
+    uses: ./.github/workflows/docs-build.yaml
+    needs: [ test-run-pinned ]
+  docs-deploy:
+    uses: ./.github/workflows/docs-deploy.yaml
+    needs: [ docs-build ]
+  publish-package:
+    uses: ./.github/workflows/publish-package.yaml
+    needs: [ docs-deploy ]
