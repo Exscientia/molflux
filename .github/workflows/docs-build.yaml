@@ -2,6 +2,7 @@ name: Build and deploy docs
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   build-docs:
@@ -19,21 +20,7 @@ jobs:
           pip install nox
           nox -s docs_build-3.11
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-pages-artifact@v2
         with:
           name: github-pages
           path: docs/build/html
-
-  deploy-docs:
-    needs: build-docs
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2

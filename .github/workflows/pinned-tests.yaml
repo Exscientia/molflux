@@ -2,6 +2,7 @@ name: Pinned Tests
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   tests-pinned:
