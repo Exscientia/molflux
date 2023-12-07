@@ -46,3 +46,15 @@ corresponding dependencies.
 
 The modular design of the system greatly simplifies the integration of new models, features, and datasets. Its robust,
 yet simple abstractions are capable of managing everything from basic to complex models and features.
+
+## Acknowledgements
+
+The ``molflux`` package has been developed by researchers and engineers at Exscientia
+
+* Alan Bilsland
+* Julia Buhmann
+* Ward Haddadin
+* Jonathan Harrison
+* Emil Nichita
+* Stefanie Speichert
+* Alvise Vianello

@@ -17,8 +17,6 @@
 MolFlux is a foundational package for molecular predictive modelling. From data to features to models, MolFlux provides
 you with a complete ecosystem for building and handling machine learning models!
 
-The package has been developed by researchers and engineers working in the AI team of Exscientia.
-
 ## Installation
 ### With pip
 
@@ -45,3 +43,15 @@ you.
 
 ## License
 [MIT License](LICENSE)
+
+## Acknowledgements
+
+The ``molflux`` package has been developed by researchers and engineers at Exscientia
+
+* Alan Bilsland
+* Julia Buhmann
+* Ward Haddadin
+* Jonathan Harrison
+* Emil Nichita
+* Stefanie Speichert
+* Alvise Vianello
