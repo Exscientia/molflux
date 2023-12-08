@@ -5,6 +5,7 @@ on:
 
 jobs:
   publish-package:
+    environment: pypi-publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -19,6 +20,8 @@ jobs:
           pip install nox
           nox -s dist_build-3.11
       - name: Deploy package
+        env:
+          EXS_PYPI_TOKEN: ${{ secrets.EXS_PYPI_TOKEN }}
         run: |
           pip install twine
-          python -m twine upload --verbose -u __token__ -p ${{ secrets.EXS_PYPI_TOKEN }} dist/*
+          python -m twine upload --verbose -u __token__ -p $EXS_PYPI_TOKEN dist/*
