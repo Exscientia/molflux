@@ -66,6 +66,7 @@ caption: Tutorials
 pages/tutorials/esol_reg
 pages/tutorials/esol_cls
 pages/tutorials/esol_uncertainty
+pages/tutorials/qm9_reg_3d
 ```
 
 ```{toctree}
