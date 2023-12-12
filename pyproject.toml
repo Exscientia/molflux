@@ -110,6 +110,7 @@ docs = [
     'matplotlib',
     'catboost>=1.2.0',
     'mapie',
+    'molfeat',
 ]
 tests = [
     'coverage[toml]',
