@@ -179,7 +179,6 @@ rdkit_descriptors_2d = 'molflux.features.representations.rdkit.descriptors.rdkit
 # fingerprints
 atom_pair_unfolded = 'molflux.features.representations.rdkit.fingerprints.atom_pair_unfolded:AtomPairUnfolded'
 avalon = 'molflux.features.representations.rdkit.fingerprints.avalon:Avalon'
-graphscan = 'molflux.features.representations.rdkit.fingerprints.graphscan:Graphscan'
 layered = 'molflux.features.representations.rdkit.fingerprints.layered:Layered'
 maccs_rdkit = 'molflux.features.representations.rdkit.fingerprints.maccs:MACCSRdkit'
 mhfp = 'molflux.features.representations.rdkit.fingerprints.mhfp:MHFP'

@@ -52,6 +52,8 @@ The ``molflux`` package has been developed by researchers and engineers at Exsci
 * Julia Buhmann
 * Ward Haddadin
 * Jonathan Harrison
+* Dom Miketa
 * Emil Nichita
 * Stefanie Speichert
+* Hagen Triendl
 * Alvise Vianello
