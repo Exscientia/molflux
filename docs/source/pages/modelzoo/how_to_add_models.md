@@ -12,8 +12,8 @@ kernelspec:
 
 # Add your own model architecture
 
-Even though ``molflux.modelzoo`` ships with a vast catalogue of available model-architectures, you may want to experiment
-at some point with your own awesome model architecture, and eventually make it available more widely to all users of
+``molflux.modelzoo`` ships with a vast catalogue of available model-architectures, but you may want to experiment
+at some point with your own model architecture, and make it more widely available to all users of
 the package. In this guide, we will go through several ways of doing this, depending on the level of integration that
 you would like to achieve.
 
@@ -21,7 +21,7 @@ you would like to achieve.
 ## A model that quacks like a duck
 
 To integrate with the rest of the ecosystem, your model architecture simply needs to behave in the same way as any
-other `molflux.modelzoo` model architecture. To do this, you just need to define a class that implements one or more of the
+other `molflux.modelzoo` model architecture. To do this, you need to define a class that implements one or more of the
 interfaces advertised by `molflux.modelzoo` in `molflux.modelzoo.protocols`.
 
 For example, to define a new estimator, we simply need to fill in the `Estimator` protocol. For example:
@@ -114,7 +114,7 @@ print(ok)
 
 If everything went well, you can now use your model architecture anywhere a `molflux.modelzoo` model would be expected!
 
-This first step is very useful if you are still prototyping and iterating on your model. You can now easily swap it in
+This first step is useful if you are still prototyping and iterating on your model. You can now easily swap it in
 anywhere in the ``molflux`` ecosystem, see what works, see what doesn't, and iterate on your model architecture.
 
 ## Adding your model to your local catalogue
@@ -122,7 +122,7 @@ anywhere in the ``molflux`` ecosystem, see what works, see what doesn't, and ite
 You may have noticed that while you can now feed your model to any function expecting `molflux.modelzoo` models, it does not
 show up yet in the `molflux.modelzoo` catalogue of available model architectures.
 
-To do this, you can simply decorate your class as follows:
+To do this, you can decorate your class as follows:
 
 ```{code-block} python
 from molflux.modelzoo import register_model
@@ -147,7 +147,7 @@ model = load_model("my_estimator")
 print(model)
 ```
 
-This step is very useful once you have tested the low-level behaviour of your model, and you would like to test the
+This step is useful once you have tested the low-level behaviour of your model, and you would like to test the
 higher level config-driven integration with the rest of the ``molflux`` ecosystem.
 
 ## Sharing your model
@@ -161,7 +161,7 @@ have two options:
 Both approaches have their pros and cons. The former will give you much more flexibility over your
 model architecture and its development as you will be completely decoupled from any `molflux.modelzoo` changes (other than
 those to the public protocol API). It does mean though that you will now have one more piece of software to maintain,
-and you may end up re-implementing on your side of things many of the utility features that already exist in `molflux.modelzoo`.
+and you may end up re-implementing many of the utility features that already exist in `molflux.modelzoo`.
 
 ### Publishing your model as a plugin
 
@@ -169,11 +169,11 @@ Note that if shipping your model architecture as part of your own package, clien
 if they have installed your package in their python environment. In addition, your model will get registered in the
 ``molflux.modelzoo`` catalogue only if the module defining your model architecture class has been imported explicitly.
 
-To get around the latter point, we strongly recommended that you register your model as a plugin (to learn more about plugins see
+To avoid the latter point, we strongly recommended that you register your model as a plugin (to learn more about plugins see
 [here](https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/)). Using this method, your model
 will get registered automatically as long as your users have installed your package in their environment.
 
-To begin with, get rid of the ``register_model`` decorator from your model architecture class definition
+To begin with, remove the ``register_model`` decorator from your model architecture class definition
 (it's no longer needed):
 
 ```{code-block} python
@@ -205,7 +205,7 @@ molflux.modelzoo.plugins.kind_of_model =
 ```
 
 This entry point allows ``molflux.modelzoo`` to hook into your package and automatically register your model in the catalogue.
-In the plugin definition, you simply need to specify the `kind` and `name` of your model, pointing at the path to your
+In the plugin definition, you need to specify the `kind` and `name` of your model, pointing at the path to your
 model architecture class definition. To make discovery in the catalogue easier, set your model architecture's `kind` to
 something that can easily be associated with your package.
 

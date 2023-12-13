@@ -14,8 +14,8 @@ kernelspec:
 
 
 Your datasets can be stored in various places; they can be in the `molflux.datasets` catalogue, on your local machine's disk,
-on a remote disk, on the HuggingFace datasets hub, and in in-memory data structures like Arrow tables, Python dictionaries, and Pandas
-DataFrames. Wherever a dataset is stored, ``molflux.datasets`` can load it.
+on a remote disk, on the HuggingFace datasets hub, and in in-memory data structures such as Arrow tables, Python dictionaries, and Pandas
+DataFrames. In all of these cases, ``molflux.datasets`` can load it.
 
 ## HuggingFace Hub
 
@@ -64,15 +64,15 @@ print(catalogue)
 
 ## Persisted file formats
 
-Datasets can also be loaded from local files stored on your computer or in the cloud. The datasets are most likely
-stored as a ``parquet``, ``csv``, ``json``, or ``txt`` files. The {func}`molflux.datasets.load_dataset_from_store` function can load each
+Datasets can also be loaded from local files stored on your computer or in the cloud. The datasets could be
+stored as ``parquet``, ``csv``, ``json``, or ``txt`` files. The {func}`molflux.datasets.load_dataset_from_store` function can load each
 of these file types
 
 ```{hint}
-This will work automatically both for local and cloud data. If you need more fine-grained control over the filesystem,
+This will work automatically for both local and cloud data. If you need more fine-grained control over the filesystem,
 you can pass your own `fsspec`-compatible filesystem object to `load_from_store()` as an argument to the `fs` parameter.
 
-For convenience, we also make available a custom AWS S3 Filesystem `fsspec` implementation which you can create with
+For convenience, we have also made available a custom AWS S3 Filesystem `fsspec` implementation which you can create with
 `fsspec.filesystem("s3")`.
 ```
 
@@ -129,7 +129,7 @@ dataset = load_dataset_from_store(data_files, format="csv")
 Parquet files are stored in a columnar format, unlike row-based files like a CSV.
 Large datasets may be stored in a Parquet file because it is more efficient and faster at returning your query.
 
-You can load Parquet files in exactly the same way as the CSV examples shown above. For example, to load a Parquet file:
+You can load Parquet files in the same way as the CSV examples shown above. For example, to load a Parquet file:
 
 ```python
 from molflux.datasets import load_dataset_from_store
@@ -195,7 +195,7 @@ dataset = load_dataset_from_store(data_files, field="data")
 
 ### Disk
 
-You can read dataset that you have previously saved with `molflux.datasets.save_dataset_to_store(..., format="disk")`.
+You can read datasets that you have previously saved with `molflux.datasets.save_dataset_to_store(..., format="disk")`.
 You just need to provide the path to the directory holding your `.arrow` file(s), and the dataset's `json` metadata:
 
 ```python

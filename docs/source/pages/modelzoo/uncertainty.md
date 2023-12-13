@@ -108,7 +108,7 @@ calibrating the uncertainty of it on a validation dataset
 Both of these are possible with our [Mapie](https://github.com/scikit-learn-contrib/MAPIE) implementation.
 
 ```{note}
-This functionality is still work in progress.
+This functionality is still a work in progress.
 ```
 
 
@@ -214,7 +214,7 @@ model.predict_with_prediction_interval(data=validation_dataset, confidence=0.6)
 ```{tip}
 As mentioned above, there are a number of protocols that can be used to check if a
 loaded model does support a specific uncertainty method.
-This can the used to allow conditional execution of code to wrap models that do not
+This can then be used to allow conditional execution of code to wrap models that do not
 support uncertainty with model agnostic uncertainty methods.
 ```
 
