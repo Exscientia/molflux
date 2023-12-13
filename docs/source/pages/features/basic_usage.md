@@ -13,13 +13,13 @@ kernelspec:
 # Basic usage
 
 
-In this section, we will illustrate how to use ``molflux.features``. These examples will provide you with a starting
+In this section, we illustrate how to use ``molflux.features``. These examples will provide you with a starting
 point.
 
 
 ## Browsing
 
-First, lets' have a look at what representations are available for use. These are conveniently categorised (for example,
+First, we review what representations are available for use. These are conveniently categorised (for example,
 into ``core``, ``rdkit``, etc.). To view what's available you can do
 
 ```{code-cell} ipython3

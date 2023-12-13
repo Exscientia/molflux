@@ -18,13 +18,13 @@ tables, Python dictionaries and Pandas DataFrames. This guide will show you how 
 
 ## Persisted file formats
 
-Datasets (`Dataset` and `DatasetDict`) can be stored as local files on your computer, or in the cloud. The datasets are
-most likely stored as a parquet, csv, or json file. The {func}`molflux.datasets.save_dataset_to_store` function can save
+Datasets (`Dataset` and `DatasetDict`) can be stored as local files on your computer, or in the cloud. The datasets
+could be stored as a parquet, csv, or json file. The {func}`molflux.datasets.save_dataset_to_store` function can save
 your datasets as each of these file types.
 
 ```{hint}
 
-This will work automatically both for local and cloud data. If you need more fine-grained control over the filesystem,
+This will work automatically for both local and cloud data. If you need more fine-grained control over the filesystem,
 you can pass your own `fsspec`-compatible filesystem object to `load_dataset_from_store()` as an argument to the `fs`
 parameter.
 
@@ -45,7 +45,7 @@ from molflux.datasets import save_dataset_to_store
 save_dataset_to_store(dataset, path="s3://my-bucket/my_file.parquet")
 ```
 
-You can of course also save `DatasetDicts`. In this case, the target path should point at a directory where the
+You can also save `DatasetDicts`. In this case, the target path should point at a directory where the
 individual splits will be saved.
 
 ```python

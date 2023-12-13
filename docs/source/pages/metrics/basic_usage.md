@@ -18,7 +18,7 @@ point.
 
 ## Browsing
 
-First, lets' have a look at what metrics are available for use. These are conveniently categorised (for example,
+First, we'll review which metrics are available for use. These are conveniently categorised (for example,
 into ``regression``, ``classification``, etc.). To view what's available you can do
 
 ```{code-cell} ipython3
@@ -134,8 +134,8 @@ print(metrics)
 ```
 
 
-Finally, you can load metrics from a yaml file. You can use a single yaml file which includes configs for all the ``molflux`` tools
-and ``molflux.metrics`` will know how extract the relevant part it needs. To do so, you need to define a yaml file with the
+Finally, you can load metrics from a yaml file. You can use a single yaml file which includes configs for all the ``molflux`` tools,
+and ``molflux.metrics`` will know how to extract the relevant part it needs. To do so, you need to define a yaml file with the
 following example format
 
 ```{code-block} yaml
