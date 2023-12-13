@@ -16,20 +16,21 @@ In this tutorial we provide a 3D example using the qm9-dataset. We use the 3D mo
 To follow along, make sure to install additional dependencies: `molflux[rdkit]`.
 
 ## Loading the qm9 dataset
-```{code-cell} ipython3
-from molflux.datasets import list_datasets, load_dataset
 
-dataset = load_dataset("gdb9", "rdkit")
-dataset
-```
-Since the original dataset is quite big, for demonstration reasons, we only select a random subset of the samples.
+Since the original dataset is quite big, for demonstration reasons, we load a truncated version of the dataset stored
+on disk
 
 ```{code-cell} ipython3
-dataset = dataset.shuffle(seed=42).select(range(1000))
+from molflux.datasets import load_dataset_from_store
+
+dataset = load_dataset_from_store("gdb9_trunc.parquet")
+
+print(dataset)
 ```
 
 ## Registering a custom featurization method
-Here we demonstrate on how to add your own representation temporarily. This is a simple wrapper for one of the many 3d-descriptors offered by [rdkit descriptors](https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html).
+Here we demonstrate on how to add your own representation temporarily. This is a simple wrapper for one of the many
+3d-descriptors offered by [rdkit descriptors](https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html).
 
 ```{code-cell} ipython3
 from typing import Any, Dict
