@@ -13,7 +13,7 @@ kernelspec:
 # QM9 Regression
 In this tutorial we provide a 3D example using the qm9-dataset. We use the 3D molecules in the dataset for featurization and train a random forest regressor to predict one of the target properties (here: `cv`, heat capacity) in the dataset.
 
-To follow along, make sure to install additional dependencies: `molflux[rdkit]` and `molfeat`.
+To follow along, make sure to install additional dependencies: `molflux[rdkit]`.
 
 ## Loading the qm9 dataset
 ```{code-cell} ipython3
@@ -29,7 +29,7 @@ dataset = dataset.shuffle(seed=42).select(range(1000))
 ```
 
 ## Registering a custom featurization method
-Here we demonstrate on how to add your own representation temporarily. This is a simple wrapper for the 3d-descriptor method of the [molfeat package](https://molfeat.datamol.io/featurizers/desc3D).
+Here we demonstrate on how to add your own representation temporarily. This is a simple wrapper for one of the many 3d-descriptors offered by [rdkit descriptors](https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html).
 
 ```{code-cell} ipython3
 from typing import Any, Dict
@@ -38,16 +38,16 @@ from typing import Any, Dict
 from molflux.features.catalogue import register_representation
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
-from molfeat.trans.fp import FPVecTransformer
 from rdkit import Chem
+from rdkit.Chem import Descriptors3D
 
 _DESCRIPTION = """
-Molfeat 3D descriptors.
+Rdkit 3D descriptors.
 """
 
 
-@register_representation(kind="custom", name="mol_feat_descriptors_3d")
-class MolFeatDescriptors3D(RepresentationBase):
+@register_representation(kind="custom", name="rdkit_descriptors_3d")
+class RdkitDescriptors3D(RepresentationBase):
     def _info(self) -> RepresentationInfo:
         return RepresentationInfo(
             description=_DESCRIPTION,
@@ -62,11 +62,10 @@ class MolFeatDescriptors3D(RepresentationBase):
         Input: a matrix of an array-like representation x N (number of Datapoints in dataset)
         """
         samples = [Chem.Mol(mol) for mol in samples]
-        transformer = FPVecTransformer(kind="desc3D", dtype=float)
-        features = transformer(samples)
-
-        output = {self.tag: features.tolist()}
-        return output
+        descriptors = []
+        for mol in samples:
+            descriptors.append(getattr(Descriptors3D.rdMolDescriptors, "CalcAUTOCORR3D")(mol))
+        return {self.tag: descriptors}
 ```
 ## Featurising
 Now that we registered the representation, we can load it as if this were part of the catalogue.
@@ -77,7 +76,7 @@ from molflux.features import load_from_dicts as load_representations_from_dicts
 
 featuriser = load_representations_from_dicts(
     [
-        {"name": "mol_feat_descriptors_3d"},
+        {"name": "rdkit_descriptors_3d"},
     ]
 )
 
@@ -161,7 +160,7 @@ model = load_model_from_dict(
     {
         "name": "random_forest_regressor",
         "config": {
-            "x_features": ["mol_bytes::mol_feat_descriptors3_d"],
+            "x_features": ["mol_bytes::rdkit_descriptors3_d"],
             "y_features": [y_feature],
         },
     }
