@@ -23,7 +23,7 @@ my_model/
 
 ### Additional Logged files
 
-For environment recreation, we automatically log a `requirements.txt` files whenever a model is logged.
+For environment recreation, we automatically log a `requirements.txt` file whenever a model is logged.
 This file can then be used to reinstall dependencies using conda or virtualenv with pip.
 
 ## Models API

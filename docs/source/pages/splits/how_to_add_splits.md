@@ -12,8 +12,8 @@ kernelspec:
 
 # Add your own splitting strategy
 
-Even though ``molflux.splits`` comes with built-in splitting strategies, you may want to add your own awesome splitter. In this guide,
-we will go through two ways you can do this.
+Even though ``molflux.splits`` comes with built-in splitting strategies, you may want to add your own splitter. In this guide,
+we go through two ways you can do this.
 
 ## Temporary splitting strategy
 
@@ -31,12 +31,12 @@ from molflux.splits.info import SplittingStrategyInfo
 from molflux.splits.typing import ArrayLike, SplitIndices, Splittable
 
 _DESCRIPTION = """
-My cool splitting strategy
+My new splitting strategy
 """
 
 
 @register_splitting_strategy(kind = "custom", name = "your_split_name")
-class YourCoolSplit(SplittingStrategyBase):
+class YourNewSplit(SplittingStrategyBase):
     def _info(self) -> SplittingStrategyInfo:
         return SplittingStrategyInfo(
             description=_DESCRIPTION
@@ -51,7 +51,7 @@ class YourCoolSplit(SplittingStrategyBase):
     ) -> Iterator[SplitIndices]:
 
 
-        # my cool splitting strategy
+        # my new splitting strategy
         train_indices = [0, 3, 5]
         validation_indices = [1, 2]
         test_indices = [4]
@@ -67,7 +67,7 @@ print(strategy)
 
 Let's break this down.
 
-Start by creating a class (you can name it whatever you like, the class name has nothing to do with
+Start by creating a class (you can name it whatever you like, the class name has no impact on
 how the strategy will appear in ``molflux.splits``). This class must inherit ``SplittingStrategyBase`` from ``molflux.splits``.
 
 Next, since we are adding this splitting strategy temporarily, you need to register it (basically make it available in ``molflux.splits``) by
@@ -97,11 +97,11 @@ If you have settled on a splitting strategy and would like to have it as part of
 to do this (add a script to your repo with the above code). If you do this though, your strategy will only be available
 in ``molflux.splits`` if you have imported your package (and also imported the strategy class from your package).
 
-To get around this, we strongly recommended that you add your strategy as a plugin (to learn more about plugins see
+To avoid this, we strongly recommended that you add your strategy as a plugin (to learn more about plugins see
 [here](https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/)). Using this method, your strategy
-will appear and be available in ``molflux.splits`` automatically (just need to have it pip installed in the same environment).
+will appear and be available in ``molflux.splits`` automatically (you need to have it pip installed in the same environment).
 
-To begin with, add your strategy class to you repo (can be any repo, not necessarily ``molflux``). Next, get rid of the
+To begin with, add your strategy class to your repo (this can be any repo, not necessarily ``molflux``). Next, remove the
 ``register_splitting_strategy`` decorator (it's no longer needed).
 
 ```{code-cell} ipython3
@@ -112,10 +112,10 @@ from molflux.splits.info import SplittingStrategyInfo
 from molflux.splits.typing import ArrayLike, SplitIndices, Splittable
 
 _DESCRIPTION = """
-My cool splitting strategy
+My new splitting strategy
 """
 
-class YourCoolSplit(SplittingStrategyBase):
+class YourNewSplit(SplittingStrategyBase):
     def _info(self) -> SplittingStrategyInfo:
         return SplittingStrategyInfo(
             description=_DESCRIPTION
@@ -130,7 +130,7 @@ class YourCoolSplit(SplittingStrategyBase):
     ) -> Iterator[SplitIndices]:
 
 
-        # my cool splitting strategy
+        # my new splitting strategy
         train_indices = [0, 3, 5]
         validation_indices = [1, 2]
         test_indices = [4]
@@ -143,7 +143,7 @@ add a plugin to your strategy class as follows
 
 ```{code-block} ini
 [project.entry-points.'molflux.splits.plugins.plugin_name']
-name_of_strategy = 'path.to.module.file:YourCoolSplit'
+name_of_strategy = 'path.to.module.file:YourNewSplit'
 ```
 
 ```{note}
@@ -153,7 +153,7 @@ strategy class as follows
 ```{code-block} ini
 [options.entry_points]
 molflux.splits.plugins.kind_of_strategy =
-   name_of_strategy = path.to.module.file:YourCoolSplit
+   name_of_strategy = path.to.module.file:YourNewSplit
 ```
 
 Let's break this down. This entry point allows ``molflux.splits`` to detect your strategy (you need to have both ``molflux`` and your

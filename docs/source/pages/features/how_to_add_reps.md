@@ -12,7 +12,7 @@ kernelspec:
 
 # Add your own representations
 
-Even though ``molflux.features`` comes with built-in representations, you may want to add your own awesome feature extractor.
+Even though ``molflux.features`` comes with built-in representations, you may want to add your own feature extractor.
 In this guide, we will go through two ways you can do this.
 
 ## Temporary representations
@@ -32,7 +32,7 @@ from molflux.features.typing import MolArray
 
 
 _DESCRIPTION = """
-My supercool representation.
+My new representation.
 """
 
 @register_representation(kind = "custom", name = "your_rep_name")
@@ -66,7 +66,7 @@ print(rep)
 
 Let's break this down.
 
-Start by creating a class (you can name it whatever you like, the class name has nothing to do with
+Start by creating a class (you can name it whatever you like, the class name has no impact on
 how the representation will appear in ``molflux.features``). This class must inherit ``RepresentationBase`` from ``molflux.features``.
 
 Next, since we are adding this representation temporarily, you need to register it (basically make it available in ``molflux.features``) by
@@ -93,14 +93,14 @@ Et Voilà ! As you can see from the python cell above, the representation was lo
 ## Permanent representations
 
 If you have settled on a representation and would like to have it as part of a package, you can still use the above method
-to do this (add a script to your repo with the above code). If you do this though, your representation will only be available
+to do this (add a script to your repo with the above code). If you do this, your representation will only be available
 in ``molflux.features`` if you have imported your package (and also imported the representation class from your package).
 
-To get around this, we strongly recommended that you add your representation as a plugin (to learn more about plugins see
+To avoid this, we strongly recommended that you add your representation as a plugin (to learn more about plugins see
 [here](https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/)). Using this method, your representation
-will appear and be available in ``molflux.features`` automatically (just need to have it pip installed in the same environment).
+will appear and be available in ``molflux.features`` automatically (you need to have it pip installed in the same environment).
 
-To begin with, add your representation class to you repo (can be any repo, not necessarily ``molflux.features``). Next, get rid of the
+To begin with, add your representation class to your repo (this can be any repo, not necessarily ``molflux.features``). Next, remove the
 ``register_representation`` decorator (it's no longer needed).
 
 ```{code-cell} ipython3
@@ -112,7 +112,7 @@ from molflux.features.typing import MolArray
 
 
 _DESCRIPTION = """
-My supercool representation.
+My new representation.
 """
 
 class YourRepName(RepresentationBase):

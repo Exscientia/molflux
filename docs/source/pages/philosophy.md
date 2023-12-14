@@ -23,7 +23,7 @@ MolFlux is a foundational package for molecular predictive modelling. It covers 
 - 📈 Metrics: Computing metrics for a variety of tasks
 
 
-MolFlux provides complete and self-contained access to the whole machine learning ecosystem to enable you to build
+MolFlux provides self-contained access to the machine learning ecosystem to enable you to build
 machine learning models from scratch.
 
 ## The Standard API
@@ -41,7 +41,7 @@ submodules.
 ## Modular
 
 Including so much functionality in one package is not trivial and python dependencies can often become daunting. The
-MolFlux package handles this by being highly modular. One can easily unlock more functionality by installing their
+MolFlux package handles this by being highly modular. You can easily unlock more functionality by installing their
 corresponding dependencies.
 
 The modular design of the system greatly simplifies the integration of new models, features, and datasets. Its robust,

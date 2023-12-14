@@ -34,7 +34,7 @@ from molflux.metrics.typing import ArrayLike, MetricResult
 
 
 _DESCRIPTION = """
-My supercool metric.
+My new metric.
 """
 
 @register_metric(kind = "custom", name = "your_metric_name")
@@ -74,11 +74,11 @@ print(metric)
 
 Let's break this down.
 
-This specific metric is build on top of Hugging Face metrics. This is not necessary and you can override it if you wish and
-build your own metric from scratch. Here, we use Hugging Face metrics because they provide a lot of convenient features.
+This specific metric is built on top of HuggingFace metrics. This is not necessary and you can override it if you wish and
+build your own metric from scratch. Here, we use HuggingFace metrics because they provide a lot of convenient features.
 
-Start by creating a class (you can name it whatever you like, the class name has nothing to do with
-how the metric will appear in ``molflux.metrics``). If you wish to use the Hugging Face features, then the class must inherit
+Start by creating a class (you can name it whatever you like, the class name does not impact
+how the metric will appear in ``molflux.metrics``). If you wish to use the HuggingFace features, then the class must inherit
 ``HFMetric`` from ``molflux.metrics``.
 
 Next, since we are adding this metric temporarily, you need to register it (basically make it available in ``molflux.metrics``) by
@@ -106,14 +106,14 @@ Et voilà  ! As you can see from the python cell above, the metric was loaded us
 ## Permanent metrics
 
 If you have settled on a metric and would like to have it as part of a package, you can still use the above method
-to do this (add a script to your repo with the above code). If you do this though, your metric will only be available
+to do this (add a script to your repo with the above code). If you do this, your metric will only be available
 in ``molflux.metrics`` if you have imported your package (and also imported the metric class from your package).
 
-To get around this, we strongly recommended that you add your metric as a plugin (to learn more about plugins see
+To avoid this, we strongly recommended that you add your metric as a plugin (to learn more about plugins see
 [here](https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/)). Using this method, your metric
-will appear and be available in ``molflux.metrics`` automatically (just need to have it pip installed in the same environment).
+will appear and be available in ``molflux.metrics`` automatically (you just need to have it pip installed in the same environment).
 
-To begin with, add your metric class to you repo (can be any repo, not necessarily ``molflux.metrics``). Next, get rid of the
+To begin with, add your metric class to your repo (this can be any repo, not necessarily ``molflux.metrics``). Next, get rid of the
 ``register_metric`` decorator (it's no longer needed).
 
 ```{code-cell} ipython3
@@ -126,7 +126,7 @@ from molflux.metrics.typing import ArrayLike, MetricResult
 
 
 _DESCRIPTION = """
-My supercool metric.
+My new metric.
 """
 
 class YourMetricName(HFMetric):

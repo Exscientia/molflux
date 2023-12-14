@@ -31,7 +31,7 @@ print(dataset)
 dataset[0]
 ```
 
-The loaded dataset is an instance of a HuggingFace ``Dataset`` (for more info, checkout the [docs](https://huggingface.co/docs/datasets/index)).
+The loaded dataset is an instance of a HuggingFace ``Dataset`` (for more info, see the [docs](https://huggingface.co/docs/datasets/index)).
 You can see that there are two columns: ``smiles`` and ``log_solubility``.
 
 

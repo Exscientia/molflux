@@ -40,7 +40,7 @@ log_dataset(dataset, path="out/my_dataset.parquet")
 ```
 ````
 
-While these will take care for you to log the corresponding objects according to standardised formats and conventions:
+While these will allow you to log the corresponding objects according to standardised formats and conventions:
 
 
 ``log_pipeline_config()``

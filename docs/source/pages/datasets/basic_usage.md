@@ -14,7 +14,7 @@ kernelspec:
 
 In this section, we will quickly illustrate how to use ``molflux.datasets``. These examples will provide you with a starting
 point. Much of the low level functionality is already documented in the HuggingFace ``dataset`` [docs](https://huggingface.co/docs/datasets/index).
-Here, we will only go through the basics and the added functionality from ``molflux``.
+Here, we will go through the basics and the added functionality from ``molflux``.
 
 
 ## Browsing
@@ -41,7 +41,7 @@ the MNIST dataset). Follow along with the rest of this page with your favourite 
 
 ### Loading using ``load_dataset``
 
-Loading a dataset is very simple. You just need to run `load_dataset` with a given dataset name:
+Loading a dataset is simple. You just need to run `load_dataset` with a given dataset name:
 
 ```{code-cell} ipython3
 
@@ -84,7 +84,7 @@ dataset
 
 ### Loading using ``load_from_dicts``
 
-For convenience, you can also load a group of dataset all at once by specifying a list of configs.
+For convenience, you can also load a group of datasets all at once by specifying a list of configs.
 
 ```{code-cell} ipython3
 
@@ -106,7 +106,7 @@ print(datasets)
 ### Loading using ``load_from_yaml``
 
 Finally, you can load datasets from a yaml file. You can use a single yaml file which includes configs for all the ``molflux``
-submodules and the ``molflux.datasets.load_from_yaml`` will know how to extract the relevant part it needs for the dataset.
+submodules, and the ``molflux.datasets.load_from_yaml`` will know how to extract the relevant part it needs for the dataset.
 To do so, you need to define a yaml file with the following example format
 
 ```{code-block} yaml
@@ -140,8 +140,8 @@ returned by e.g. `molflux.datasets.load_dataset()` are actually native HuggingFa
 functionality.
 
 You can find complete documentation on how to work with HuggingFace datasets [online](https://huggingface.co/docs/datasets/index), or
-even check out their official [training course](https://huggingface.co/course/chapter5/1?fw=pt)! The rest of this
-tutorial will simply show you a couple of examples of some of the most basic functionalities available.
+check out their official [training course](https://huggingface.co/course/chapter5/1?fw=pt)! The rest of this
+tutorial will show a couple of examples of some of the most basic functionalities available.
 
 You can inspect individual datapoints and get the column names:
 
@@ -193,7 +193,7 @@ dataset = load_dataset_from_store("my/data/dataset.parquet")
 
 ```{seealso}
 
-For more information on how to save, load (from disk), featurise, and split datasets, checkout these guides:
+For more information on how to save, load (from disk), featurise, and split datasets, see these guides:
 * [How to save datasets](saving.md)
 * [How to load datasets](loading.md)
 * [How to featurise datasets](featurising.md)

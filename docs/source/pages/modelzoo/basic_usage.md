@@ -19,7 +19,7 @@ point.
 
 ## Browsing
 
-First, lets' have a look at what model architectures are available for use. To view what's available you can do
+First, we review which what model architectures are available for use. To view what's available you can do
 
 ```{code-cell} ipython3
 
@@ -41,7 +41,7 @@ and `xg_boost_regressor`, you would do: ``pip install molflux[xgboost]``.
 
 ## Loading a model architecture
 
-Loading a model architecture of your choice is very simple. For example, to load a `random_forest_regressor` from the
+Loading a model architecture of your choice is simple. For example, to load a `random_forest_regressor` from the
 catalogue:
 
 ```{code-cell} ipython3
@@ -185,23 +185,23 @@ print(models)
 
 ## Training/Inferencing a model
 
-All models have in ``molflux.modelzoo`` have a ``train`` and ``predict`` methods. These are the main two methods you need to
+All models in ``molflux.modelzoo`` have ``train`` and ``predict`` methods. These are the main two methods you need to
 interact with.
 
 ### Training
 
-After loading a model architecture, you can train it on some data using the model's `train()` method, to which you
+After loading a model architecture, you can train it on a dataset using the model's `train()` method, to which you
 should feed your training dataset and optional training arguments (if any are specified by the model architecture
 of your choice).
 
 ```{note}
-Our model's interfaces accept any dataframe-like objects that implement the
+Our model's interfaces accept dataframe-like objects that implement the
 [Dataframe Interchange Protocol](https://data-apis.org/dataframe-protocol/latest/purpose_and_scope.html) as input data:
 these include pandas dataframes, pyarrow tables, vaex dataframes, cudf dataframes, and many other popular dataframe
 libraries... We also support HuggingFace [datasets](https://huggingface.co/docs/datasets/index) as inputs for seamless
 integration with our datasets users. If you are used to working with other in-memory data representations,
-you will need to convert them before feeding them to our models. That being said, please do get in touch with us,
-as we would love to best support your workflows.
+you will need to convert them before feeding them to our models. Please [contact us](https://github.com/Exscientia/molflux/issues) if you need support with,
+your workflows.
 ```
 
 For example, we can train our `random_forest_regressor` as follows:
@@ -262,7 +262,7 @@ To disable progress bars you can call `datasets.disable_progress_bar()` anywhere
 
 ### Inferencing
 
-Once a model is trained, you can use it for inference using the model's `predict()` method, to which you should simply
+Once a model is trained, you can use it for inference using the model's `predict()` method, to which you should
 feed the dataset you would like to get predictions for:
 
 ```{code-block} ipython3
@@ -304,13 +304,13 @@ The ``save_to_store`` function takes the path and the model to save. It can save
 
 ```{note}
 For models intended for production level usage, we recommend that they are saved as described in the [productionising](../production/models.md)
-section. Along with the model, this also save the featurisation metadata and a snapshot of the environment the model was
+section. Along with the model, this also saves the featurisation metadata and a snapshot of the environment the model was
 built in.
 ```
 
 ### Loading
 
-Loading is equally as simple. Just do
+To load, you simply need to do
 
 ```{code-block} python
 from molflux.modelzoo import load_from_store
