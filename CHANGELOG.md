@@ -10,6 +10,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---------------------------------------------------------
 
+## [0.0.1] - 2023-12-15
+
+## Removed
+
+* Removed a featuriser
+
+## [0.0.0] - 2023-12-15
+
+## Added
+
+* Initial release
+
 ---------------------------------------------------------
 
 ## [X.Y.Z] - 20YY-MM-DD
