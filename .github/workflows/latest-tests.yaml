@@ -1,0 +1,33 @@
+name: Latest Tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 0 * * *
+
+jobs:
+  tests-pinned:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Run pinned tests
+        run: |
+          pip install nox
+          nox -s tests_run_latest-${{ matrix.python-version }}
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: "test-reports/${{ matrix.python-version }}/.junitxml.*.xml"
+          show: "fail"
+        if: always()

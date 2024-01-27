@@ -3,8 +3,6 @@ name: Main CI Actions
 on:
   push:
     branches: ['main']
-  schedule:
-    - cron: 0 0 * * *
 
 jobs:
   quality-checks:
