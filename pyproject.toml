@@ -37,7 +37,7 @@ dependencies = [
     'joblib',
     'mergedeep',
     'more-itertools',
-    'numpy',
+    'numpy<2.0.0',
     'pandas',
     'pyarrow>=11.0.0',
     'pydantic>=1.9.0,<2.0.0',
@@ -113,9 +113,8 @@ docs = [
 ]
 tests = [
     'coverage[toml]',
-    'pytest',
     'moto[server]',
-    'pytest',
+    'pytest<8.0.0',
     'pytest-lazy-fixture',
     'mock',
 ]
