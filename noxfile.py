@@ -27,8 +27,8 @@ TEST_REPORTS_DIR = "test-reports"
 BUILD_TOOLS = ["build"]
 COVERAGE_TOOLS = ["coverage[toml]", "coverage-badge"]
 FORMATTING_TOOLS = ["black[jupyter]~=23.0"]
-LINTING_TOOLS = ["ruff==0.0.278"]
-LOCKFILE_TOOLS = ["pip-tools>=6.5.0"]
+LINTING_TOOLS = ["ruff~=0.1.0"]
+LOCKFILE_TOOLS = ["pip-tools>=7.0.0"]  # default --resolver-backtracking
 
 SUBMODULE_EXTRAS: Dict[str, Dict[str, Optional[List]]] = {
     "core": {
@@ -385,7 +385,6 @@ def generate_lockfile(
         "--strip-extras",
         "--no-emit-index-url",
         "--no-emit-trusted-host",
-        "--resolver=backtracking",  # this will become the default in 7.0.0
         "pyproject.toml",
         "-o",
         str(lockfile_path),
