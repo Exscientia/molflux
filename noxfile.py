@@ -27,7 +27,7 @@ TEST_REPORTS_DIR = "test-reports"
 BUILD_TOOLS = ["build"]
 COVERAGE_TOOLS = ["coverage[toml]", "coverage-badge"]
 FORMATTING_TOOLS = ["black[jupyter]~=23.0"]
-LINTING_TOOLS = ["ruff~=0.1.0"]
+LINTING_TOOLS = ["ruff==0.0.278"]
 LOCKFILE_TOOLS = ["pip-tools>=7.0.0"]  # default --resolver-backtracking
 
 SUBMODULE_EXTRAS: Dict[str, Dict[str, Optional[List]]] = {
