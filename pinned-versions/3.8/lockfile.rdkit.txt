@@ -6,7 +6,7 @@
 #
 accessible-pygments==0.0.4
     # via pydata-sphinx-theme
-aiohttp==3.9.1
+aiohttp==3.9.2
     # via
     #   datasets
     #   fsspec
@@ -454,11 +454,7 @@ pyparsing==3.1.1
     # via
     #   matplotlib
     #   moto
-pytest==7.4.4
-    # via
-    #   molflux (pyproject.toml)
-    #   pytest-lazy-fixture
-pytest-lazy-fixture==0.6.3
+pytest==8.0.0
     # via molflux (pyproject.toml)
 python-dateutil==2.8.2
     # via
@@ -472,7 +468,7 @@ python-jose==3.3.0
     # via
     #   moto
     #   python-jose
-pytz==2023.3.post1
+pytz==2023.4
     # via
     #   babel
     #   pandas
@@ -660,7 +656,7 @@ traitlets==5.14.1
     #   matplotlib-inline
     #   nbclient
     #   nbformat
-typing-extensions==4.9.0 ; python_version < "3.9.2"
+typing-extensions==4.9.0
     # via
     #   aws-sam-translator
     #   cloudpathlib

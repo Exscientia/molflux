@@ -48,8 +48,13 @@ def test_exports_register_model():
 
 
 def test_exports_model():
-    """That the package exposes the Model protocol."""
+    """That the package exposes the Model type alias."""
     assert hasattr(molflux.modelzoo, "Model")
+
+
+def test_exports_models():
+    """That the package exposes the Models type alias."""
+    assert hasattr(molflux.modelzoo, "Models")
 
 
 def test_exports_model_base():
@@ -65,6 +70,12 @@ def test_exports_supports_classification():
     """That the package exposes the supports_classification function."""
     assert hasattr(molflux.modelzoo, "supports_classification")
     assert callable(molflux.modelzoo.supports_classification)
+
+
+def test_exports_supports_covariance():
+    """That the package exposes the supports_covariance function."""
+    assert hasattr(molflux.modelzoo, "supports_covariance")
+    assert callable(molflux.modelzoo.supports_covariance)
 
 
 def test_exports_supports_supports_prediction_interval():

@@ -31,7 +31,7 @@ def list_suites() -> List[str]:
 def register_suite(suite_path: Path) -> None:
     """Registers a suite in the catalogue."""
     file_type = suite_path.suffix
-    if file_type != ".yml" and file_type != ".yaml":
+    if file_type not in {".yml", ".yaml"}:
         raise ValueError(f"Invalid suite file format: {file_type!r} (expected .yml)")
 
     suite_name = suite_path.stem

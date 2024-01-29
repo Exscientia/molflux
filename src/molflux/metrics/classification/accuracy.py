@@ -104,5 +104,5 @@ class Accuracy(HFMetric):
             y_pred=predictions,
             normalize=normalize,
             sample_weight=sample_weight,
-        ).tolist()
+        )
         return {self.tag: float(score)}

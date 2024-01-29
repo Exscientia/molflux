@@ -134,10 +134,10 @@ def test_predict_with_prediction_interval_from_estimator(
     )
 
     assert supports_uncertainty_calibration(model)
-    model.calibrate_uncertainty(data=train_data)  # type: ignore[attr-defined]
+    model.calibrate_uncertainty(data=train_data)
 
     assert supports_prediction_interval(model)
-    predictions, intervals = model.predict_with_prediction_interval(  # type: ignore[attr-defined]
+    predictions, intervals = model.predict_with_prediction_interval(
         predict_data,
         confidence=0.5,
     )
@@ -227,6 +227,54 @@ def test_predict_single_instance(fixture_model):
     predictions = model.predict(predict_data)
     for array in predictions.values():
         assert isinstance(array, list)
+
+    predictions, prediction_intervals = model.predict_with_prediction_interval(
+        predict_data,
+        confidence=0.5,
+    )
+    for array in predictions.values():
+        assert isinstance(array, list)
+    for array in prediction_intervals.values():
+        assert isinstance(array, list)
+        assert isinstance(array[0], tuple)
+
+
+@pytest.mark.parametrize(
+    ["estimator", "should_raise_errors"],
+    [
+        [
+            {
+                "name": "random_forest_regressor",
+                "config": {"n_estimators": 10, "x_features": ["dummy_col"]},
+            },
+            False,
+        ],
+        [{"name": "gradient_boosting_regressor"}, False],
+        [{"bad_schema_key": {"bad_kwarg": 42}}, True],
+        [{"name": "bad_name_for_a_model"}, True],
+    ],
+)
+def test_model_with_config_estimator(estimator, should_raise_errors):
+    """That models with configs as estimators correctly run"""
+
+    model: Model = load_model(
+        model_name,
+        estimator=estimator,
+        x_features=_X_FEATURES,
+        y_features=_Y_FEATURES,
+    )
+
+    train_data = datasets.Dataset.from_pandas(train_df)
+    predict_data = datasets.Dataset.from_pandas(predict_df)
+
+    if should_raise_errors:
+        with pytest.raises(ValueError):
+            model.train(train_data)
+        return
+    else:
+        model.train(train_data)
+
+    assert isinstance(model, SupportsPredictionInterval)
 
     predictions, prediction_intervals = model.predict_with_prediction_interval(
         predict_data,

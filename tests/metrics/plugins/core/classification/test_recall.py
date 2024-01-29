@@ -90,6 +90,9 @@ def test_multiclass_none_average(fixture_metric):
     np.testing.assert_allclose([1, 0, 0], result["recall"])
 
 
+@pytest.mark.filterwarnings(
+    "ignore:Recall is ill-defined and being set to 0.0 in labels with no true samples:sklearn.exceptions.UndefinedMetricWarning",
+)
 def test_zero_division_zero(fixture_metric):
     """Returns zero on a zero division (when all predictions amd labels are negative)."""
     metric = fixture_metric

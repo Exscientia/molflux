@@ -10,6 +10,34 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---------------------------------------------------------
 
+## [0.1.0] - 2023-01-29
+
+## Added
+
+* Added `atom_pair` from `rdkit`
+* Added `topological_torsion` from `rdkit`
+* Added `CovarianceMixin` for `modelzoo`
+* Added separate `root_mean_squared_error` metric
+
+## Changed
+ 
+* `prediction_internal_coverage` from `numpy`
+* Updated `mapie_regressor`
+* Strict warnings
+* removed `pkg_resources` for `importlib`
+* HF `datasets` uses `trust_remote_code=True` by default
+* updated `ruff~=0.1.0`
+* updated `datasets>=2.16.0`
+
+## Fixed
+
+* Fixed `accuracy` metric 
+
+## Removed
+
+* Removed `pytest-lazy-fixture`  
+
+
 ## [0.0.1] - 2023-12-15
 
 ## Removed

@@ -6,16 +6,17 @@ import molflux.modelzoo
 from molflux.core import load_model, save_model
 
 parametrized_output_directory_fixtures = [
-    pytest.lazy_fixture("tmp_path"),  # type: ignore[operator]
-    pytest.lazy_fixture("fixture_test_bucket"),  # type: ignore[operator]
-    pytest.lazy_fixture("fixture_nested_tmp_path"),  # type: ignore[operator]
-    pytest.lazy_fixture("fixture_nested_test_bucket"),  # type: ignore[operator]
+    "tmp_path",
+    "fixture_test_bucket",
+    "fixture_nested_tmp_path",
+    "fixture_nested_test_bucket",
 ]
 
 
 @pytest.mark.parametrize("output_directory", parametrized_output_directory_fixtures)
-def test_save_model_creates_standardised_artefact(output_directory):
+def test_save_model_creates_standardised_artefact(output_directory, request):
     """That models are saved into a standardised artefact directory."""
+    output_directory = request.getfixturevalue(output_directory)
 
     dataset = datasets.Dataset.from_dict({"x": [1, 2, 3], "y": [1, 2, 3]})
     featurisation_metadata = {"version": 1, "config": []}
@@ -75,9 +76,10 @@ def test_save_model_with_no_featurisation_metadata_raises_warning(tmp_path):
 
 
 @pytest.mark.parametrize("output_directory", parametrized_output_directory_fixtures)
-def test_can_load_back_saved_model(output_directory):
+def test_can_load_back_saved_model(output_directory, request):
     """That can load a model that has been saved."""
 
+    output_directory = request.getfixturevalue(output_directory)
     dataset = datasets.Dataset.from_dict({"x": [1, 2, 3], "y": [1, 2, 3]})
     featurisation_metadata = {"version": 1, "config": []}
     model = molflux.modelzoo.load_model(

@@ -46,7 +46,7 @@ Examples:
     >>> upper_bound = [1, 1.5, 1.8, 2.8, 5.7]
     >>> prediction_intervals = list(zip(lower_bound, upper_bound))
     >>> m.compute(predictions=pred, references=ref, prediction_intervals=prediction_intervals)
-    {'gaussian_nll': 6.687535862908962}
+    {'gaussian_nll': 1.2949031482515838}
 """
 
 _CITATION = """\
@@ -91,12 +91,16 @@ class GaussianNLL(PredictionIntervalMetric):
         if (upper_bound < lower_bound).any():  # type: ignore[attr-defined]
             raise ValueError("Please ensure upper bound is greater than lower bound.")
 
-        sigma = _estimate_standard_deviation(lower_bound, upper_bound, mu, confidence)
+        sigma = _estimate_standard_deviation(lower_bound, upper_bound, confidence)
         sigma = np.clip(sigma, a_min=eps, a_max=None)
 
-        gaussian_log_likelihood = -np.sum(
-            np.log(2 * np.pi * (sigma**2)) / 2
-            + ((references - mu) ** 2) / (2 * (sigma**2)),
+        gaussian_log_likelihood = (
+            1
+            / 2
+            * np.mean(
+                np.log(2 * np.pi * (sigma**2))
+                + ((references - mu) ** 2) / (sigma**2),
+            )
         )
 
-        return {self.tag: -gaussian_log_likelihood}
+        return {self.tag: gaussian_log_likelihood}

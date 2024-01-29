@@ -199,8 +199,7 @@ class DrfpEncoder:
 
         return np.array(
             [int(blake2b(t, digest_size=4).hexdigest(), 16) for t in shingling],
-            dtype=np.int32,
-        )
+        ).astype(np.int32)
 
     @staticmethod
     def fold(

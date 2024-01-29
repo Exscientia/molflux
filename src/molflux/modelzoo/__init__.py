@@ -8,7 +8,9 @@ from molflux.modelzoo.load import (
 from molflux.modelzoo.model import ClassificationMixin, ModelBase
 from molflux.modelzoo.protocols import (
     Model,
+    Models,
     supports_classification,
+    supports_covariance,
     supports_prediction_interval,
     supports_sampling,
     supports_std,

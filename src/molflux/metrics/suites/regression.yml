@@ -10,11 +10,7 @@ specs:
 
     - name: mean_squared_error
 
-    - name: mean_squared_error
-      config:
-        tag: "root_mean_squared_error"
-      presets:
-        root: True
+    - name: root_mean_squared_error
 
     - name: median_absolute_error
 

@@ -32,7 +32,6 @@ def test_results_have_all_the_metrics_in():
     result = suite.compute(references=ground_truth, predictions=preds)
     all_metrics = [metric.name for metric in suite]
     assert set(result.keys()) - set(all_metrics) == {
-        "root_mean_squared_error",
         "spearman::p_value",
         "spearman::correlation",
         "pearson::p_value",

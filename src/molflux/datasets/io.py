@@ -1,6 +1,7 @@
 import json
 import os
 import pathlib
+import warnings
 from typing import Any, Dict, List, Literal, Optional, Union, cast, get_args
 
 import fsspec
@@ -443,10 +444,19 @@ def load_dataset_from_store(
     if split is None and not data_files_are_for_dataset_dict:
         split = "all"
 
-    return datasets.load_dataset(
-        format,
-        data_files=data_files,
-        split=split,
-        storage_options=fs.storage_options,
-        **kwargs,
-    )
+    with warnings.catch_warnings():
+        # Do not pass through unhandled deprecation warnings from dependencies of hf datasets themselves
+        warnings.filterwarnings(
+            "ignore",
+            message="The .* keyword in pd.read_csv is deprecated and will be removed in a future version",
+            category=FutureWarning,
+            module="datasets[.*]",
+        )
+
+        return datasets.load_dataset(
+            format,
+            data_files=data_files,
+            split=split,
+            storage_options=fs.storage_options,
+            **kwargs,
+        )

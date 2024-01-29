@@ -60,7 +60,6 @@ def test_perfect_accuracy(fixture_metric):
     assert result["accuracy"] == 1.0
 
 
-@pytest.mark.xfail
 def test_binary_multilabel():
     """Multilabel case with binary label indicators."""
     metric = load_metric("accuracy", config_name="multilabel")

@@ -6,7 +6,7 @@
 #
 accessible-pygments==0.0.4
     # via pydata-sphinx-theme
-aiohttp==3.9.1
+aiohttp==3.9.2
     # via
     #   datasets
     #   fsspec
@@ -457,11 +457,7 @@ pyparsing==3.1.1
     # via
     #   matplotlib
     #   moto
-pytest==7.4.4
-    # via
-    #   molflux (pyproject.toml)
-    #   pytest-lazy-fixture
-pytest-lazy-fixture==0.6.3
+pytest==8.0.0
     # via molflux (pyproject.toml)
 python-dateutil==2.8.2
     # via
@@ -477,7 +473,7 @@ python-jose==3.3.0
     #   python-jose
 pytorch-lightning==2.1.3
     # via lightning
-pytz==2023.3.post1
+pytz==2023.4
     # via pandas
 pyyaml==6.0.1
     # via
@@ -547,7 +543,7 @@ s3transfer==0.10.0
     # via boto3
 sarif-om==1.0.4
     # via cfn-lint
-scikit-learn==1.4.0
+scikit-learn==1.4.0 ; python_version > "3.8"
     # via
     #   mapie
     #   molflux (pyproject.toml)
@@ -687,6 +683,7 @@ typing-extensions==4.9.0
     #   huggingface-hub
     #   lightning
     #   lightning-utilities
+    #   molflux (pyproject.toml)
     #   myst-nb
     #   pydantic
     #   pydata-sphinx-theme

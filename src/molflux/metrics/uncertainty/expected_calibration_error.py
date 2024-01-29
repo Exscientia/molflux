@@ -92,7 +92,6 @@ class ExpectedCalibrationError(PredictionIntervalMetric):
             standard_deviations = _estimate_standard_deviation(
                 lower_bound,
                 upper_bound,
-                predictions,
                 confidence,
             )
 

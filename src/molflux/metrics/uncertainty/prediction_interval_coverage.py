@@ -4,12 +4,11 @@ import logging
 from typing import Any, Optional
 
 import evaluate
+import numpy as np
 
 import datasets
 from molflux.metrics.bases import PredictionIntervalMetric
 from molflux.metrics.typing import ArrayLike, MetricResult
-
-from .utils import regression_coverage_score
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +28,6 @@ _CITATION = """\
 _DESCRIPTION = """\
 Computes coverage of a prediction interval.
 This is obtained by estimating the fraction of true labels that lie within the prediction intervals.
-Previously name coverage_score but renamed to avoid confusion with the design tool of the same name.
 """
 
 _KWARGS_DESCRIPTION = """
@@ -82,6 +80,6 @@ class PredictionIntervalCoverage(PredictionIntervalMetric):
                 "Please provide prediction intervals in the form of lower and upper bounds.",
             )
 
-        lower_bound, upper_bound = zip(*prediction_intervals)
-        score = regression_coverage_score(references, lower_bound, upper_bound)
-        return {self.tag: score}
+        lower_bound, upper_bound = np.array(prediction_intervals).T
+        score = np.mean((lower_bound <= references) & (upper_bound >= references))
+        return {self.tag: float(score)}

@@ -552,6 +552,82 @@ class StandardDeviationMixin(ABC):
         )
 
 
+class CovarianceMixin(ABC):
+    """Mixin for all models supporting predictions with a covariance matrix of joint predictions"""
+
+    tag: str
+    x_features: Features
+    y_features: Features
+
+    @cached_property
+    def predict_with_covariance_signature(self) -> inspect.Signature:
+        return inspect.signature(self._predict_with_covariance)
+
+    def predict_with_covariance(
+        self,
+        data: DataFrameLike,
+        **kwargs: Any,
+    ) -> Tuple[PredictionResult, PredictionResult]:
+        """Return a model prediction with an associated standard deviation"""
+
+        # make sure data is a datasets.Dataset
+        data = hf_dataset_from_dataframe(data)
+
+        # make sure dataset has required features
+        validate_features(data, self.x_features)
+
+        # pick out relevant features
+        data = pick_features(data, self.x_features)
+
+        # Safeguard against invalid kwargs
+        raise_on_unrecognised_parameters(self._predict_with_covariance, **kwargs)
+
+        prediction_result, prediction_covariance_result = self._predict_with_covariance(
+            data,
+            **kwargs,
+        )
+
+        validate_prediction_result_num_tasks(prediction_result, self.y_features)
+        validate_prediction_result_num_tasks(
+            prediction_covariance_result,
+            self.y_features,
+        )
+
+        return prediction_result, prediction_covariance_result
+
+    @abstractmethod
+    def _predict_with_covariance(
+        self,
+        data: Dataset,
+        **kwargs: Any,
+    ) -> Tuple[PredictionResult, PredictionResult]:
+        """The prediction callable for prediction covariances.
+
+        To be implemented by subclasses.
+        """
+
+    @property
+    def _predict_with_covariance_display_names(self) -> Tuple[List[str], List[str]]:
+        """The display names for prediction outputs.
+
+        These are not part of the API, we just provide this utility function
+        to help making display names consistent across all of our models.
+        """
+        return zip(  # type: ignore[return-value]
+            *[
+                (f"{self.tag}::{task}", f"{self.tag}::{task}::covariance")
+                for task in self.y_features
+            ],
+        )
+
+    def __str__(self) -> str:
+        return super().__str__() + (
+            f"\nEstimator(\n"
+            f"\tpredict_with_covariance signature: self.predict_with_covariance{self.predict_with_covariance_signature},\n"
+            ")"
+        )
+
+
 class SamplingMixin(ABC):
     """Mixin for all models supporting sampling"""
 

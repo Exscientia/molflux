@@ -1,7 +1,7 @@
 import functools
+import importlib.metadata
 from typing import Dict, List
 
-import pkg_resources
 from cloudpathlib import AnyPath
 
 from molflux.core.typing import PathLike
@@ -15,7 +15,11 @@ def pip_working_set() -> Dict[str, str]:
 
 @functools.lru_cache
 def _cached_pip_working_set() -> Dict[str, str]:
-    return {p.key: p.version for p in pkg_resources.working_set}
+    distributions = importlib.metadata.distributions()
+    return {
+        distribution.metadata["Name"]: distribution.version
+        for distribution in distributions
+    }
 
 
 @functools.lru_cache
