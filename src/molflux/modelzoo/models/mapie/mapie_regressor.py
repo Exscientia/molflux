@@ -7,6 +7,7 @@ from pydantic.dataclasses import dataclass
 
 import datasets
 from molflux.modelzoo.info import ModelInfo
+from molflux.modelzoo.load import load_from_dict
 from molflux.modelzoo.model import (
     ModelBase,
     ModelConfig,
@@ -23,7 +24,7 @@ from molflux.modelzoo.utils import (
 )
 
 try:
-    from mapie.conformity_scores import ConformityScore
+    from mapie.conformity_scores import AbsoluteConformityScore
     from mapie.regression import MapieRegressor as MapieMapieRegressor
     from sklearn.base import RegressorMixin
     from sklearn.model_selection import BaseCrossValidator
@@ -48,10 +49,11 @@ with strong theoretical guarantees.
 _CONFIG_DESCRIPTION = """
 Parameters
 ----------
-estimator : Union[Estimator,RegressorMixin,None]
+estimator : Union[Estimator,RegressorMixin,None,Dict]
     Any modelzoo estimator or sklearn regressor backed by a scikit-learn API
     (i.e. with fit and predict methods), by default ``None``.
     If ``None``, estimator defaults to a linear regressor instance.
+    If a dictionary, it is assumed to me a modelzoo model config for an scikit-learn backed regressor.
 
 method: str, optional
     Method to choose for prediction interval estimates.
@@ -134,19 +136,6 @@ verbose : int, optional
     Above ``50``, the output is sent to stdout.
 
     By default ``0``.
-
-conformity_score : Optional[ConformityScore]
-    ConformityScore instance.
-    It defines the link between the observed values, the predicted ones
-    and the conformity scores. For instance, the default None value
-    correspondonds to a conformity score which assumes
-    y_obs = y_pred + conformity_score.
-
-    - ``None``, to use the default ``AbsoluteConformityScore`` conformity
-      score
-    - ConformityScore: any ``ConformityScore`` class
-
-    By default ``None``.
 """
 
 Method = Literal["naive", "base", "plus", "minmax"]
@@ -174,6 +163,15 @@ def _as_mapie_estimator(model: Any) -> Any:
     if model is None or isinstance(model, RegressorMixin):
         return model
 
+    # a dictionary is assumed to be a modelzoo config
+    if isinstance(model, dict):
+        try:
+            model = load_from_dict(model)
+        except Exception as e:
+            raise ValueError(
+                f"Could not generate a modelzoo model from the estimator config {model}",
+            ) from e
+
     # Allow to pass generic modelzoo architectures as well
     # TODO(avianello): for the time being we will only allow modezloo models
     #  explicitly backed by a sklearn model. In the future we could expand by
@@ -181,6 +179,11 @@ def _as_mapie_estimator(model: Any) -> Any:
     #  interface accepted by mapie
     if isinstance(model, Estimator):
         if isinstance(model, SKLearnModelBase):
+            # warning: this is not a method provided by the Estimator Protocol
+            # it needs to be called because the model.model attribute is None
+            # before fitting a modelzoo model
+            if model.model is None:
+                return model._instantiate_model()
             return model.model
         raise NotImplementedError(
             f"Unsupported estimator architecture: {model.__class__!r}",
@@ -196,13 +199,12 @@ class Config:
 
 @dataclass(config=Config)
 class MapieRegressorConfig(ModelConfig):
-    estimator: Union[Estimator, RegressorMixin, None, str] = None
+    estimator: Union[Estimator, RegressorMixin, None, str, Dict] = None
     method: Method = "plus"
     cv: Optional[Union[int, str, BaseCrossValidator]] = None
     n_jobs: Optional[int] = None
     agg_function: Optional[AggFunction] = "mean"
     verbose: int = 0
-    conformity_score: Optional[ConformityScore] = None
 
     def __post_init_post_parse__(self) -> None:
         if self.y_features and len(self.y_features) != 1:
@@ -242,15 +244,23 @@ class MapieRegressor(
 
     def _instantiate_model(self) -> MapieMapieRegressor:
         config = self.model_config
-        return MapieMapieRegressor(
+        # the conformity score is created on the fly
+        conformity_score = AbsoluteConformityScore()
+        # avoids automatic checks that sometimes produce errors depending on
+        # the dataset and machine due to machine decimal errors
+        # when using the conformal methods provided by mapie, there are
+        # mathematical guarantees that such checks are redundant
+        conformity_score.consistency_check = False
+        mapie_regressor = MapieMapieRegressor(
             estimator=_as_mapie_estimator(config.estimator),
             method=config.method,
             cv=config.cv,
             n_jobs=config.n_jobs,
             agg_function=config.agg_function,
             verbose=config.verbose,
-            conformity_score=config.conformity_score,
+            conformity_score=conformity_score,
         )
+        return mapie_regressor
 
     def _train(
         self,
@@ -275,6 +285,7 @@ class MapieRegressor(
     def _predict(
         self,
         data: datasets.Dataset,
+        use_ensemble_predictions: bool = True,
         **kwargs: Any,
     ) -> PredictionResult:
         # the conformal predictions require an alpha, which is 1-confidence, between 1/n and (n-1)/n
@@ -284,6 +295,7 @@ class MapieRegressor(
         prediction_result, _ = self._predict_with_prediction_interval(
             data,
             confidence=default_confidence,
+            use_ensemble_predictions=use_ensemble_predictions,
             **kwargs,
         )
         return prediction_result
@@ -295,6 +307,7 @@ class MapieRegressor(
         self,
         data: datasets.Dataset,
         confidence: float,
+        use_ensemble_predictions: bool = True,
         **kwargs: Any,
     ) -> Tuple[PredictionResult, PredictionResult]:
         (
@@ -310,7 +323,11 @@ class MapieRegressor(
         X = get_concatenated_array(data, self.x_features)
 
         # Evaluate prediction on testing set
-        y_predict, y_pis = self.model.predict(X, alpha=1 - confidence)
+        y_predict, y_pis = self.model.predict(
+            X,
+            ensemble=use_ensemble_predictions,
+            alpha=1 - confidence,
+        )
         lower_bound, upper_bound = y_pis[:, 0, 0], y_pis[:, 1, 0]
 
         # Check that predictions match expected features

@@ -1,11 +1,14 @@
+import importlib.metadata
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
 
-import pkg_resources
-
 
 def get_runtime() -> Dict[str, str]:
-    return {p.key: p.version for p in pkg_resources.working_set}
+    distributions = importlib.metadata.distributions()
+    return {
+        distribution.metadata["Name"]: distribution.version
+        for distribution in distributions
+    }
 
 
 @dataclass

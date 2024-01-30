@@ -432,8 +432,6 @@ class ConfigOverride:
             else:
                 new_sections[section] = override_obj
 
-        # broken since mypy==1.5.0 due to https://github.com/python/mypy/pull/14849
-        # similar to https://github.com/python/mypy/pull/9380#issuecomment-748307209
         self.model.model_config = replace(
             self.original_config,
             **new_sections,

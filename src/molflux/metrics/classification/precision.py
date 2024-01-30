@@ -84,9 +84,9 @@ Examples:
     >>> metric.compute(references=references, predictions=predictions, average=None)
     {'precision': [0.66..., 0.0, 0.0]}
     >>> predictions = [0, 0, 0, 0, 0, 0]
-    >>> metric.compute(references=references, predictions=predictions, average=None)
+    >>> metric.compute(references=references, predictions=predictions, average=None, zero_division=0.0)
     {'precision': [0.33..., 0.0, 0.0]}
-    >>> metric.compute(references=references, predictions=predictions, average=None, zero_division=1)
+    >>> metric.compute(references=references, predictions=predictions, average=None, zero_division=1.0)
     {'precision': [0.33..., 1.0, 1.0]}
 
 Notes:

@@ -90,16 +90,20 @@ def fixture_mock_representations():
 @pytest.mark.parametrize(
     "representations_fixture",
     [
-        pytest.lazy_fixture("fixture_mock_one_to_many_representation"),  # type: ignore[operator]
-        pytest.lazy_fixture("fixture_mock_representations"),  # type: ignore[operator]
+        "fixture_mock_one_to_many_representation",
+        "fixture_mock_representations",
     ],
 )
 def test_can_use_representation_or_representations(
     fixture_mock_dataset,
     representations_fixture,
+    request,
 ):
     """That can featurise a dataset both providing a single representation (convenience)
     or a collection of representations (core)."""
+
+    representations_fixture = request.getfixturevalue(representations_fixture)
+
     dataset = fixture_mock_dataset
     representations = representations_fixture
     column_to_featurise = dataset.column_names[0]
@@ -524,17 +528,24 @@ def test_setting_display_name_already_in_use_warns(
 @pytest.mark.parametrize(
     "dataset_dict",
     [
-        pytest.lazy_fixture("fixture_mock_dataset_dict"),  # type: ignore[operator]
-        pytest.lazy_fixture("fixture_mock_dataset_dict_with_empty_splits"),  # type: ignore[operator]
+        "fixture_mock_dataset_dict",
+        "fixture_mock_dataset_dict_with_empty_splits",
     ],
 )
-def test_can_featurise_dataset_dict(dataset_dict, fixture_mock_representations):
+def test_can_featurise_dataset_dict(
+    dataset_dict,
+    fixture_mock_representations,
+    request,
+):
     """That can featurise a DatasetDict.
 
     We would generally advise featurising a single `Dataset` and then splitting
     it into a `DatasetDict`, but feturising a `DatasetDict` should technically
     be supported too.
     """
+
+    dataset_dict = request.getfixturevalue(dataset_dict)
+
     representations = fixture_mock_representations
 
     column_to_featurise = dataset_dict.column_names["train"][0]

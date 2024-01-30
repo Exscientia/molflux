@@ -30,7 +30,7 @@ dependencies = [
     'botocore',
     'cloudpathlib[s3]',
     'colorama',
-    'datasets>=2.14.5',
+    'datasets>=2.16.0',
     'evaluate',
     'fsspec>=2022.5.0',
     'h5py',
@@ -46,11 +46,12 @@ dependencies = [
     'qlient',
     'requests',
     'scikit-learn>=1.2.1',
+    'scikit-learn>=1.4.0; python_version > "3.8"',  # support for root_mean_squared_error, not available on 3.8. Cleanup when dropping 3.8 compatiblity
     'scipy>=1.7.0',
     'tenacity',
     'thefuzz[speedup]',
     'tqdm',
-    'typing-extensions; python_version < "3.9.2"'
+    'typing-extensions'
 ]
 
 [project.optional-dependencies]
@@ -114,12 +115,12 @@ docs = [
 tests = [
     'coverage[toml]',
     'moto[server]',
-    'pytest<8.0.0',
-    'pytest-lazy-fixture',
+    'pytest',
     'mock',
 ]
 typing = [
     'mypy',
+    'types-pytz',
     'types-PyYAML',
     'types-setuptools',
     'types-python-dateutil',
@@ -176,6 +177,7 @@ sd_feature = 'molflux.features.representations.openeye.sd.sd_feature:SDFeature'
 # descriptors
 rdkit_descriptors_2d = 'molflux.features.representations.rdkit.descriptors.rdkit_descriptors_2d:RdkitDescriptors_2d'
 # fingerprints
+atom_pair = 'molflux.features.representations.rdkit.fingerprints.atom_pair:AtomPair'
 atom_pair_unfolded = 'molflux.features.representations.rdkit.fingerprints.atom_pair_unfolded:AtomPairUnfolded'
 avalon = 'molflux.features.representations.rdkit.fingerprints.avalon:Avalon'
 layered = 'molflux.features.representations.rdkit.fingerprints.layered:Layered'
@@ -186,6 +188,7 @@ morgan = 'molflux.features.representations.rdkit.fingerprints.morgan:Morgan'
 morgan_unfolded = 'molflux.features.representations.rdkit.fingerprints.morgan_unfolded:MorganUnfolded'
 pattern = 'molflux.features.representations.rdkit.fingerprints.pattern:Pattern'
 topological = 'molflux.features.representations.rdkit.fingerprints.topological:Topological'
+topological_torsion = 'molflux.features.representations.rdkit.fingerprints.topological_torsion:TopologicalTorsion'
 topological_torsion_unfolded = 'molflux.features.representations.rdkit.fingerprints.topological_torsion_unfolded:TopologicalTorsionUnfolded'
 toxicophores = 'molflux.features.representations.rdkit.fingerprints.toxicophores:Toxicophores'
 # reaction
@@ -301,6 +304,7 @@ explained_variance = 'molflux.metrics.regression.explained_variance:ExplainedVar
 max_error = 'molflux.metrics.regression.max_error:MaxError'
 mean_absolute_error = 'molflux.metrics.regression.mean_absolute_error:MeanAbsoluteError'
 mean_squared_error = 'molflux.metrics.regression.mean_squared_error:MeanSquaredError'
+root_mean_squared_error = 'molflux.metrics.regression.root_mean_squared_error:RootMeanSquaredError'
 median_absolute_error = 'molflux.metrics.regression.median_absolute_error:MedianAbsoluteError'
 pearson = 'molflux.metrics.regression.pearson:Pearson'
 proportion_within_fold = 'molflux.metrics.regression.proportion_within_fold:ProportionWithinFold'
@@ -372,8 +376,74 @@ disallow_untyped_defs = false
 module = 'noxfile'
 
 [tool.pytest.ini_options]
-addopts = "-rv --doctest-modules --color=yes"
+addopts = ["-rv", "--strict-markers", "--strict-config", "--doctest-modules", "--color=yes"]
 cache_dir = ".cache/pytest_cache"
+filterwarnings = [
+    "error",
+    # [core]
+    # https://moyix.blogspot.com/2022/09/someones-been-messing-with-my-subnormals.html
+    "ignore:The value of the smallest subnormal for .* type is zero:UserWarning:numpy.core.getlimits",
+    # [datasets]
+    "ignore::pytest.PytestUnraisableExceptionWarning",
+    "ignore:The 'strict' parameter is no longer needed on Python 3:DeprecationWarning:urllib3.poolmanager",
+    # ignore deprecated usage of pyarrow.concat_table() by datasets since pyarrow 14.0 release
+    "ignore:promote has been superseded by mode='default':FutureWarning:datasets.table",
+    # [features]
+    # allow UserWarning raised by mhfp library when passing an empty SMILES for featurisation
+    "ignore:The length of the shingling is 0, which results in an empty set and an all zero folded fingerprint:UserWarning:mhfp.encoder",
+    # [modelzoo.core]
+    # ignore potential UserWarnings stemming from minimal datasets used for testing
+    "ignore:The least populated class in y has only .* members, which is less than n_splits.*:UserWarning:sklearn.model_selection[.*]",
+    # allow RuntimeWarning sometimes raised deep into scipy when calculating prediction intervals for average regressor
+    "ignore:invalid value encountered in multiply:RuntimeWarning:scipy.stats._distn_infrastructure",
+    # [modelzoo.lightning]
+    # ignore unhandled deprecated usage of pkg_resources from lightning_utilities
+    "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
+    "ignore:distutils Version classes are deprecated. Use packaging.version instead:DeprecationWarning",
+    "ignore:Deprecated call to:DeprecationWarning",
+    # allow PossibleUserWarnings during training
+    "ignore:The .* does not have many workers which may be a bottleneck",
+    "ignore:The number of training batches .* is smaller than the logging interval",
+    "ignore:Total length of `dict` across ranks is zero. Please make sure this was your intention:UserWarning",
+    "ignore: Starting from v1.9.0, `tensorboardX` has been removed as a dependency of the `lightning.pytorch` package:UserWarning",
+    # [modelzoo.mapie]
+    # ignore unhandled DataConversionWarning raised internally by mapie
+    "ignore:A column-vector y was passed when a 1d array was expected. Please change the shape of y::sklearn.utils.validation",
+    # allow our own warning when loading a pre-trained MAPIE model
+    "ignore:Model loaded with an unlinked input estimator. This is expected if loading a pre-trained MAPIE model:UserWarning:molflux.modelzoo.models.mapie.mapie_regressor",
+    # [modelzoo.pyod]
+    # allow UserWarning sometimes raised by pyod on training
+    "ignore:n_neighbors is set to the number of training points minus 1:UserWarning:pyod.models.abod",
+    # ignore unhandled FutureWarning raised internally by pyod
+    "ignore:The default value of `n_init` will change:FutureWarning",
+    # allow sklearn.exceptions.ConvergenceWarning sometimes raised internally by pyod during training stemming from mock test data
+    "ignore:Number of distinct clusters .* found smaller than n_clusters",
+    # ignore UserWarning sometimes raised internally by pyod during training stemming from mock test data
+    "ignore:The chosen clustering for CBLOF forms .* clusterswhich is inconsistent with n_clusters:UserWarning:pyod.models.cblof",
+    # allow internal RuntimeWarning pyod warnings
+    "ignore:divide by zero encountered in scalar divide:RuntimeWarning:pyod.models.cblof",
+    "ignore:invalid value encountered in scalar divide:RuntimeWarning:pyod.models.cblof",
+    "ignore:Degrees of freedom <= 0 for slice:RuntimeWarning",
+    "ignore:invalid value encountered in divide:RuntimeWarning",
+    "ignore:invalid value encountered in scalar divide:RuntimeWarning",
+    # [modelzoo.pystan]
+    # ignore unhandled internal marshmallow warning raised by pystan
+    "ignore:The 'missing' argument to fields is deprecated. Use 'load_default' instead::marshmallow.fields",
+    # ignore unhandled internal aiohttp warning raised by pystan
+    "ignore:It is recommended to use web.AppKey instances for keys",
+    # ignore unhandled internal pystan DeprecationWarnings
+    "ignore:.* is deprecated:DeprecationWarning",
+    # [modelzoo.sklearn]
+    # ignore ConvergenceWarnings during tests
+    "ignore:Stochastic Optimizer.*Maximum iterations (.*) reached and the optimization hasn't converged yet",
+    # [modelzoo.xgboost]
+    # ignore unhandled internal FutureWarning triggered by xgboost on python 3.8
+    "ignore:elementwise comparison failed; returning scalar instead:FutureWarning:xgboost.sklearn",
+    # ignore warnings about constant input arrays
+    "ignore:An input array is constant; the correlation coefficient is not defined",
+    # ignore speed
+    "ignore:The iteration is not making good progress",
+]
 log_cli = true
 log_cli_level = "WARNING"
 log_cli_format = "%(levelname)s:%(name)s: %(message)s"
@@ -386,9 +456,11 @@ norecursedirs = [
     'tests/*/*/mock_data',
 ]
 testpaths = ['src', 'tests']
+xfail_strict = true
 
 [tool.ruff]
 cache-dir = ".cache/ruff"
+extend-exclude = ["src/molflux/version.py"]  # dynamically generated
 line-length = 88
 src = ["src/molflux", "tests"]
 namespace-packages = ["src/molflux"]
@@ -436,6 +508,9 @@ ignore = ["E501", "S101", "PD901", "PD003"]
 "docs/source/conf.py" = ["ERA"]
 "src/molflux/__init__.py" = ["F401"]
 "src/molflux/*/__init__.py" = ["F401"]
+"src/molflux/metrics/classification/*" = ["PLR0913"]
+"src/molflux/metrics/regression/*" = ["PLR0913"]
+"src/molflux/metrics/uncertainty/*" = ["PLR0913"]
 "tests/*" = ["ARG001", "D", "S101", "PLR2004"]
 "noxfile.py" = ["T201"]
 

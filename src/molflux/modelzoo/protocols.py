@@ -1,11 +1,13 @@
 from typing import Any, Dict, Protocol, Tuple, Union, runtime_checkable
 
+from typing_extensions import TypeGuard
+
 from molflux.modelzoo.typing import Classes, DataFrameLike, Features, PredictionResult
 
 
 @runtime_checkable
 class Estimator(Protocol):
-    """The public protocol for exs-modelzoo Models."""
+    """The public protocol for molflux modelzoo Models."""
 
     def __init__(self, **kwargs: Any):
         """Initialises the model."""
@@ -52,7 +54,7 @@ class Estimator(Protocol):
 
 
 @runtime_checkable
-class SupportsClassification(Protocol):
+class SupportsClassification(Estimator, Protocol):
     @property
     def classes(self) -> Classes:
         """Returns the model's unique class labels"""
@@ -62,15 +64,19 @@ class SupportsClassification(Protocol):
 
 
 @runtime_checkable
-class SupportsUncertaintyCalibration(Protocol):
-    """The public protocol for Models supporting uncertainty calibrations."""
+class SupportsCovariance(Estimator, Protocol):
+    """The public protocol for Models supporting covariance matrix for multivariate predictions."""
 
-    def calibrate_uncertainty(self, data: DataFrameLike, **kwargs: Any) -> Any:
-        """Calibrates the uncertainty of predictions on a validation dataset"""
+    def predict_with_covariance(
+        self,
+        data: DataFrameLike,
+        **kwargs: Any,
+    ) -> Tuple[PredictionResult, PredictionResult]:
+        """Performs a model prediction with associated covariance matrix."""
 
 
 @runtime_checkable
-class SupportsPredictionInterval(Protocol):
+class SupportsPredictionInterval(Estimator, Protocol):
     """The public protocol for Models supporting prediction interval."""
 
     def predict_with_prediction_interval(
@@ -83,19 +89,7 @@ class SupportsPredictionInterval(Protocol):
 
 
 @runtime_checkable
-class SupportsStandardDeviation(Protocol):
-    """The public protocol for Models supporting standard deviation."""
-
-    def predict_with_std(
-        self,
-        data: DataFrameLike,
-        **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
-        """Performs a model prediction with associated standard deviation."""
-
-
-@runtime_checkable
-class SupportsSampling(Protocol):
+class SupportsSampling(Estimator, Protocol):
     """The public protocol for Models supporting sampling."""
 
     def sample(
@@ -107,45 +101,65 @@ class SupportsSampling(Protocol):
         """Performs a model prediction with associated samples"""
 
 
-def supports_classification(model: Any) -> bool:
+@runtime_checkable
+class SupportsStandardDeviation(Estimator, Protocol):
+    """The public protocol for Models supporting standard deviation."""
+
+    def predict_with_std(
+        self,
+        data: DataFrameLike,
+        **kwargs: Any,
+    ) -> Tuple[PredictionResult, PredictionResult]:
+        """Performs a model prediction with associated standard deviation."""
+
+
+@runtime_checkable
+class SupportsUncertaintyCalibration(Estimator, Protocol):
+    """The public protocol for Models supporting uncertainty calibrations."""
+
+    def calibrate_uncertainty(self, data: DataFrameLike, **kwargs: Any) -> Any:
+        """Calibrates the uncertainty of predictions on a validation dataset"""
+
+
+def supports_classification(model: Any) -> TypeGuard[SupportsClassification]:
     """Returns True if the given model is a classifier."""
     return isinstance(model, SupportsClassification)
 
 
-def supports_uncertainty_calibration(model: Any) -> bool:
-    """Return True if the given model supports uncertainty calibration."""
-    return isinstance(model, SupportsUncertaintyCalibration)
+def supports_covariance(model: Any) -> TypeGuard[SupportsCovariance]:
+    """Return True if the given model supports covariance."""
+    return isinstance(model, SupportsCovariance)
 
 
-def supports_prediction_interval(model: Any) -> bool:
+def supports_prediction_interval(model: Any) -> TypeGuard[SupportsPredictionInterval]:
     """Return True if the given model supports prediction interval"""
     return isinstance(model, SupportsPredictionInterval)
 
 
-def supports_std(model: Any) -> bool:
-    """Return True if the given model supports standard deviation."""
-    return isinstance(model, SupportsStandardDeviation)
-
-
-def supports_sampling(model: Any) -> bool:
+def supports_sampling(model: Any) -> TypeGuard[SupportsSampling]:
     """Return True if the given model supports sampling."""
     return isinstance(model, SupportsSampling)
 
 
-@runtime_checkable
-class Classifier(Estimator, SupportsClassification, Protocol):
-    ...
+def supports_std(model: Any) -> TypeGuard[SupportsStandardDeviation]:
+    """Return True if the given model supports standard deviation."""
+    return isinstance(model, SupportsStandardDeviation)
 
 
-@runtime_checkable
-class UncertaintyEstimator(
+def supports_uncertainty_calibration(
+    model: Any,
+) -> TypeGuard[SupportsUncertaintyCalibration]:
+    """Return True if the given model supports uncertainty calibration."""
+    return isinstance(model, SupportsUncertaintyCalibration)
+
+
+Model = Union[
     Estimator,
-    SupportsUncertaintyCalibration,
+    SupportsClassification,
+    SupportsCovariance,
     SupportsPredictionInterval,
-    Protocol,
-):
-    ...
-
-
-Model = Union[Estimator, Classifier, UncertaintyEstimator]
+    SupportsSampling,
+    SupportsStandardDeviation,
+    SupportsUncertaintyCalibration,
+]
 Models = Dict[str, Model]

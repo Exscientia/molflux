@@ -90,6 +90,9 @@ def test_multiclass_none_average(fixture_metric):
     np.testing.assert_allclose([2 / 3, 0, 0], result["precision"])
 
 
+@pytest.mark.filterwarnings(
+    "ignore:Precision is ill-defined and being set to 0.0 in labels with no predicted samples:sklearn.exceptions.UndefinedMetricWarning",
+)
 def test_zero_division_zero(fixture_metric):
     """Returns zero on a zero division (when all predictions amd labels are negative)."""
     metric = fixture_metric

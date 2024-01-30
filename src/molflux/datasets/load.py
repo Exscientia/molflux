@@ -47,6 +47,8 @@ def load_dataset_builder(
     is_custom_builder = name in BUILDERS_CATALOGUE
     if is_custom_builder:
         name = get_dataset_builder_path(name)
+        # ensure Datasets is allowed to execute the loading script by default
+        kwargs = {"trust_remote_code": True, **kwargs}
 
     with warnings.catch_warnings():
         # for our custom builders, ignore warning from missing huggingface hub repo card metadata [MLOPS-1125]
@@ -150,13 +152,15 @@ def load_dataset(
         The dataset requested.
     """
 
-    # Check first if this is a custom builder name, and resolve path
+    # Check first if this is a custom builder name, and resolve path to loading script
     is_custom_builder = name in BUILDERS_CATALOGUE
     if is_custom_builder:
         name = get_dataset_builder_path(name)
+        # ensure Datasets is allowed to execute the loading script by default
+        kwargs = {"trust_remote_code": True, **kwargs}
 
     with warnings.catch_warnings():
-        # for our custom builders, ignore warning from missing huggingface hub repo card metadata [MLOPS-1125]
+        # for our custom builders, ignore warning from missing huggingface hub repo card metadata
         if is_custom_builder:
             warnings.filterwarnings(
                 "ignore",
@@ -164,6 +168,14 @@ def load_dataset(
                 category=UserWarning,
                 module="huggingface_hub.repocard",
             )
+
+        # Do not pass through unhandled deprecation warnings from dependencies of hf datasets themselves
+        warnings.filterwarnings(
+            "ignore",
+            message="The .* keyword in pd.read_csv is deprecated and will be removed in a future version",
+            category=FutureWarning,
+            module="datasets[.*]",
+        )
         return datasets.load_dataset(
             path=name,
             name=config_name,

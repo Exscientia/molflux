@@ -110,7 +110,7 @@ def compute_scores(
 
     # Empty splits will have returned empty scores dicts
     # backfill them with metrics names and None scores
-    metrics_names = [
+    metrics_names = [  # noqa
         list(task_scores.keys())
         for tasks_scores in fold_scores.values()
         for task_scores in tasks_scores.values()

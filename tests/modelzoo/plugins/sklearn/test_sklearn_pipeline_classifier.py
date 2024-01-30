@@ -12,7 +12,7 @@ from molflux.modelzoo.load import load_model
 from molflux.modelzoo.models.sklearn.sklearn_pipeline.sklearn_pipeline_classifier import (
     SklearnPipelineClassifier,
 )
-from molflux.modelzoo.protocols import Classifier, Estimator, Model
+from molflux.modelzoo.protocols import Estimator, Model, SupportsClassification
 from molflux.modelzoo.typing import DataFrameLike
 
 model_name = "sklearn_pipeline_classifier"
@@ -156,7 +156,7 @@ def test_implements_protocol(model_fixture, request):
     """That the model implements the public Estimator protocol."""
     model = request.getfixturevalue(model_fixture)
     assert isinstance(model, Estimator)
-    assert isinstance(model, Classifier)
+    assert isinstance(model, SupportsClassification)
 
 
 @pytest.mark.parametrize(
