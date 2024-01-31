@@ -10,6 +10,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---------------------------------------------------------
 
+## [0.2.0] - 2024-01-31
+
+## Changed
+
+- Updated the `spice` dataset from 1.1.1 to 1.1.4
+
+## Fixed
+
+- Patch bug with multiproc and Sequence features of fixed length
+
 ## [0.1.0] - 2023-01-29
 
 ## Added

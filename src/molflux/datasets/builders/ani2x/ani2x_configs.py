@@ -52,7 +52,7 @@ FEATURES = {
         "energies": datasets.Value("float64"),
         "dipoles": datasets.Sequence(
             datasets.Value("float64"),
-            length=3,
+            length=-1,
         ),
         "mbis_atomic_charges": datasets.Sequence(
             datasets.Value("float64"),
@@ -80,7 +80,7 @@ FEATURES = {
         "energies": datasets.Value("float64"),
         "dipoles": datasets.Sequence(
             datasets.Value("float64"),
-            length=3,
+            length=-1,
         ),
         "wB97M_def2-TZVPP.scf-energies": datasets.Value("float64"),
         "D3.energy-corrections": datasets.Value("float64"),
@@ -90,7 +90,7 @@ FEATURES = {
         "energies": datasets.Value("float64"),
         "dipoles": datasets.Sequence(
             datasets.Value("float64"),
-            length=3,
+            length=-1,
         ),
         "wB97M_def2-TZVPP.scf-energies": datasets.Value("float64"),
         "VV10.energy-corrections": datasets.Value("float64"),
@@ -109,7 +109,7 @@ FEATURES = {
         ),
         "dipole": datasets.Sequence(
             datasets.Value("float64"),
-            length=3,
+            length=-1,
         ),
         "D3.energy-corrections": datasets.Value("float64"),
         "D3.force-corrections": datasets.Sequence(
