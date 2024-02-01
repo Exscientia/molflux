@@ -6,7 +6,7 @@ import h5py
 import datasets
 from molflux.datasets.typing import ExamplesGenerator
 
-_BASE_URL = "https://github.com/openmm/spice-dataset/releases/download/1.1.1/SPICE.hdf5"
+_BASE_URL = "https://zenodo.org/records/8222043/files/SPICE-1.1.4.hdf5?download=1"
 
 _HOMEPAGE = "https://github.com/openmm/spice-dataset"
 
@@ -61,6 +61,86 @@ class SPICE(datasets.GeneratorBasedBuilder):
                     "formation_energy": datasets.Value("float64"),
                     "smiles": datasets.Value("string"),
                     "subset": datasets.Value("string"),
+                    "mbis_charges": datasets.Sequence(
+                        feature=datasets.Sequence(
+                            feature=datasets.Value(dtype="float64", id=None),
+                            length=-1,
+                            id=None,
+                        ),
+                        length=-1,
+                        id=None,
+                    ),
+                    "mbis_dipoles": datasets.Sequence(
+                        feature=datasets.Sequence(
+                            feature=datasets.Value(dtype="float64", id=None),
+                            length=-1,
+                            id=None,
+                        ),
+                        length=-1,
+                        id=None,
+                    ),
+                    "mbis_quadrupoles": datasets.Sequence(
+                        feature=datasets.Sequence(
+                            feature=datasets.Sequence(
+                                feature=datasets.Value(dtype="float64", id=None),
+                                length=-1,
+                                id=None,
+                            ),
+                            length=-1,
+                            id=None,
+                        ),
+                        length=-1,
+                        id=None,
+                    ),
+                    "mbis_octupoles": datasets.Sequence(
+                        feature=datasets.Sequence(
+                            feature=datasets.Sequence(
+                                feature=datasets.Sequence(
+                                    feature=datasets.Value(dtype="float64", id=None),
+                                    length=-1,
+                                    id=None,
+                                ),
+                                length=-1,
+                                id=None,
+                            ),
+                            length=-1,
+                            id=None,
+                        ),
+                        length=-1,
+                        id=None,
+                    ),
+                    "scf_dipole": datasets.Sequence(
+                        feature=datasets.Value(dtype="float64", id=None),
+                        length=-1,
+                        id=None,
+                    ),
+                    "scf_quadrupole": datasets.Sequence(
+                        feature=datasets.Sequence(
+                            feature=datasets.Value(dtype="float64", id=None),
+                            length=-1,
+                            id=None,
+                        ),
+                        length=-1,
+                        id=None,
+                    ),
+                    "mayer_indices": datasets.Sequence(
+                        feature=datasets.Sequence(
+                            feature=datasets.Value(dtype="int64", id=None),
+                            length=-1,
+                            id=None,
+                        ),
+                        length=-1,
+                        id=None,
+                    ),
+                    "wiberg_lowdin_indices": datasets.Sequence(
+                        feature=datasets.Sequence(
+                            feature=datasets.Value(dtype="int64", id=None),
+                            length=-1,
+                            id=None,
+                        ),
+                        length=-1,
+                        id=None,
+                    ),
                 },
             ),
             homepage=_HOMEPAGE,
@@ -177,6 +257,10 @@ class SPICE(datasets.GeneratorBasedBuilder):
                 example_dict["smiles"] = chemical_formula_id_smiles
                 example_dict["subset"] = chemical_formula_id_subset
 
+                # not all subsets have all the columns, fill in with None
+                for k in self.info.features:
+                    if k not in example_dict:
+                        example_dict[k] = None
                 yield index, example_dict
 
     def _generate_examples_rdkit(
@@ -270,4 +354,8 @@ class SPICE(datasets.GeneratorBasedBuilder):
                 example_dict["smiles"] = chemical_formula_id_smiles
                 example_dict["subset"] = chemical_formula_id_subset
 
+                # not all subsets have all the columns, fill in with None
+                for k in self.info.features:
+                    if k not in example_dict:
+                        example_dict[k] = None
                 yield index, example_dict
