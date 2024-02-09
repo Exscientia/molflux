@@ -10,6 +10,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---------------------------------------------------------
 
+## [0.3.0] - 2024-02-09
+
+## Changed
+
+- Upgraded `datasets>=2.17.0` which fixes a problem with flattening indices
+- Removed failure tests for flattening indices
+
+
 ## [0.2.0] - 2024-01-31
 
 ## Changed
