@@ -6,7 +6,7 @@
 #
 accessible-pygments==0.0.4
     # via pydata-sphinx-theme
-aiohttp==3.9.2
+aiohttp==3.9.3
     # via
     #   datasets
     #   fsspec
@@ -16,9 +16,9 @@ alabaster==0.7.13
     # via sphinx
 apeye==1.4.1
     # via sphinx-toolbox
-apeye-core==1.1.4
+apeye-core==1.1.5
     # via apeye
-appnope==0.1.3
+appnope==0.1.4
     # via
     #   ipykernel
     #   ipython
@@ -36,7 +36,7 @@ attrs==23.2.0
     #   sarif-om
 autodocsumm==0.2.12
     # via sphinx-toolbox
-aws-sam-translator==1.83.0
+aws-sam-translator==1.84.0
     # via cfn-lint
 aws-xray-sdk==2.12.1
     # via moto
@@ -52,30 +52,30 @@ beautifulsoup4==4.12.3
     #   sphinx-toolbox
 blinker==1.7.0
     # via flask
-boto3==1.34.29
+boto3==1.34.38
     # via
     #   aws-sam-translator
     #   cloudpathlib
     #   molflux (pyproject.toml)
     #   moto
-botocore==1.34.29
+botocore==1.34.38
     # via
     #   aws-xray-sdk
     #   boto3
     #   molflux (pyproject.toml)
     #   moto
     #   s3transfer
-cachecontrol==0.13.1
+cachecontrol==0.14.0
     # via
     #   cachecontrol
     #   sphinx-toolbox
 catboost==1.2.2
     # via molflux (pyproject.toml)
-certifi==2023.11.17
+certifi==2024.2.2
     # via requests
 cffi==1.16.0
     # via cryptography
-cfn-lint==0.85.0
+cfn-lint==0.85.1
     # via moto
 charset-normalizer==3.3.2
     # via requests
@@ -95,7 +95,7 @@ contourpy==1.1.1
     # via matplotlib
 coverage==7.4.1
     # via molflux (pyproject.toml)
-cryptography==42.0.1
+cryptography==42.0.2
     # via
     #   moto
     #   python-jose
@@ -104,17 +104,17 @@ cssutils==2.9.0
     # via dict2css
 cycler==0.12.1
     # via matplotlib
-datasets==2.16.1
+datasets==2.17.0
     # via
     #   evaluate
     #   molflux (pyproject.toml)
-debugpy==1.8.0
+debugpy==1.8.1
     # via ipykernel
 decorator==5.1.1
     # via ipython
 dict2css==0.3.0.post1
     # via sphinx-toolbox
-dill==0.3.7
+dill==0.3.8
     # via
     #   datasets
     #   evaluate
@@ -154,13 +154,13 @@ filelock==3.13.1
     #   datasets
     #   huggingface-hub
     #   sphinx-toolbox
-flask==3.0.1
+flask==3.0.2
     # via
     #   flask-cors
     #   moto
 flask-cors==4.0.0
     # via moto
-fonttools==4.47.2
+fonttools==4.48.1
     # via matplotlib
 frozenlist==1.4.1
     # via
@@ -208,14 +208,14 @@ importlib-resources==6.1.1
     #   openapi-spec-validator
 iniconfig==2.0.0
     # via pytest
-ipykernel==6.29.0
+ipykernel==6.29.2
     # via myst-nb
 ipython==8.12.3
     # via
     #   ipykernel
     #   ipywidgets
     #   myst-nb
-ipywidgets==8.1.1
+ipywidgets==8.1.2
     # via molflux (pyproject.toml)
 itsdangerous==2.1.2
     # via flask
@@ -273,7 +273,7 @@ jupyter-core==5.7.1
     #   jupyter-client
     #   nbclient
     #   nbformat
-jupyterlab-widgets==3.0.9
+jupyterlab-widgets==3.0.10
     # via ipywidgets
 jupytext==1.16.1
     # via molflux (pyproject.toml)
@@ -288,7 +288,7 @@ markdown-it-py==2.2.0
     #   jupytext
     #   mdit-py-plugins
     #   myst-parser
-markupsafe==2.1.4
+markupsafe==2.1.5
     # via
     #   jinja2
     #   sphinx-jinja2-compat
@@ -313,17 +313,17 @@ mock==5.1.0
     # via molflux (pyproject.toml)
 more-itertools==10.2.0
     # via molflux (pyproject.toml)
-moto==5.0.0
+moto==5.0.1
     # via molflux (pyproject.toml)
 mpmath==1.3.0
     # via sympy
 msgpack==1.0.7
     # via cachecontrol
-multidict==6.0.4
+multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-multiprocess==0.70.15
+multiprocess==0.70.16
     # via
     #   datasets
     #   evaluate
@@ -404,7 +404,7 @@ pillow==10.2.0
     #   rdkit
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==4.1.0
+platformdirs==4.2.0
     # via
     #   apeye
     #   jupyter-core
@@ -420,7 +420,7 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
-py-partiql-parser==0.5.0
+py-partiql-parser==0.5.1
     # via moto
 pyarrow==15.0.0
     # via
@@ -466,7 +466,7 @@ python-jose==3.3.0
     # via
     #   moto
     #   python-jose
-pytz==2023.4
+pytz==2024.1
     # via
     #   babel
     #   pandas
@@ -528,7 +528,7 @@ rpds-py==0.17.1
     #   referencing
 rsa==4.9
     # via python-jose
-ruamel-yaml==0.18.5
+ruamel-yaml==0.18.6
     # via sphinx-toolbox
 ruamel-yaml-clib==0.2.8
     # via ruamel-yaml
@@ -688,7 +688,7 @@ werkzeug==3.0.1
     #   moto
 wheel==0.42.0
     # via sphinx-togglebutton
-widgetsnbextension==4.0.9
+widgetsnbextension==4.0.10
     # via ipywidgets
 wrapt==1.16.0
     # via aws-xray-sdk
