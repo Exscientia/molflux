@@ -7,7 +7,7 @@ on:
     - cron: 0 0 * * *
 
 jobs:
-  tests-pinned:
+  tests-latest:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-      - name: Run pinned tests
+      - name: Run latest tests
         run: |
           pip install nox
           nox -s tests_run_latest-${{ matrix.python-version }}
