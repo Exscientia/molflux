@@ -32,7 +32,7 @@ empty_predict_df = pd.DataFrame([], columns=_X_FEATURES)
 
 @pytest.fixture(scope="function")
 def fixture_model() -> Model:
-    return load_model(model_name, x_features=_X_FEATURES)
+    return load_model(model_name, x_features=_X_FEATURES, alpha=0.5)
 
 
 def test_in_catalogue():
