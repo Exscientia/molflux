@@ -104,13 +104,6 @@ solver : {'newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'}, \
        summarazing solver/penalty supports.
 max_iter : int, default=100
     Maximum number of iterations taken for the solvers to converge.
-multi_class : {'auto', 'ovr', 'multinomial'}, default='auto'
-    If the option chosen is 'ovr', then a binary problem is fit for each
-    label. For 'multinomial' the loss minimised is the multinomial loss fit
-    across the entire probability distribution, *even when the data is
-    binary*. 'multinomial' is unavailable when solver='liblinear'.
-    'auto' selects 'ovr' if the data is binary, or if solver='liblinear',
-    and otherwise selects 'multinomial'.
 verbose : int, default=0
     For the liblinear and lbfgs solvers set verbose to any positive
     number for verbosity.
@@ -118,12 +111,6 @@ warm_start : bool, default=False
     When set to True, reuse the solution of the previous call to fit as
     initialization, otherwise, just erase the previous solution.
     Useless for liblinear solver.
-n_jobs : int, default=None
-    Number of CPU cores used when parallelizing over classes if
-    multi_class='ovr'". This parameter is ignored when the ``solver`` is
-    set to 'liblinear' regardless of whether 'multi_class' is specified or
-    not. ``None`` means 1 unless in a :obj:`joblib.parallel_backend`
-    context. ``-1`` means using all processors.
 l1_ratio : float, default=None
     The Elastic-Net mixing parameter, with ``0 <= l1_ratio <= 1``. Only
     used if ``penalty='elasticnet'``. Setting ``l1_ratio=0`` is equivalent
@@ -154,10 +141,8 @@ class LogisticRegressorConfig(ModelConfig):
     random_state: Optional[Union[int, RandomState]] = None
     solver: Solver = "lbfgs"
     max_iter: int = 100
-    multi_class: MultiClass = "auto"
     verbose: int = 0
     warm_start: bool = False
-    n_jobs: Optional[int] = None
     l1_ratio: Optional[float] = None
 
 
@@ -188,9 +173,7 @@ class LogisticRegressor(
             random_state=config.random_state,
             solver=config.solver,
             max_iter=config.max_iter,
-            multi_class=config.multi_class,
             verbose=config.verbose,
             warm_start=config.warm_start,
-            n_jobs=config.n_jobs,
             l1_ratio=config.l1_ratio,
         )
