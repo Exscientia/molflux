@@ -9,6 +9,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ---------------------------------------------------------
+## [0.4.0] - 2024-06-03
+
+## Removed
+
+- Drop parameter `multi_class` and `n_jobs` for `logistic_regressor` in anticipation of `numpy>=1.7` removal
 
 ## [0.3.0] - 2024-02-09
 
