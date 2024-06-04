@@ -87,6 +87,9 @@ pystan = [
 sklearn = [
     'scikit-learn>=1.2.1',
 ]
+tdc = [
+    'PyTDC'
+]
 xgboost = [
     'scikit-learn>=1.2.1',
     'xgboost<2.0.0',  # flip pin once codebase upgraded to new >= 2.0.0 API
@@ -139,6 +142,7 @@ ani2x = 'molflux.datasets.builders.ani2x.ani2x'
 gdb9 = 'molflux.datasets.builders.gdb9.gdb9'
 pcqm4m_v2 = 'molflux.datasets.builders.pcqm4m_v2.pcqm4m_v2'
 spice = 'molflux.datasets.builders.spice.spice'
+tdc_admet_benchmarks = 'molflux.datasets.builders.tdc.tdc_admet'
 
 ### Features entry points
 
