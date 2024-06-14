@@ -38,7 +38,7 @@ def test_default_compute(fixture_representation):
     samples = [
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
     ]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [10]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -51,7 +51,7 @@ def test_batch_compute(fixture_representation):
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
         "CC",
     ]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [10, 0]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -63,7 +63,7 @@ def test_default_digitise(fixture_representation):
     samples = [
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
     ]
-    result = representation.featurise(samples=samples, digitise=True)
+    result = representation.featurise(samples, digitise=True)
     expected_result = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]]
     assert representation_name in result
     assert result[representation_name] == expected_result

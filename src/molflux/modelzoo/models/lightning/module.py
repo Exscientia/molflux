@@ -5,12 +5,10 @@ from lightning.pytorch.utilities.types import _METRIC
 from typing_extensions import TypeAlias
 
 from molflux.modelzoo.models.lightning.config import LightningConfig
-from molflux.modelzoo.models.lightning.trainer.optimizers.stock_optimizers import (
-    AVAILABLE_OPTIMIZERS,
-)
 
 try:
     import torch
+    from class_resolver.contrib.torch import optimizer_resolver
     from lightning.pytorch import LightningModule
     from lightning.pytorch.utilities import grad_norm
 except ImportError as e:
@@ -150,9 +148,10 @@ class LightningModuleBase(LightningModule):
             raise ValueError("Optimizer must be specified in model config.")
 
         optimizer_config = self.model_config.optimizer
-        optimizer = AVAILABLE_OPTIMIZERS[optimizer_config.name](
-            filter(lambda p: p.requires_grad, self.parameters()),
+        optimizer = optimizer_resolver.make(
+            optimizer_config.name,
             **optimizer_config.config,
+            params=filter(lambda p: p.requires_grad, self.parameters()),
         )
         out: Dict[str, Any] = {"optimizer": optimizer}
 

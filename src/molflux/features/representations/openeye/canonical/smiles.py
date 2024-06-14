@@ -10,8 +10,8 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.openeye._utils import smiles_from_oemol, to_oemol
 from molflux.features.representations.openeye.canonical._utils import standardise_oemol
-from molflux.features.typing import ArrayLike
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.typing import MolArray
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 A canonical SMILES representation.
@@ -26,7 +26,7 @@ class CanonicalSmiles(RepresentationBase):
 
     def _featurise(
         self,
-        samples: ArrayLike,
+        *columns: MolArray,
         strip_salts: bool = False,
         set_neutral_ph: bool = False,
         reasonable_protomer: bool = False,
@@ -112,6 +112,10 @@ class CanonicalSmiles(RepresentationBase):
             >>> representation.featurise(samples)
             {'canonical_smiles': ['CCCC']}
         """
+
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
+
         canonical_smiles = []
         flavor = oechem.OEGetDefaultOFlavor(oechem.OEFormat_SMI)
         if explicit_h:

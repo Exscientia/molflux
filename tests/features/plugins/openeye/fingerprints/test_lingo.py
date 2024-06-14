@@ -36,7 +36,7 @@ def test_default_compute(fixture_representation):
     samples = [
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
     ]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [
         [
             1,
@@ -652,7 +652,7 @@ def test_batch_compute(fixture_representation):
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
         "CC",
     ]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [
         [
             1,
@@ -1273,6 +1273,6 @@ def test_empty_smiles_fingerprint_handling(fixture_representation):
     """
     representation = fixture_representation
     samples = [""]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     fingerprint = result[representation_name][0]
     assert fingerprint == [0]

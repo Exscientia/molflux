@@ -41,7 +41,7 @@ def test_default_compute(fixture_representation):
     samples = [
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
     ]
-    result = representation.featurise(samples=samples, n_permutations=32, seed=42)
+    result = representation.featurise(samples, n_permutations=32, seed=42)
     expected_result = [
         4020624,
         9980344,

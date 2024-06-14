@@ -39,6 +39,7 @@ class Estimator(Protocol):
     def train(
         self,
         train_data: Union[DataFrameLike, Dict[str, DataFrameLike]],
+        validation_data: Union[DataFrameLike, Dict[str, DataFrameLike], None] = None,
         **kwargs: Any,
     ) -> Any:
         """Trains the model."""

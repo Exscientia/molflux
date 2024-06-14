@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Type, Union
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.model import ModelConfig
@@ -77,7 +77,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class KernelRidgeConfig(ModelConfig):
     alpha: Union[float, List[float]] = 1.0
     kernel: str = "linear"

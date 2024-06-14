@@ -26,8 +26,10 @@ classifiers = [
 dynamic = ['version']
 
 dependencies = [
-    'boto3',
-    'botocore',
+    'botocore>=1.28.16',
+    'boto3>=1.28.16',
+    'urllib3>=1.25.4,<1.27; python_version<"3.10"',  # not strictly required - remove once boto>=1.34.0
+    'urllib3>=1.25.4,<2.1; python_version>="3.10"',  # not strictly required - remove once boto>=1.34.0
     'cloudpathlib[s3]',
     'colorama',
     'datasets>=2.17.0',
@@ -40,7 +42,7 @@ dependencies = [
     'numpy<2.0.0',
     'pandas',
     'pyarrow>=11.0.0',
-    'pydantic>=1.9.0,<2.0.0',
+    'pydantic>=1.10.15,<3',
     'python-dateutil',
     'pyyaml',
     'qlient',
@@ -71,8 +73,9 @@ ensemble = [
     'scikit-learn>=1.2.1',
 ]
 lightning = [
-    'torch>=2.0,<2.1',
-    'lightning>=2.1'
+    'torch>=2.0',
+    'lightning>=2.1',
+    'class_resolver',
 ]
 mapie = [
     'mapie',
@@ -83,7 +86,7 @@ pyod = [
     'pyod',
 ]
 pystan = [
-    'pystan',
+    'pystan>=3',
 ]
 sklearn = [
     'scikit-learn>=1.2.1',
@@ -147,6 +150,7 @@ spice = 'molflux.datasets.builders.spice.spice'
 # generic
 exploded = 'molflux.features.representations.core.generic.exploded:Exploded'
 character_count = 'molflux.features.representations.core.generic.character_count:CharacterCount'
+sum = 'molflux.features.representations.core.generic.sum:Sum'
 
 [project.entry-points.'molflux.features.plugins.openeye']
 # canonical
@@ -169,8 +173,6 @@ path = 'molflux.features.representations.openeye.fingerprints.path:Path'
 tree = 'molflux.features.representations.openeye.fingerprints.tree:Tree'
 # shape
 hermite = 'molflux.features.representations.openeye.shape.hermite:Hermite'
-# sd
-sd_feature = 'molflux.features.representations.openeye.sd.sd_feature:SDFeature'
 
 
 [project.entry-points.'molflux.features.plugins.rdkit']
@@ -204,6 +206,7 @@ k_fold = 'molflux.splits.strategies.core.k_fold:KFold'
 leave_one_group_out = 'molflux.splits.strategies.core.leave_one_group_out:LeaveOneGroupOut'
 leave_p_groups_out = 'molflux.splits.strategies.core.leave_p_groups_out:LeavePGroupsOut'
 linear_split = 'molflux.splits.strategies.core.linear_split:LinearSplit'
+linear_split_with_rotation = 'molflux.splits.strategies.core.linear_split_with_rotation:LinearSplitWithRotation'
 shuffle_split = 'molflux.splits.strategies.core.shuffle_split:ShuffleSplit'
 stratified_k_fold = 'molflux.splits.strategies.core.stratified_k_fold:StratifiedKFold'
 stratified_shuffle_split = 'molflux.splits.strategies.core.stratified_shuffle_split:StratifiedShuffleSplit'
@@ -250,6 +253,7 @@ pca_detector = 'molflux.modelzoo.models.pyod.pca_detector:PCADetector'
 
 [project.entry-points.'molflux.modelzoo.plugins.pystan']
 sparse_linear_regressor = 'molflux.modelzoo.models.pystan.sparse_linear_regressor:SparseLinearRegressor'
+ordinal_classifier = 'molflux.modelzoo.models.pystan.ordinal_classifier:OrdinalClassifier'
 
 [project.entry-points.'molflux.modelzoo.plugins.sklearn']
 corrected_nb_classifier = 'molflux.modelzoo.models.sklearn.corrected_nb_classifier:CorrectedNBClassifier'
@@ -314,6 +318,7 @@ spearman = 'molflux.metrics.regression.spearman:Spearman'
 [project.entry-points.'molflux.metrics.plugins.uncertainty']
 coefficient_of_variation = 'molflux.metrics.uncertainty.coefficient_of_variation:CoefficientOfVariation'
 expected_calibration_error = 'molflux.metrics.uncertainty.expected_calibration_error:ExpectedCalibrationError'
+calibration_gap = 'molflux.metrics.uncertainty.calibration_gap:CalibrationGap'
 gaussian_nll = 'molflux.metrics.uncertainty.gaussian_nll:GaussianNLL'
 prediction_interval_coverage = 'molflux.metrics.uncertainty.prediction_interval_coverage:PredictionIntervalCoverage'
 prediction_interval_width = 'molflux.metrics.uncertainty.prediction_interval_width:PredictionIntervalWidth'
@@ -406,6 +411,7 @@ filterwarnings = [
     "ignore:The number of training batches .* is smaller than the logging interval",
     "ignore:Total length of `dict` across ranks is zero. Please make sure this was your intention:UserWarning",
     "ignore: Starting from v1.9.0, `tensorboardX` has been removed as a dependency of the `lightning.pytorch` package:UserWarning",
+    "ignore: GPU available but not used.",
     # [modelzoo.mapie]
     # ignore unhandled DataConversionWarning raised internally by mapie
     "ignore:A column-vector y was passed when a 1d array was expected. Please change the shape of y::sklearn.utils.validation",

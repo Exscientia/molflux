@@ -1,6 +1,6 @@
 import inspect
 from contextlib import contextmanager
-from typing import Any, Callable, Iterator, Union
+from typing import Any, Callable, Iterator, List, Union
 
 import numpy as np
 
@@ -134,3 +134,9 @@ def get_concatenated_array(
         raise RuntimeError("Features must either be scalars or 1-dimensional!")
 
     return np.column_stack(arrays)
+
+
+def format_wrapped_model_tag(tag: str, wrapped_tags: List[str]) -> str:
+    """Ensure more informative naming of model tags."""
+    wrapped_models_tags = ":".join(wrapped_tags)
+    return f"{tag}[{wrapped_models_tags}]"

@@ -14,7 +14,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import Fingerprint, MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 Layered fingerprint for a molecule.
@@ -42,7 +42,7 @@ class Layered(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         layer_flags: int = 0xFFFFFFFF,
         min_path: int = 1,
         max_path: int = 7,
@@ -95,7 +95,8 @@ class Layered(RepresentationBase):
             >>> representation.featurise(samples, fp_size=16)
             {'layered': [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1]]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         layered_fp_list: List[List] = []
         for sample in samples:
             with featurisation_error_harness(sample):

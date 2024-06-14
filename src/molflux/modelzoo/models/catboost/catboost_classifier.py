@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Type, Union
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 import datasets
 
@@ -155,7 +155,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class CatBoostClassifierConfig(ModelConfig):
     iterations: Optional[int] = None
     learning_rate: Optional[float] = None

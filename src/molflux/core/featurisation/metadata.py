@@ -5,7 +5,7 @@ import os
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from cloudpathlib import AnyPath
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 
 from molflux.core.environment import pip_working_set
 from molflux.core.io import save_dict_to_json
@@ -37,9 +37,20 @@ class FeaturisationMetadataV1(BaseModel):
     runtime: Dict[str, Any] = Field(default_factory=pip_working_set)
 
 
+class ColumnFeaturisationConfigV2(BaseModel):
+    columns: List[str]
+    representations: List[RepresentationConfig]
+
+
+class FeaturisationMetadataV2(BaseModel):
+    version: int = Field(2, const=True)
+    config: List[ColumnFeaturisationConfigV2] = Field(default_factory=list)
+    runtime: Dict[str, Any] = Field(default_factory=pip_working_set)
+
+
 def _placeholder_featurisation_metadata() -> Dict[str, Any]:
     """Returns an empty placeholder featurisation metadata payload"""
-    return FeaturisationMetadataV1().dict(
+    return FeaturisationMetadataV2(version=2).dict(
         exclude_defaults=False,
         exclude_unset=False,
         exclude_none=False,
@@ -57,8 +68,8 @@ def parse_featurisation_metadata(
     version = featurisation_metadata["version"]
     if version == 1:
         metadata = FeaturisationMetadataV1(**featurisation_metadata).dict(by_alias=True)
-    # elif version == 2:
-    #   ...
+    elif version == 2:
+        metadata = FeaturisationMetadataV2(**featurisation_metadata).dict(by_alias=True)
     else:
         raise NotImplementedError(
             f"Unsupported featurisation metadata version: {version!r}",

@@ -25,3 +25,11 @@ class ExtrasDependencyImportError(Exception):
             + f"$ {Style.BRIGHT + Fore.GREEN}pip install 'molflux[{extras_type}]'{Style.RESET_ALL}"
         )
         super().__init__(message)
+
+
+class InvalidNumberOfPositionalArgs(Exception):
+    """Raisable when the expected and actual number of columns in a representation featurise call differ"""
+
+    def __init__(self, expected_size: int, actual_size: int):
+        msg = f"Error processing *columns within the featuriser - {expected_size} positional arguments expected, {actual_size} received"
+        super().__init__(msg)

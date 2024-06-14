@@ -1,8 +1,7 @@
 from typing import Any, Dict, Iterable, List, Literal
 
-import pydantic
 import yaml
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field, ValidationError
 
 from molflux.modelzoo.typing import PathLike
 
@@ -22,7 +21,7 @@ def dict_parser(dictionary: Dict[str, Any]) -> Spec:
     """Parses a dictionary into a spec."""
     try:
         return Spec(**dictionary)
-    except pydantic.ValidationError as e:
+    except ValidationError as e:
         raise SyntaxError("Dictionary not conform with expected schema") from e
 
 
@@ -46,7 +45,7 @@ def yaml_parser(path: PathLike) -> Iterable[Spec]:
                         f"Yaml config schema not available: {config.version}",
                     )
 
-            except pydantic.ValidationError:
+            except ValidationError:
                 pass
 
     raise FileNotFoundError(f"Could not find valid document in file: {path}")

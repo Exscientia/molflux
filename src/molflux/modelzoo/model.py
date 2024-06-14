@@ -5,12 +5,13 @@ import inspect
 import logging
 import os
 import pickle
+import warnings
 from abc import ABC, abstractmethod
 from dataclasses import field
 from functools import cached_property
 from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from datasets import Dataset, concatenate_datasets
 from molflux.modelzoo.errors import NotTrainedError
@@ -34,7 +35,7 @@ from molflux.version import version as __version__
 logger = logging.getLogger(__name__)
 
 
-@dataclass
+@dataclasses.dataclass
 class ModelConfig:
     x_features: Features = field(default_factory=list)
     y_features: Features = field(default_factory=list)
@@ -162,48 +163,93 @@ class ModelBase(Generic[_ModelConfigT], ABC):
     def train(
         self,
         train_data: Union[DataFrameLike, Dict[Optional[str], DataFrameLike]],
+        validation_data: Union[
+            DataFrameLike,
+            Dict[Optional[str], DataFrameLike],
+            None,
+        ] = None,
         **kwargs: Any,
     ) -> Any:
         """Trains the model."""
 
+        all_data = {"train_data": train_data}
+
         if self._train_multi_data_enabled:
-            # if passed a single dataset, convert to dict
-            if not isinstance(train_data, dict):
-                train_data = {None: train_data}
+            # safe support for optional validation_data used e.g. by Lightning models
+            if validation_data is not None:
+                try:
+                    raise_on_unrecognised_parameters(
+                        self._train_multi_data,
+                        validation_data=validation_data,
+                    )
+                    all_data["validation_data"] = validation_data
+                except ValueError:
+                    warnings.warn(
+                        "Validation data not supported for this model type. It will not propagate to _train_multi_data.",
+                        UserWarning,
+                        stacklevel=2,
+                    )
 
-            # make sure data is a datasets.Dataset
-            train_datasets = {
-                k: hf_dataset_from_dataframe(v) for k, v in train_data.items()
-            }
+            all_multi_datasets: Dict[str, Dict[Union[str, None], Dataset]] = {}
+            for split, data in all_data.items():
+                # if passed a single dataset, convert to dict
+                if not isinstance(data, dict):
+                    data = {None: data}
 
-            # make sure dataset has required features
-            for name, dataset in train_datasets.items():
-                validate_features(
-                    dataset,
-                    self.model_config.resolve_train_features(name),
-                )
+                # make sure data is a datasets.Dataset
+                datasets = {k: hf_dataset_from_dataframe(v) for k, v in data.items()}
+
+                # make sure dataset has required features
+                # NOTE ensures that train_features are present in the validation dataset, too
+                for name, dataset in datasets.items():
+                    validate_features(
+                        dataset,
+                        self.model_config.resolve_train_features(name),
+                    )
+
+                all_multi_datasets[split] = datasets
 
             # Safeguard against invalid kwargs
             raise_on_unrecognised_parameters(self._train_multi_data, **kwargs)
 
-            return self._train_multi_data(train_data=train_datasets, **kwargs)
+            return self._train_multi_data(**all_multi_datasets, **kwargs)
 
         else:
-            if isinstance(train_data, dict):
-                train_dataset = concatenate_datasets(
-                    [
-                        hf_dataset_from_dataframe(dataset)
-                        for dataset in train_data.values()
-                    ],
-                )
-            else:
-                train_dataset = hf_dataset_from_dataframe(train_data)
+            # safe support for optional validation_data used e.g. by Lightning models
+            if validation_data is not None:
+                try:
+                    raise_on_unrecognised_parameters(
+                        self._train,
+                        validation_data=validation_data,
+                    )
+                    all_data["validation_data"] = validation_data
+                except ValueError:
+                    warnings.warn(
+                        "Validation data not supported for this model type. It will not propagate to _train.",
+                        UserWarning,
+                        stacklevel=2,
+                    )
 
-            validate_features(train_dataset, self.model_config.resolve_train_features())
+            all_datasets: Dict[str, Dataset] = {}
+            for split, data in all_data.items():
+                if isinstance(data, dict):
+                    dataset = concatenate_datasets(
+                        [
+                            hf_dataset_from_dataframe(dataset)
+                            for dataset in data.values()
+                        ],
+                    )
+                else:
+                    dataset = hf_dataset_from_dataframe(data)
+
+                # NOTE ensures that train_features are present in the validation dataset, too
+                validate_features(dataset, self.model_config.resolve_train_features())
+
+                all_datasets[split] = dataset
 
             raise_on_unrecognised_parameters(self._train, **kwargs)
 
-            return self._train(train_data=train_dataset, **kwargs)
+            return self._train(**all_datasets, **kwargs)
 
     @abstractmethod
     def _train(self, train_data: Dataset, **kwargs: Any) -> Any:
@@ -287,7 +333,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
 
 
 class ClassificationMixin(ABC):
-    """Mixin for all classifiers in exs-modelzoo."""
+    """Mixin for all classifiers in molflux-modelzoo."""
 
     tag: str
     x_features: Features
@@ -351,7 +397,7 @@ class ClassificationMixin(ABC):
 
 
 class UncertaintyCalibrationMixin(ABC):
-    """Mixin for all models supporting uncertainty calibration exs-modelzoo"""
+    """Mixin for all models supporting uncertainty calibration molflux-modelzoo"""
 
     x_features: Features
     y_features: Features

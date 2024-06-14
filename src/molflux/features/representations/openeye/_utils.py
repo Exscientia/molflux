@@ -241,7 +241,7 @@ def get_sd_data(
             )
             raise ValueError(
                 f"Unable to find SD tag {tag!s} on molecule {mol.GetTitle()}. Closest "
-                f"SD tags found: {sd_tags}",
+                f"SD tags found: {(*sd_tags,)}",
             )
     value = oechem.OEGetSDData(mol, tag)
     try:

@@ -10,7 +10,7 @@ from molflux.features.representations.rdkit._utils import (
     rdkit_mol_from_smiles,
     to_smiles,
 )
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 if TYPE_CHECKING:
     from molflux.features.typing import MolArray
@@ -258,7 +258,7 @@ class RdkitDescriptors_2d(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         include: list[_Descriptor2D] | None = None,
         exclude: list[_Descriptor2D] | None = None,
         **kwargs: Any,
@@ -284,7 +284,8 @@ class RdkitDescriptors_2d(RepresentationBase):
             >>> representation.featurise(samples, include=["SlogP_VSA8", "VSA_EState8"])
             {'rdkit_descriptors_2d::SlogP_VSA8': [10.90..., 0.0], 'rdkit_descriptors_2d::VSA_EState8': [5.25..., 0.0]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         # not using set difference to avoid possible internal shuffling
         descriptors_to_calculate = [
             x

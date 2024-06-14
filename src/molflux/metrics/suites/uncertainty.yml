@@ -13,3 +13,5 @@ specs:
     - name: gaussian_nll
 
     - name: expected_calibration_error
+
+    - name: calibration_gap

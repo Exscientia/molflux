@@ -138,7 +138,7 @@ def _consolidate_map_outputs(dataset: DatasetType) -> DatasetType:
 
 def featurise_dataset(
     dataset: DatasetType,
-    column: str,
+    column: Union[str, List[str]],
     representations: Union[Representation, Representations],
     display_names: FreeformDisplayNames = None,
     **map_kwargs: Any,
@@ -147,8 +147,8 @@ def featurise_dataset(
 
     Args:
         dataset: The dataset to featurise.
-        column: The name of the dataset column to featurise.
-        representations: The representation or representations to featurise the column with.
+        column: One or multiple columns from the dataset to use as input to featurisers.
+        representations: The representation or representations to featurise the columns with.
         display_names: A list of custom labels to assign to the newly
             featurised columns, or a single string template that will be
             used to dynamically generate labels.
@@ -158,6 +158,9 @@ def featurise_dataset(
     Returns:
         The featurised dataset.
     """
+
+    # make sure we're working with a list of columns
+    columns = [column] if isinstance(column, str) else column
 
     # Make sure we can always iterate over a collection
     if not isinstance(representations, Representations):
@@ -184,7 +187,7 @@ def featurise_dataset(
         featurized_dataset = dataset.map(
             function=_featurise_batch,
             fn_kwargs={
-                "column": column,
+                "columns": columns,
                 "representations": representations,
                 "display_names": canonical_display_names,
             },
@@ -202,7 +205,7 @@ def featurise_dataset(
 
 def _featurise_batch(
     example: Dict[str, Any],
-    column: str,
+    columns: List[str],
     representations: Representations,
     display_names: DisplayNames,
 ) -> Dict[str, Any]:
@@ -212,19 +215,21 @@ def _featurise_batch(
     times, it is faster to work with batches of data instead of single examples.
     """
 
-    if column not in example:
-        raise KeyError(
-            f"Feature {column!r} not in dataset: available features are {list(example.keys())!r}",
-        )
+    for column in columns:
+        if column not in example:
+            raise KeyError(
+                f"Feature {column!r} not in dataset: available features are {list(example.keys())!r}",
+            )
 
-    samples = example[column]
+    # get the relevant columns from the dataset
+    samples = [example[column] for column in columns]
 
     for representation, representation_display_names in zip(
         representations,
         display_names,
     ):
         # this could be a multi-output feature
-        representation_results = representation.featurise(samples)
+        representation_results = representation.featurise(*samples)
 
         # handle template strings as display names for one-to-many representations
         if len(representation_display_names) == 1 and len(representation_results) != 1:
@@ -243,7 +248,7 @@ def _featurise_batch(
             representation_results.items(),  # type: ignore[arg-type]
             representation_display_names,  # type: ignore[arg-type]
         ):
-            ctx = {"source_column": column, "feature_name": feature_name}  # type: ignore[has-type]
+            ctx = {"source_column": ":".join(columns), "feature_name": feature_name}  # type: ignore[has-type]
             featurised_column_name = _template(
                 display_name,
                 default_template=_DEFAULT_DISPLAY_NAMES_TEMPLATE,
@@ -252,7 +257,7 @@ def _featurise_batch(
 
             if featurised_column_name in example:
                 warnings.warn(
-                    f"An existing column is being overwritten on featurisation: {column}::{feature_name} >> {featurised_column_name}",  # type: ignore[has-type]
+                    f"An existing column is being overwritten on featurisation: {':'.join(columns)}::{feature_name} >> {featurised_column_name}",  # type: ignore[has-type]
                     stacklevel=1,
                 )
 

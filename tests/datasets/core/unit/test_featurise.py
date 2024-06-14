@@ -16,8 +16,8 @@ class MockRepresentation:
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def featurise(self, samples, **kwargs):
-        return {self.name: samples}
+    def featurise(self, *columns, **kwargs):
+        return {self.name: columns[0]}
 
 
 class MockMultiRepresentation:
@@ -31,8 +31,24 @@ class MockMultiRepresentation:
         self.name = name
         self.n = n
 
-    def featurise(self, samples: Any, **kwargs: Any) -> Dict[str, Any]:
+    def featurise(self, *columns: Any, **kwargs: Any) -> Dict[str, Any]:
+        samples = columns[0]
         return {f"{self.name}{i}": samples for i in range(self.n)}
+
+
+class MockMultiColumnRepresentation:
+    """Implements the interfaces.Representation protocol.
+
+    Here we define a single representation that sums the input columns.
+    This can be used to simulate many-to-one representations.
+    """
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def featurise(self, *columns: Any, **kwargs: Any) -> Dict[str, Any]:
+        concat_columns = [sum(samples) for samples in zip(*columns)]
+        return {self.name: concat_columns}
 
 
 @pytest.fixture(scope="module")
@@ -75,6 +91,13 @@ def fixture_mock_one_to_many_representation():
 
 
 @pytest.fixture(scope="module")
+def fixture_mock_many_to_one_representation():
+    """A single representation taking arbitrarily many columns and returning
+    one"""
+    return MockMultiColumnRepresentation("original_name_a")
+
+
+@pytest.fixture(scope="module")
 def fixture_mock_representations():
     """A collection of representations that simulates an heterogeneous mix of
     representations including representations generating multiple features.
@@ -101,11 +124,8 @@ def test_can_use_representation_or_representations(
 ):
     """That can featurise a dataset both providing a single representation (convenience)
     or a collection of representations (core)."""
-
-    representations_fixture = request.getfixturevalue(representations_fixture)
-
     dataset = fixture_mock_dataset
-    representations = representations_fixture
+    representations = request.getfixturevalue(representations_fixture)
     column_to_featurise = dataset.column_names[0]
     assert featurise_dataset(
         dataset=dataset,
@@ -285,6 +305,96 @@ def test_allowed_display_names_notations_for_one_to_many_representation_outputs(
     featurised_dataset = featurise_dataset(
         dataset=dataset,
         column=column_to_featurise,
+        representations=representation,
+        display_names=display_names,
+    )
+    for display_name in expected_output_names:
+        assert display_name in featurised_dataset.column_names
+
+
+@pytest.mark.parametrize(
+    ("pass_columns", "display_names", "expected_output_names"),
+    [
+        (
+            # canonical format (nested array with one array of display names for each representation)
+            ["a", "b"],
+            [["custom_name_a"]],
+            ["custom_name_a"],
+        ),
+        (
+            # shorthand for single representation (worth to support as we allow users to pass a single representation to the function)
+            ["a", "b"],
+            ["custom_name_a"],
+            ["custom_name_a"],
+        ),
+        (
+            # apply None (fallback) template across all representations
+            ["a", "b"],
+            None,
+            ["a:b::original_name_a"],
+        ),
+        (
+            # canonical format, apply fallback template across all outputs of associated representation (same effect in this case)
+            ["a", "b"],
+            [[None]],
+            ["a:b::original_name_a"],
+        ),
+        (
+            # same but using shorthand for single representation
+            ["a", "b"],
+            [None],
+            ["a:b::original_name_a"],
+        ),
+        (
+            # apply custom template across all representations
+            ["a", "b"],
+            "{source_column}>>{feature_name}",
+            ["a:b>>original_name_a"],
+        ),
+        (
+            # canonical format, apply custom template across all outputs of associated representation (same effect in this case)
+            ["a", "b"],
+            [["{source_column}>>{feature_name}"]],
+            ["a:b>>original_name_a"],
+        ),
+        (
+            # shorthand for single representation
+            ["a", "b"],
+            ["{source_column}>>{feature_name}"],
+            ["a:b>>original_name_a"],
+        ),
+        (
+            # canonical format with single column
+            ["a"],
+            [["custom_name_a"]],
+            ["custom_name_a"],
+        ),
+        (
+            # canonical format, template and single column
+            ["a"],
+            [["{source_column}>>{feature_name}"]],
+            ["a>>original_name_a"],
+        ),
+    ],
+)
+def test_allowed_display_names_notations_for_many_to_one_representation_outputs(
+    fixture_mock_dataset,
+    fixture_mock_many_to_one_representation,
+    pass_columns,
+    display_names,
+    expected_output_names,
+):
+    """That can assign custom display names to the featurisation outputs obtained
+    using a single many-to-one representation.
+
+    All display names formats shown above should be accepted and give the
+    corresponding output.
+    """
+    dataset = fixture_mock_dataset
+    representation = fixture_mock_many_to_one_representation
+    featurised_dataset = featurise_dataset(
+        dataset=dataset,
+        column=pass_columns,
         representations=representation,
         display_names=display_names,
     )
@@ -526,14 +636,14 @@ def test_setting_display_name_already_in_use_warns(
 
 
 @pytest.mark.parametrize(
-    "dataset_dict",
+    "dataset_dict_fixture",
     [
         "fixture_mock_dataset_dict",
         "fixture_mock_dataset_dict_with_empty_splits",
     ],
 )
 def test_can_featurise_dataset_dict(
-    dataset_dict,
+    dataset_dict_fixture,
     fixture_mock_representations,
     request,
 ):
@@ -543,9 +653,7 @@ def test_can_featurise_dataset_dict(
     it into a `DatasetDict`, but feturising a `DatasetDict` should technically
     be supported too.
     """
-
-    dataset_dict = request.getfixturevalue(dataset_dict)
-
+    dataset_dict = request.getfixturevalue(dataset_dict_fixture)
     representations = fixture_mock_representations
 
     column_to_featurise = dataset_dict.column_names["train"][0]

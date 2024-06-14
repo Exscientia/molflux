@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from typing import Any, Callable, Dict, Literal, Optional, Type, Union
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.models.pyod import (
@@ -110,7 +110,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class KNNDetectorConfig(PyODModelConfig):
     contamination: float = 0.1
     n_neighbours: int = 5

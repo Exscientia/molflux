@@ -13,7 +13,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 Raw/Unfolded Morgan fingerprint.
@@ -30,7 +30,7 @@ class MorganUnfolded(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         radius: int = 3,
         invariants: Optional[List] = None,
         from_atoms: Optional[List] = None,
@@ -91,7 +91,8 @@ class MorganUnfolded(RepresentationBase):
             >>> representation.featurise(samples, use_features=True, use_counts=True)
             {'morgan_unfolded': [{'0': 4, '2602795547': 1, '3205495869': 2, '3766532888': 2}]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         unfolded_morgan_fp_list: List[Dict[str, int]] = []
         for sample in samples:
             with featurisation_error_harness(sample):

@@ -7,7 +7,7 @@ from molflux.features.representations.rdkit._utils import (
     to_smiles,
 )
 from molflux.features.typing import MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 try:
     from rdkit import Chem
@@ -72,7 +72,7 @@ class Toxicophores(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         **kwargs: Any,
     ) -> Dict[str, List[List[Any]]]:
         """
@@ -92,6 +92,8 @@ class Toxicophores(RepresentationBase):
             >>> representation.featurise(samples)
             {'toxicophores': [[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]}
         """
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         match_list: List[List] = []
 
         for sample in samples:

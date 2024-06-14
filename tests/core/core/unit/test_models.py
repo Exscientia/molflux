@@ -13,10 +13,13 @@ parametrized_output_directory_fixtures = [
 ]
 
 
-@pytest.mark.parametrize("output_directory", parametrized_output_directory_fixtures)
-def test_save_model_creates_standardised_artefact(output_directory, request):
+@pytest.mark.parametrize(
+    "output_directory_fixture",
+    parametrized_output_directory_fixtures,
+)
+def test_save_model_creates_standardised_artefact(output_directory_fixture, request):
     """That models are saved into a standardised artefact directory."""
-    output_directory = request.getfixturevalue(output_directory)
+    output_directory = request.getfixturevalue(output_directory_fixture)
 
     dataset = datasets.Dataset.from_dict({"x": [1, 2, 3], "y": [1, 2, 3]})
     featurisation_metadata = {"version": 1, "config": []}
@@ -75,11 +78,14 @@ def test_save_model_with_no_featurisation_metadata_raises_warning(tmp_path):
         save_model(model, path=tmp_path, featurisation_metadata={})
 
 
-@pytest.mark.parametrize("output_directory", parametrized_output_directory_fixtures)
-def test_can_load_back_saved_model(output_directory, request):
+@pytest.mark.parametrize(
+    "output_directory_fixture",
+    parametrized_output_directory_fixtures,
+)
+def test_can_load_back_saved_model(output_directory_fixture, request):
     """That can load a model that has been saved."""
+    output_directory = request.getfixturevalue(output_directory_fixture)
 
-    output_directory = request.getfixturevalue(output_directory)
     dataset = datasets.Dataset.from_dict({"x": [1, 2, 3], "y": [1, 2, 3]})
     featurisation_metadata = {"version": 1, "config": []}
     model = molflux.modelzoo.load_model(

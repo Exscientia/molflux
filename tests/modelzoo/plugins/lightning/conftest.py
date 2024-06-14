@@ -101,6 +101,19 @@ def fixture_model() -> Model:
 
 
 @pytest.fixture(scope="function")
+def fixture_multi_layer_model() -> Model:
+    return load_model(
+        model_name,
+        x_features=_X_FEATURES,
+        y_features=_Y_FEATURES,
+        hidden_dim=3,
+        num_layers=4,
+        input_dim=2,
+        num_tasks=len(_Y_FEATURES),
+    )
+
+
+@pytest.fixture(scope="function")
 def fixture_compiled_model() -> Model:
     return load_model(
         model_name,
@@ -135,6 +148,28 @@ def fixture_pre_trained_model() -> Model:
             p.data = torch.ones_like(p) * 3
         else:
             raise KeyError("Param not found in module")
+
+    return model
+
+
+@pytest.fixture(scope="function")
+def fixture_pre_trained_multi_layer_model() -> Model:
+    model = load_model(
+        model_name,
+        x_features=_X_FEATURES,
+        y_features=_Y_FEATURES,
+        hidden_dim=3,
+        num_layers=4,
+        input_dim=2,
+        num_tasks=len(_Y_FEATURES),
+    )
+    # set params to nice numbers
+    model.module = model._instantiate_module()  # type: ignore
+    for n, p in model.module.named_parameters():  # type: ignore
+        if n == "module.2.weight":
+            p.data = torch.ones_like(p) * 0
+        elif n == "module.2.bias":
+            p.data = torch.ones_like(p) * 1
 
     return model
 

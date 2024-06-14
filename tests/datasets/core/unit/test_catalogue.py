@@ -30,4 +30,4 @@ def test_register_builder():
 
 def test_get_builder_entrypoint():
     with pytest.raises(NotImplementedError):
-        get_builder_entrypoint("exs_endpoint_not_available")
+        get_builder_entrypoint("molflux_endpoint_not_available")

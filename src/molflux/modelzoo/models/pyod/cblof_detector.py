@@ -2,7 +2,7 @@ from dataclasses import asdict
 from typing import Any, Dict, Literal, Type, Union
 
 import numpy as np
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.models.pyod import (
@@ -99,7 +99,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class CBLOFDetectorConfig(PyODModelConfig):
     n_clusters: int = 8
     contamination: float = 0.1

@@ -119,12 +119,38 @@ def test_in_catalogue():
 
 
 def test_default_model_tag_matches_entrypoint_name(fixture_basic_model):
-    """That the default model tag matches the catalogue entrypoint name.
+    """That the default model tag includes the catalogue entrypoint name.
 
     This is not strictly required, but ensures a more intuitive user experience.
     """
     model = fixture_basic_model
-    assert model.tag == model_name
+    assert model_name in model.tag
+
+
+@pytest.mark.parametrize(
+    ["model_fixture", "expected_tag"],
+    [
+        [
+            "fixture_basic_model",
+            "sklearn_pipeline_classifier[sklearn.ensemble.RandomForestClassifier]",
+        ],
+        [
+            "fixture_k_neighbors_model",
+            "sklearn_pipeline_classifier[sklearn.neighbors.KNeighborsClassifier]",
+        ],
+        [
+            "fixture_rf_model",
+            "sklearn_pipeline_classifier[sklearn.ensemble.RandomForestClassifier]",
+        ],
+        ["fixture_svc_model", "sklearn_pipeline_classifier[sklearn.svm.SVC]"],
+    ],
+)
+def test_tag_for_wrapped_model(model_fixture, expected_tag, request):
+    """That the model has appropriate tag for a wrapped model.
+    This is not strictly required, but ensures a more intuitive user experience.
+    """
+    model = request.getfixturevalue(model_fixture)
+    assert model.tag == expected_tag
 
 
 @pytest.mark.parametrize(
@@ -140,7 +166,7 @@ def test_is_mapped_to_correct_class(model_fixture, request):
     """That the model name is mapped to the appropriate class."""
     model = request.getfixturevalue(model_fixture)
     assert isinstance(model, SklearnPipelineClassifier)
-    assert model.tag == model_name
+    assert model_name in model.tag
 
 
 @pytest.mark.parametrize(

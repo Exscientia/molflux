@@ -43,7 +43,7 @@ def test_enumerate_fingerprints(fixture_representation):
     """That works as expected on fingerprint-like inputs."""
     representation = fixture_representation
     samples = [[1, 0, 0, 0], [1, 1, 0, 0], [1, 1, 1, 0], [1, 1, 1, 1]]
-    results = representation.featurise(samples=samples)
+    results = representation.featurise(samples)
 
     # should return a column with all the first molfluxs, one with all the
     # second molfluxs, and so on...

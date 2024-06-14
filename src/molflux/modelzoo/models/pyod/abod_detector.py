@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, Literal, Type
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 import datasets
 from molflux.modelzoo.info import ModelInfo
@@ -65,7 +65,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class ABODDetectorConfig(PyODModelConfig):
     contamination: float = 0.1
     n_neighbours: int = 10

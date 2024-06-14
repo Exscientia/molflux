@@ -3,6 +3,7 @@ from typing import Any
 
 try:
     import torch
+    from class_resolver import ClassResolver
     from lightning.pytorch import LightningModule, Trainer, callbacks
 except ImportError as e:
     from molflux.modelzoo.errors import ExtrasDependencyImportError
@@ -12,6 +13,11 @@ except ImportError as e:
 
 logger = logging.getLogger(__name__)
 
+callback_resolver = ClassResolver.from_subclasses(callbacks.Callback)
+
+
+# You may register custom callbacks too
+
 
 class ModelCheckpointApply(callbacks.ModelCheckpoint):
     """Model checkpointing callback which applies the best module checkpoint at the end of fitting"""
@@ -20,6 +26,8 @@ class ModelCheckpointApply(callbacks.ModelCheckpoint):
         super().__init__(**kwargs)
 
     def on_fit_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
+        del trainer
+
         if self.best_model_path is not None:
             best_ckpt = torch.load(self.best_model_path, map_location="cpu")
             pl_module.load_state_dict(best_ckpt["state_dict"])
@@ -28,19 +36,4 @@ class ModelCheckpointApply(callbacks.ModelCheckpoint):
             )
 
 
-AVAILABLE_CALLBACKS = {
-    "BackboneFinetuning": callbacks.BackboneFinetuning,
-    "BaseFinetuning": callbacks.BaseFinetuning,
-    "BasePredictionWriter": callbacks.BasePredictionWriter,
-    "DeviceStatsMonitor": callbacks.DeviceStatsMonitor,
-    "EarlyStopping": callbacks.EarlyStopping,
-    "GradientAccumulationScheduler": callbacks.GradientAccumulationScheduler,
-    "LearningRateMonitor": callbacks.LearningRateMonitor,
-    "ModelCheckpoint": callbacks.ModelCheckpoint,
-    "ModelCheckpointApply": ModelCheckpointApply,
-    "ModelPruning": callbacks.ModelPruning,
-    "ModelSummary": callbacks.ModelSummary,
-    "RichModelSummary": callbacks.RichModelSummary,
-    "StochasticWeightAveraging": callbacks.StochasticWeightAveraging,
-    "Timer": callbacks.Timer,
-}
+callback_resolver.register(ModelCheckpointApply)

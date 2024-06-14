@@ -13,7 +13,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import Fingerprint, MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 The RDKit topological fingerprint for a molecule.
@@ -44,7 +44,7 @@ class Topological(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         min_path: int = 1,
         max_path: int = 7,
         fp_size: int = 2048,
@@ -100,6 +100,8 @@ class Topological(RepresentationBase):
             >>> representation.featurise(samples, fp_size=16)
             {'topological': [[0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0]]}
         """
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         topo_fp_list: List[List] = []
         for sample in samples:
             with featurisation_error_harness(sample):

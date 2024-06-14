@@ -14,7 +14,7 @@ from molflux.features.representations.openeye._utils import (
     to_oemol,
 )
 from molflux.features.typing import Fingerprint, MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 Tree fingerprint.
@@ -33,7 +33,7 @@ class Tree(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         length: int = 2048,
         diameter: int = 6,
         atom_type: int = oegraphsim.OEFPAtomType_DefaultAtom,
@@ -66,7 +66,8 @@ class Tree(RepresentationBase):
             >>> representation.featurise(samples=samples, length=16)
             {'tree': [[0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         if not ((length & (length - 1) == 0) and length != 0):
             raise RuntimeError(f"length: {length} must be a power of 2")
 

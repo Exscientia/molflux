@@ -10,8 +10,12 @@ from molflux.modelzoo.protocols import (
     Estimator,
     Model,
     SupportsPredictionInterval,
+    SupportsSampling,
+    SupportsStandardDeviation,
     SupportsUncertaintyCalibration,
     supports_prediction_interval,
+    supports_sampling,
+    supports_std,
     supports_uncertainty_calibration,
 )
 
@@ -54,12 +58,12 @@ def test_in_catalogue():
 
 
 def test_default_model_tag_matches_entrypoint_name(fixture_model):
-    """That the default model tag matches the catalogue entrypoint name.
+    """That the default model tag includes the catalogue entrypoint name.
 
     This is not strictly required, but ensures a more intuitive user experience.
     """
     model = fixture_model
-    assert model.tag == model_name
+    assert model_name in model.tag
 
 
 def test_is_mapped_to_correct_class(fixture_model):
@@ -84,6 +88,26 @@ def test_implements_prediction_interval_protocol(fixture_model):
     """That the model implements the prediction interval protocol."""
     model = fixture_model
     assert isinstance(model, SupportsPredictionInterval)
+
+
+def test_implements_standard_deviation_protocol(fixture_model):
+    """That the model implements the standard deviation protocol."""
+    model = fixture_model
+    assert isinstance(model, SupportsStandardDeviation)
+
+
+def test_implements_sampling_protocol(fixture_model):
+    """That the model implements the sampling protocol."""
+    model = fixture_model
+    assert isinstance(model, SupportsSampling)
+
+
+def test_tag_for_wrapped_model(fixture_model):
+    """That the model has appropriate tag for a wrapped model.
+    This is not strictly required, but ensures a more intuitive user experience.
+    """
+    model = fixture_model
+    assert model.tag == "mapie_regressor[linear_regressor]"
 
 
 def test_raises_on_multitask():
@@ -149,6 +173,69 @@ def test_predict_with_prediction_interval_from_estimator(
     assert len(intervals) == len(model.y_features)
     for prediction_interval in intervals.values():
         assert len(prediction_interval) == len(predict_data)
+
+
+@pytest.mark.parametrize(
+    "train_data, predict_data",
+    [
+        (train_df, predict_df),
+        (
+            datasets.Dataset.from_pandas(train_df),
+            datasets.Dataset.from_pandas(predict_df),
+        ),
+        (
+            datasets.Dataset.from_pandas(train_df),
+            datasets.Dataset.from_pandas(empty_predict_df),
+        ),
+    ],
+)
+def test_train_predict_with_standard_deviation(fixture_model, train_data, predict_data):
+    """Test that a model can run the train and predict_with_std functions"""
+    model = fixture_model
+    model.train(train_data)
+
+    assert supports_std(model)
+
+    predictions, stds = model.predict_with_std(predict_data)
+
+    assert len(predictions) == len(model.y_features)
+    for task_predictions in predictions.values():
+        assert len(task_predictions) == len(predict_data)
+
+    assert len(stds) == len(model.y_features)
+    for prediction_std in stds.values():
+        assert len(prediction_std) == len(predict_data)
+
+
+@pytest.mark.parametrize(
+    "train_data, predict_data",
+    [
+        (train_df, predict_df),
+        (
+            datasets.Dataset.from_pandas(train_df),
+            datasets.Dataset.from_pandas(predict_df),
+        ),
+        (
+            datasets.Dataset.from_pandas(train_df),
+            datasets.Dataset.from_pandas(empty_predict_df),
+        ),
+    ],
+)
+def test_sample(fixture_model, train_data, predict_data):
+    """Test that a model can run the train and sample functions"""
+    model = fixture_model
+    model.train(train_data)
+
+    assert supports_sampling(model)
+
+    n_samples = 10
+    prediction_samples = model.sample(predict_data, n_samples=n_samples)
+    assert prediction_samples
+    assert len(prediction_samples) == len(model.y_features)
+    for samples in prediction_samples.values():
+        assert len(samples) == len(predict_data)
+        for item in samples:
+            assert len(item) == n_samples
 
 
 def test_saving_mapie_regressor_model(tmp_path):

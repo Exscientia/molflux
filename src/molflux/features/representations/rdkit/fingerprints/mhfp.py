@@ -11,7 +11,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import Fingerprint, MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 MHFP6 (MinHash fingerprint, up to six bonds) is a molecular fingerprint which
@@ -40,7 +40,7 @@ class MHFP(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         length: int = 2048,
         radius: int = 3,
         rings: bool = True,
@@ -75,7 +75,8 @@ class MHFP(RepresentationBase):
             >>> representation.featurise(samples, length=4)
             {'mhfp': [[1, 1, 1, 1]]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         fingerprints = []
         for sample in samples:
             with featurisation_error_harness(sample):

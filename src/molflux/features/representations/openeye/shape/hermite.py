@@ -11,8 +11,8 @@ except ImportError as e:
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.openeye._utils import to_oemol
-from molflux.features.typing import ArrayLike
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.typing import MolArray
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class Hermite(RepresentationBase):
 
     def _featurise(
         self,
-        samples: ArrayLike,
+        *columns: MolArray,
         n_poly_max: int = 8,
         use_optimal_lambdas: bool = True,
         orient_by_moments_of_inertia: bool = False,
@@ -71,6 +71,8 @@ class Hermite(RepresentationBase):
             >>> representation.featurise(samples, n_poly_max=1)
             {'hermite': [[2.70..., 0.0, 0.0, 0.0]]}
         """
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         hermite_mols = []
         for sample in samples:
             with featurisation_error_harness(sample):

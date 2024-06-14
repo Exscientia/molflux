@@ -2,7 +2,7 @@ import contextlib
 from types import FunctionType
 from typing import Any, Callable, Iterator
 
-from molflux.features.errors import FeaturisationError
+from molflux.features.errors import FeaturisationError, InvalidNumberOfPositionalArgs
 
 
 def copyfunc(func: Callable) -> FunctionType:
@@ -43,3 +43,19 @@ def featurisation_error_harness(sample: Any) -> Iterator:
         yield
     except Exception as e:
         raise FeaturisationError(sample=sample) from e
+
+
+def assert_n_positional_args(*args: Any, expected_size: int) -> None:
+    """Checks that the number of positional arguments given matches the expected size.
+
+    Args:
+        *args: The positional arguments whose number is checked
+        expected_size: The expected number of positional arguments
+
+    Raises:
+            molflux.features.errors.InvalidNumberOfPositionalArgs: If the number of args is different from expected_size.
+
+    """
+    actual_size = len(args)
+    if actual_size != expected_size:
+        raise InvalidNumberOfPositionalArgs(expected_size, actual_size)

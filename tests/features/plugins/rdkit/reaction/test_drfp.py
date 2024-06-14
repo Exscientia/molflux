@@ -64,6 +64,6 @@ def test_default_representation_tag_matches_entrypoint_name(fixture_representati
 def test_default_compute(fixture_representation, samples, expected_result):
     """That default scoring gives expected results."""
     representation = fixture_representation
-    result = representation.featurise(samples=samples, length=16)
+    result = representation.featurise(samples, length=16)
     assert "drfp" in result
     assert result["drfp"] == expected_result

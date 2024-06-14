@@ -13,9 +13,8 @@ from typing import (
 
 from datasets import Dataset
 from molflux.modelzoo.errors import NotTrainedError
-from molflux.modelzoo.interchange import hf_dataset_from_dataframe
 from molflux.modelzoo.model import ModelBase
-from molflux.modelzoo.typing import DataFrameLike, PredictionResult
+from molflux.modelzoo.typing import PredictionResult
 
 try:
     import lightning.pytorch as pl
@@ -90,8 +89,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
         self,
         train_data: Dict[Optional[str], Dataset],
         validation_data: Union[
-            DataFrameLike,
-            Dict[Optional[str], DataFrameLike],
+            Dict[Optional[str], Dataset],
             None,
         ] = None,
         datamodule_config: Union[DataModuleConfig, Dict[str, Any], None] = None,
@@ -126,19 +124,6 @@ class LightningModelBase(ModelBase[LightningConfigT]):
         """
         del kwargs
 
-        # BaseModel.train does not expect validation_data so we reproduce the train_data manipulations here
-        if validation_data is None:
-            validation_datasets = None
-        else:
-            # if passed a single dataset, convert to dict
-            if not isinstance(validation_data, dict):
-                validation_data = {None: validation_data}
-
-            # make sure data is a datasets.Dataset
-            validation_datasets = {
-                k: hf_dataset_from_dataframe(v) for k, v in validation_data.items()
-            }
-
         with self.override_config(
             datamodule=datamodule_config,
             trainer=trainer_config,
@@ -148,11 +133,11 @@ class LightningModelBase(ModelBase[LightningConfigT]):
             compile=compile_config,
         ):
             if self.model_config.transfer_learning is not None:
-                self._transfer_learn(train_data, validation_datasets)
+                self._transfer_learn(train_data, validation_data)
             else:
                 datamodule = self._instantiate_datamodule(
                     train_data=train_data,
-                    validation_data=validation_datasets,
+                    validation_data=validation_data,
                 )
                 self.module: Any = self._instantiate_module()
                 self._compile()
@@ -169,29 +154,31 @@ class LightningModelBase(ModelBase[LightningConfigT]):
             list_of_old_modules = [name for name, _ in old_module.named_modules()]
             list_of_new_modules = [name for name, _ in new_module.named_modules()]
 
-            if not (set(modules_to_match.keys()) <= set(list_of_old_modules)):
+            if not (set(modules_to_match.keys()) <= set(list_of_new_modules)):
                 raise KeyError(
-                    f"Modules {set(modules_to_match.keys()) - set(list_of_old_modules)} not in old module.",
+                    f"Modules {set(modules_to_match.keys()) - set(list_of_new_modules)} not in new module.",
                 )
 
-            if not (set(modules_to_match.values()) <= set(list_of_new_modules)):
+            if not (set(modules_to_match.values()) <= set(list_of_old_modules)):
                 raise KeyError(
-                    f"Modules {set(modules_to_match.values()) - set(list_of_new_modules)} not in new module.",
+                    f"Modules {set(modules_to_match.values()) - set(list_of_old_modules)} not in old module.",
                 )
 
-            # iterate over old module's named modules and try to match
-            for name, sub_module in old_module.named_modules():
+            # iterate over new module's named modules and try to match
+            for name, sub_module in new_module.named_modules():
                 if name in modules_to_match:
                     try:
-                        new_module.get_submodule(
-                            modules_to_match[name],
-                        ).load_state_dict(sub_module.state_dict())
+                        sub_module.load_state_dict(
+                            old_module.get_submodule(
+                                modules_to_match[name],
+                            ).state_dict(),
+                        )
                         logger.warning(
-                            f"Matched module '{name}' in old module to '{modules_to_match[name]}' in new module.\n",
+                            f"Matched module '{name}' in new module to '{modules_to_match[name]}' in old module.\n",
                         )
                     except RuntimeError as exc:
                         raise KeyError(
-                            f"Unable to match module '{name}' in old module to '{modules_to_match[name]}' in new module. {exc}",
+                            f"Unable to match module '{name}' in new module to '{modules_to_match[name]}' in old module. {exc}",
                         ) from exc
         else:
             # try to match entire module
@@ -369,7 +356,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
     def as_dir(self, directory: str) -> None:
         """Saves the model into a directory."""
 
-        if self.module is not None:
+        if hasattr(self, "module") and self.module is not None:
             ckpt = {"state_dict": self.state_dict}
             torch.save(ckpt, os.path.join(directory, "module_checkpoint.ckpt"))
         else:
@@ -432,10 +419,20 @@ class ConfigOverride:
             else:
                 new_sections[section] = override_obj
 
-        self.model.model_config = replace(
+        # Mypy has trouble recognising TypeVar bound to a Pydantic dataclass
+        new_model_config = replace(
             self.original_config,
             **new_sections,
         )
+
+        # NOTE model_config is stored in the model, module and datamodule
+        # It will be correctly overridden ONLY in these two locations.
+        # Datamodules are always instantiated UNDER the override and so are
+        # passed an overridden config.
+        self.model.model_config = new_model_config
+
+        if hasattr(self.model, "module") and self.model.module is not None:
+            self.model.module.model_config = new_model_config
 
     def __exit__(
         self,
@@ -445,3 +442,6 @@ class ConfigOverride:
     ) -> None:
         del exc_type, exc_val, exc_tb
         self.model.model_config = self.original_config
+
+        if hasattr(self.model, "module") and self.model.module is not None:
+            self.model.module.model_config = self.original_config

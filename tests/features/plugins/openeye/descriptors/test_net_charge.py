@@ -36,7 +36,7 @@ def test_default_compute(fixture_representation):
     """That default scoring gives expected results."""
     representation = fixture_representation
     samples = ["[OH3+]"]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [1]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -46,7 +46,7 @@ def test_batch_compute(fixture_representation):
     """That batch scoring gives expected results."""
     representation = fixture_representation
     samples = ["[OH3+]", "CC"]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [1, 0]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -56,7 +56,7 @@ def test_default_digitise(fixture_representation):
     """Test default digitised featurisation gives expected results."""
     representation = fixture_representation
     samples = ["[OH3+]"]
-    result = representation.featurise(samples=samples, digitise=True)
+    result = representation.featurise(samples, digitise=True)
     expected_result = [[0, 0, 0, 1, 0]]
     assert representation_name in result
     assert result[representation_name] == expected_result

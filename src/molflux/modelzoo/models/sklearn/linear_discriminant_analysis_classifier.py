@@ -1,7 +1,7 @@
 from typing import Any, Iterable, Literal, Optional, Type, Union
 
 import numpy as np
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.model import ModelConfig
@@ -86,7 +86,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class LinearDiscriminantAnalysisClassifierConfig(ModelConfig):
     solver: SolverT = "svd"
     shrinkage: Union[None, int, Literal["auto"]] = None

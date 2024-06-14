@@ -1,6 +1,6 @@
 import pytest
 import torch
-from pydantic.error_wrappers import ValidationError
+from pydantic.v1 import ValidationError
 from torch._dynamo.testing import CompileCounter
 
 from molflux.modelzoo import save_to_store
@@ -198,6 +198,73 @@ def test_transfer_learning_model_partial_match(
                 )
             else:
                 raise KeyError("Param not found in module")
+
+
+@pytest.mark.parametrize(
+    "compile",
+    [True, False],
+)
+def test_transfer_learning_model_surjective_match(
+    tmp_path,
+    fixture_multi_layer_model,
+    fixture_pre_trained_multi_layer_model,
+    train_dataset,
+    validation_dataset,
+    compile,
+    compile_error_context,
+):
+    """Test that transfer learning for one stage with surjective matching trains the right params and has correct weights"""
+
+    model = fixture_pre_trained_multi_layer_model
+    save_to_store(str(tmp_path), model)
+
+    new_model = fixture_multi_layer_model
+    with compile_error_context:
+        new_model.train(
+            train_data=train_dataset,
+            validation_data=validation_dataset,
+            trainer_config={
+                "accelerator": "cpu",
+                "max_epochs": 1,
+                "default_root_dir": str(tmp_path),
+            },
+            datamodule_config={
+                "train": {"batch_size": 2},
+                "validation": {"batch_size": 2},
+            },
+            transfer_learning_config={
+                "pre_trained_model_path": str(tmp_path),
+                "modules_to_match": {
+                    "module.2": "module.2",
+                    "module.4": "module.2",
+                },
+                "stages": [
+                    {
+                        "freeze_modules": [
+                            "module.2",
+                        ],
+                    },
+                ],
+            },
+            compile_config=compile,
+        )
+
+        module = new_model.module if not compile else new_model.module._orig_mod
+
+        for n, p in module.named_parameters():
+            # check that matched but not frozen is close but not equal to
+            if n == "module.2.weight":
+                assert torch.equal(p, torch.ones_like(p) * 0)
+            elif n == "module.2.bias":
+                assert torch.equal(p, torch.ones_like(p) * 1)
+            elif n == "module.4.weight":
+                assert (not torch.equal(p, torch.ones_like(p) * 0)) and (
+                    torch.allclose(p, torch.ones_like(p) * 0, atol=1e-3)
+                )
+            elif n == "module.4.bias":
+                assert (not torch.equal(p, torch.ones_like(p) * 1)) and (
+                    torch.allclose(p, torch.ones_like(p) * 1, atol=1e-3)
+                )
 
 
 @pytest.mark.parametrize(

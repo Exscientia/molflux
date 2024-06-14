@@ -1,7 +1,7 @@
 from dataclasses import field
-from typing import Type
+from typing import Any, Optional, Type
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.model import ModelConfig
@@ -10,6 +10,7 @@ from molflux.modelzoo.models.sklearn.sklearn_pipeline._utils import (
     StepConfigsT,
     build_pipeline,
 )
+from molflux.modelzoo.utils import format_wrapped_model_tag
 
 try:
     from sklearn.base import is_regressor
@@ -77,7 +78,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class SklearnPipelineRegressorConfig(ModelConfig):
     step_configs: StepConfigsT = field(
         default_factory=lambda: DEFAULT_CONFIG.copy(),
@@ -85,6 +86,14 @@ class SklearnPipelineRegressorConfig(ModelConfig):
 
 
 class SklearnPipelineRegressor(SKLearnModelBase[SklearnPipelineRegressorConfig]):
+    def __init__(self, tag: Optional[str] = None, **config_kwargs: Any) -> None:
+        super().__init__(tag=tag, **config_kwargs)
+        if tag is None:
+            self.info.tag = format_wrapped_model_tag(
+                self.info.tag,
+                [self.model_config.step_configs[-1].get("class_name", "")],
+            )
+
     @property
     def _config_builder(self) -> Type[SklearnPipelineRegressorConfig]:
         return SklearnPipelineRegressorConfig
@@ -99,7 +108,7 @@ class SklearnPipelineRegressor(SKLearnModelBase[SklearnPipelineRegressorConfig])
         config = self.model_config
         pipeline = build_pipeline(config.step_configs)
 
-        # assert that the last estimator of this pipeline is a classifier
+        # assert that the last estimator of this pipeline is a regressor
         pipeline_estimator = pipeline[-1]
 
         if not is_regressor(pipeline_estimator):

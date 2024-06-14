@@ -2,7 +2,7 @@ from dataclasses import asdict
 from typing import Any, Dict, Literal, Optional, Type, Union
 
 import numpy as np
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.models.pyod import (
@@ -136,7 +136,7 @@ class Config:
     smart_union = True
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class PCADetectorConfig(PyODModelConfig):
     n_components: Union[int, float, str, None] = None
     n_selected_components: Optional[int] = None

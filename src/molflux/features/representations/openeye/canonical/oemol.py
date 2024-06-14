@@ -14,8 +14,8 @@ from molflux.features.representations.openeye.canonical._utils import (
     ensure_oemol_title,
     standardise_oemol,
 )
-from molflux.features.typing import ArrayLike
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.typing import MolArray
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 A canonical OpenEye molecule representation.
@@ -30,7 +30,7 @@ class CanonicalOemol(RepresentationBase):
 
     def _featurise(
         self,
-        samples: ArrayLike,
+        *columns: MolArray,
         strip_salts: bool = False,
         set_neutral_ph: bool = False,
         reasonable_protomer: bool = False,
@@ -54,7 +54,7 @@ class CanonicalOemol(RepresentationBase):
         r"""Featurises the input molecules as canonical OEMols.
 
         Args:
-            samples: The sample molecules to featurise.
+            *columns: The sample molecules to featurise.
             strip_salts: Whether to remove everything but the largest component
                 from the molecules, in case they contain disconnected
                 components such as salts. Defaults to `False`.
@@ -128,6 +128,10 @@ class CanonicalOemol(RepresentationBase):
             >>> representation.featurise(samples, as_bytes=True)
             {'canonical_oemol': [b'\x0b\xa5\n\x8f\x19\x85mol_0\x13\x83\x81C\x80 \x81\x00\x10\x8f\x81\x80?\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00!\x81\x00']}
         """
+
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
+
         canonical_mols = []
         for idx, sample in enumerate(samples):
             with featurisation_error_harness(sample):

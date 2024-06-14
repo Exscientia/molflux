@@ -11,7 +11,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.openeye._utils import to_digit, to_oemol
 from molflux.features.typing import MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 The number of acceptors in a molecule based on the definition from the work of
@@ -29,7 +29,7 @@ class NumAcceptors(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         digitise: bool = False,
         start: int = 0,
         stop: int = 10,
@@ -55,7 +55,8 @@ class NumAcceptors(RepresentationBase):
             >>> representation.featurise(samples=samples)
             {'num_acceptors': [0, 1]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         results = []
         for sample in samples:
             with featurisation_error_harness(sample):

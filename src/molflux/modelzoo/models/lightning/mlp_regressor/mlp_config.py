@@ -1,9 +1,9 @@
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.models.lightning.config import ConfigDict, LightningConfig
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class MLPConfig(LightningConfig):
     input_dim: int = 1
     num_layers: int = 2

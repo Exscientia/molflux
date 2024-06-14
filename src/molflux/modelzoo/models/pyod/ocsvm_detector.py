@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from typing import Any, Callable, Dict, Literal, Type, Union
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.models.pyod import (
@@ -89,7 +89,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class OCSVMDetectorConfig(PyODModelConfig):
     kernel: Union[Kernel, Callable] = "rbf"
     nu: float = 0.5

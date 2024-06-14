@@ -1,6 +1,6 @@
 from typing import Iterable, Optional, Type
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.model import ModelConfig
@@ -47,7 +47,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class PipelinePilotNBConfig(ModelConfig):
     alpha: float = 1
     fit_prior: bool = True

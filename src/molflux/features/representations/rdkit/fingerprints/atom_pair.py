@@ -13,7 +13,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import Fingerprint, MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 The atom-pair fingerprint for a molecule.
@@ -52,7 +52,7 @@ class AtomPair(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         min_distance: int = 1,
         max_distance: int = 30,
         include_chirality: bool = False,
@@ -97,7 +97,8 @@ class AtomPair(RepresentationBase):
             >>> representation.featurise(samples, fp_size=16)
             {'atom_pair': [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         apgen = rdFingerprintGenerator.GetAtomPairGenerator(
             minDistance=min_distance,
             maxDistance=max_distance,
