@@ -61,7 +61,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Changed
 - Compatible with Pydantic v1 & v2
-- Add lower pin on `botocore` / `boto3` to help dependency resolution
 - Lower pin on `botocore` / `boto3` to help dependency resolution when installed alongside `dvc-s3`
 - Use `class_resolver` to simplify and generalise modularity inside Lightning models.
 - `model.train` will now always accept a `validation_data` kwarg. If the underlying model implementation doesn't have `validation_data` in its `model._train` (or `model._train_multi_data`), it will be dropped with a warning.
