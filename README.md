@@ -49,11 +49,14 @@ you.
 The ``molflux`` package has been developed by researchers and engineers at Exscientia
 
 * Alan Bilsland
+* Giovanni Bocci
 * [Julia Buhmann](https://github.com/juliabuhmann)
 * [Ward Haddadin](https://github.com/wardhaddadin1)
 * Jonathan Harrison
+* Henry Kenlay
 * Dom Miketa
 * Emil Nichita
 * Stefanie Speichert
 * Hagen Triendl
 * [Alvise Vianello](https://github.com/amv213)
+* Andy Wedlake
