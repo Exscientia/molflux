@@ -9,6 +9,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ---------------------------------------------------------
+## [0.7.0] - 2024-09-05
+
+## Added
+
+- Added the TDC ADMET benchmarks dataset (with optional dependency `pip install molflux[tdc]`)
+- Turned on `pystan` tests
+
 ## [0.6.0] - 2024-08-23
 
 ## Removed

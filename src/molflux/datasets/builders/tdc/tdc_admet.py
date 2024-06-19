@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, ClassVar, List
+from typing import Any, ClassVar
 
 from tdc.benchmark_group import admet_group
 
@@ -83,7 +83,7 @@ class ADMETBenchmarks(Csv):
         })
     """
 
-    BUILDER_CONFIGS: ClassVar[List[datasets.BuilderConfig]] = [
+    BUILDER_CONFIGS: ClassVar[list[datasets.BuilderConfig]] = [
         CsvConfig(name=name) for name in _ADMET_GROUP_BENCHMARK_NAMES
     ]
 
@@ -93,7 +93,7 @@ class ADMETBenchmarks(Csv):
     def _split_generators(
         self,
         dl_manager: datasets.DownloadManager,
-    ) -> List[datasets.SplitGenerator]:
+    ) -> list[datasets.SplitGenerator]:
         # Link up to the appropriate assets subdirectory
         cache_path = Path.home() / Path(_ASSETS_DIR)
         cache_path.mkdir(exist_ok=True)
