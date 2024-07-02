@@ -13,7 +13,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Added
 - Enable multi-column representations
 - Add `linear_split_with_rotation` splitting strategy
-- Added a Bayesian ordinal regression model.
+- Added a Bayesian ordinal regression model (`ordinal_classifier`).
 - `mapie_regressor` now has `predict_with_std` and `sample` methods implemented based on a Gaussian approximation for the prediction interval.
 - Added `calibration_gap` metric
 - Added option for masking inputs by the references
