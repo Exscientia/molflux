@@ -165,8 +165,8 @@ preds, intervals = mapie_model.predict_with_prediction_interval(
 )
 
 xs = split_featurised_dataset["test"]["log_solubility"]
-ys = preds["mapie_regressor::log_solubility"]
-y_intervals = intervals["mapie_regressor::log_solubility::prediction_interval"]
+ys = preds["mapie_regressor[random_forest_regressor]::log_solubility"]
+y_intervals = intervals["mapie_regressor[random_forest_regressor]::log_solubility::prediction_interval"]
 
 yerrs = [
     [abs(y - y_in[0])  for y, y_in in zip(ys, y_intervals)],

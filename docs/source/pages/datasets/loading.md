@@ -81,7 +81,7 @@ For convenience, we have also made available a custom AWS S3 Filesystem `fsspec`
 You can read a dataset made up of one or several CSV files:
 
 ```python
-from molflux.datasets.alexandria import load_dataset_from_store
+from molflux.datasets import load_dataset_from_store
 
 dataset = load_dataset_from_store("my_file.csv")
 ```
