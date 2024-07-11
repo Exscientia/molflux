@@ -78,12 +78,12 @@ def test_in_catalogue():
 
 
 def test_default_model_tag_matches_entrypoint_name(fixture_model):
-    """That the default model tag matches the catalogue entrypoint name.
+    """That the default model tag includes the catalogue entrypoint name.
 
     This is not strictly required, but ensures a more intuitive user experience.
     """
     model = fixture_model
-    assert model.tag == model_name
+    assert model_name in model.tag
 
 
 def test_is_mapped_to_correct_class(fixture_model):
@@ -101,6 +101,17 @@ def test_implements_protocol(fixture_model):
 def test_supports_classification(fixture_model):
     """That the model counts as being a classifier."""
     assert supports_classification(fixture_model)
+
+
+def test_tag_for_wrapped_model(fixture_model):
+    """That the model has appropriate tag for a wrapped model.
+    This is not strictly required, but ensures a more intuitive user experience.
+    """
+    model = fixture_model
+    assert (
+        model.tag
+        == "ensemble_classifier[knn_classifier:random_forest_classifier:random_forest_classifier_1]"
+    )
 
 
 @pytest.mark.parametrize(

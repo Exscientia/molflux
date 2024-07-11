@@ -31,7 +31,5 @@ def test_flatten_indices():
     # a filter operation which does nothing (checks that all nested arrays have len < 8, they have len == 7)
     dataset_filtered = dataset.filter(lambda x: len(x["array"]) < 8)
 
-    # step to filter indices with because of Batched=True
+    # step that fails because of Batched=True in map
     dataset_filtered.flatten_indices()
-
-    assert True

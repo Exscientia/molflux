@@ -27,7 +27,7 @@ class Representation(Protocol):
     def state(self) -> Dict[str, Any]:
         """The internal state config."""
 
-    def featurise(self, samples: ArrayLike, **kwargs: Any) -> RepresentationResult:
+    def featurise(self, *columns: ArrayLike, **kwargs: Any) -> RepresentationResult:
         """Featurises the input samples."""
 
     def reset_state(self) -> None:
@@ -75,9 +75,9 @@ class Representations:
     def add_representation(self, representation: Representation) -> None:
         self[representation.tag] = representation
 
-    def featurise(self, samples: ArrayLike, **kwargs: Any) -> RepresentationResult:
+    def featurise(self, *columns: ArrayLike, **kwargs: Any) -> RepresentationResult:
         results = (
-            representation.featurise(samples=samples)
+            representation.featurise(*columns)
             for representation in self._stack.values()
         )
         merged_results = {k: v for r in results for k, v in r.items()}

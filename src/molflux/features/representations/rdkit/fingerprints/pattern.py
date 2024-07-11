@@ -15,7 +15,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import Fingerprint, MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class Pattern(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         fp_size: int = 2048,
         atom_counts: Optional[List[int]] = None,
         set_only_bits: Optional[ExplicitBitVect] = None,
@@ -92,7 +92,8 @@ class Pattern(RepresentationBase):
             >>> representation.featurise(samples, fp_size=16)  # doctest: +SKIP
             {'pattern': [[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         pattern_fp_list: List[List] = []
         for sample in samples:
             with featurisation_error_harness(sample):

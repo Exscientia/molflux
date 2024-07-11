@@ -5,6 +5,7 @@ from dataclasses import asdict
 from typing import Any, Dict, Optional, Tuple
 
 import evaluate
+import numpy as np
 
 import datasets
 from molflux.metrics.typing import ArrayLike, MetricResult
@@ -112,11 +113,26 @@ class HFMetric(evaluate.Metric, ABC):
         references: Optional[ArrayLike] = None,
         **kwargs: Any,
     ) -> MetricResult:
-        """Computes the metric."""
+        """
+        Computes the metric.
+        Args:
+            predictions:
+            references:
+            **kwargs: Can include a 'mask_by_references' kwarg that allows for masking
+                the inputs by the valid references values
+
+        Returns:
+
+        """
 
         # Merge explicit keyword arguments with those stored in config
         if self._state is not None:
             kwargs = {**self._state, **kwargs}
+
+        if "mask_by_references" in kwargs:
+            mask_by_references = kwargs.pop("mask_by_references")
+        else:
+            mask_by_references = False
 
         # Safeguard against invalid kwargs
         if not all(k in self._signature.parameters for k in kwargs):
@@ -124,6 +140,12 @@ class HFMetric(evaluate.Metric, ABC):
             raise ValueError(
                 f"Unknown compute parameter(s): {unknown_kwargs}\n\n"
                 f"Expected signature self.compute{self._signature}",
+            )
+
+        if mask_by_references:
+            predictions, references = self._mask_by_references(
+                predictions=predictions,
+                references=references,
             )
 
         predictions, references = self._pre_process_inputs(
@@ -188,6 +210,19 @@ class HFMetric(evaluate.Metric, ABC):
     def update_state(self, **kwargs: Any) -> None:
         """Pre-configures keyword arguments for compute()."""
         self._state = {**self._state, **kwargs}
+
+    def _mask_by_references(
+        self,
+        predictions: Optional[ArrayLike] = None,
+        references: Optional[ArrayLike] = None,
+    ) -> Tuple[Optional[ArrayLike], ...]:
+        if (references is not None) and (predictions is not None):
+            # mask if None or NaN
+            mask = [not (x is None or np.isnan(x)) for x in references]
+            references = [x for valid, x in zip(mask, references) if valid]
+            predictions = [x for valid, x in zip(mask, predictions) if valid]
+
+        return predictions, references
 
     def _pre_process_inputs(
         self,

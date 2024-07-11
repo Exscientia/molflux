@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union
 
 import numpy as np
 import scipy.stats as st
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 import datasets
 from molflux.modelzoo.info import ModelInfo
@@ -153,7 +153,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class CatBoostRegressorConfig(ModelConfig):
     iterations: Optional[int] = None
     learning_rate: Optional[float] = None

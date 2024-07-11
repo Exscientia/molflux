@@ -13,7 +13,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 The atom-pair fingerprint for a molecule.
@@ -50,7 +50,7 @@ class AtomPairUnfolded(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         min_length: int = 1,
         max_length: int = 30,
         from_atoms: Optional[List[int]] = None,
@@ -95,7 +95,8 @@ class AtomPairUnfolded(RepresentationBase):
             >>> representation.featurise(samples, max_length=16)
             {'atom_pair_unfolded': [{'689473': 6, '689474': 6, '689475': 3}]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         atom_pairs_fp_list: List[Dict[str, int]] = []
         for sample in samples:
             with featurisation_error_harness(sample):

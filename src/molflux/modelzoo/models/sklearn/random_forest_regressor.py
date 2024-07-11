@@ -1,7 +1,7 @@
 from typing import Literal, Optional, Type, Union
 
 from numpy.random import RandomState
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.model import ModelConfig
@@ -141,7 +141,7 @@ class Config:
     smart_union = True
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class RandomForestRegressorConfig(ModelConfig):
     n_estimators: int = 100
     criterion: Criterion = "squared_error"

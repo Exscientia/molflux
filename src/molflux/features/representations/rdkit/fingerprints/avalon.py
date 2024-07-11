@@ -13,7 +13,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import Fingerprint, MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 Avalon fingerprints from rdkit.
@@ -28,7 +28,7 @@ class Avalon(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         n_bits: int = 512,
         is_query: bool = False,
         reset_vect: bool = False,
@@ -54,7 +54,8 @@ class Avalon(RepresentationBase):
             >>> representation.featurise(samples, n_bits=16)
             {'avalon': [[0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         avalon_fp_list: List[List] = []
         for sample in samples:
             with featurisation_error_harness(sample):

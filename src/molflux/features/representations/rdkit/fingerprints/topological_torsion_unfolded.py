@@ -13,7 +13,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 Topological-torsion fingerprints, as described in:
@@ -52,7 +52,7 @@ class TopologicalTorsionUnfolded(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         target_size: int = 4,
         from_atoms: Optional[List[int]] = None,
         ignore_atoms: Optional[List[int]] = None,
@@ -91,7 +91,8 @@ class TopologicalTorsionUnfolded(RepresentationBase):
             >>> representation.featurise(samples)
             {'topological_torsion_unfolded': [{'5513433129': 6}]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         torsion_fp_list: List[Dict[str, int]] = []
         for sample in samples:
             with featurisation_error_harness(sample):

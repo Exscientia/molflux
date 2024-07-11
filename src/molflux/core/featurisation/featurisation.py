@@ -5,6 +5,7 @@ import molflux.datasets
 import molflux.features
 from molflux.core.featurisation.metadata import (
     FeaturisationMetadataV1,
+    FeaturisationMetadataV2,
     fetch_model_featurisation_metadata,
     parse_featurisation_metadata,
 )
@@ -41,8 +42,12 @@ def featurise_dataset(
             featurisation_metadata=featurisation_metadata,
             **map_kwargs,
         )
-    # if version == 2:
-    #   ...
+    if version == 2:
+        return _featurise_dataset_v2(
+            dataset=inputs,
+            featurisation_metadata=featurisation_metadata,
+            **map_kwargs,
+        )
     else:
         raise NotImplementedError(
             f"No featuriser implemented for featurisation metadata version: {version!r}",
@@ -78,7 +83,44 @@ def _featurise_dataset_v1(
         )
         dataset = molflux.datasets.featurise_dataset(
             dataset,
-            column=column,
+            column=[column],
+            representations=representations,
+            display_names=canonical_display_names,  # type: ignore[arg-type]
+            **map_kwargs,
+        )
+    return dataset
+
+
+def _featurise_dataset_v2(
+    dataset: Dataset,
+    featurisation_metadata: Dict[str, Any],
+    **map_kwargs: Any,
+) -> Dataset:
+    """Featurises a dataset from a V2 featurisation metadata schema."""
+    featurisation_metadata_obj = FeaturisationMetadataV2(**featurisation_metadata)
+    featurisation_config = featurisation_metadata_obj.config
+    for column_featurisation_config in featurisation_config:
+        columns = column_featurisation_config.columns
+        representation_configs = column_featurisation_config.representations
+
+        # We allow passing single string display_names as convenience method
+        # but we need to turn them into a list to match canonical form expected
+        # by molflux.datasets.featurise_dataset()
+        display_names = [config.as_ for config in representation_configs]
+        canonical_display_names = [
+            names if isinstance(names, list) else [names] for names in display_names
+        ]
+
+        representation_configs_as_dicts = [
+            config.dict(by_alias=True) for config in representation_configs
+        ]
+
+        representations = molflux.features.load_from_dicts(
+            representation_configs_as_dicts,
+        )
+        dataset = molflux.datasets.featurise_dataset(
+            dataset,
+            column=columns,
             representations=representations,
             display_names=canonical_display_names,  # type: ignore[arg-type]
             **map_kwargs,

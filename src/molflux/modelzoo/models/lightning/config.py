@@ -1,69 +1,52 @@
 import logging
 from dataclasses import asdict, field
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
+from typing import Any, Dict, List, Literal, Optional, TypeVar, Union
 
-from pydantic import validator
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses, validator
 
 from molflux.modelzoo.model import ModelConfig
-from molflux.modelzoo.models.lightning.trainer.callbacks.stock_callbacks import (
-    AVAILABLE_CALLBACKS,
-)
-from molflux.modelzoo.models.lightning.trainer.schedulers.stock_schedulers import (
-    AVAILABLE_SCHEDULERS,
-)
 
 try:
+    from class_resolver import ClassResolver
+    from class_resolver.contrib.torch import lr_scheduler_resolver
     from lightning.pytorch import Trainer
     from lightning.pytorch import callbacks as pl_callbacks
     from lightning.pytorch import loggers as pl_loggers
     from lightning.pytorch import profilers as pl_profilers
     from lightning.pytorch import strategies as pl_strategies
     from torch.optim import Optimizer
+
+    from molflux.modelzoo.models.lightning.trainer.callbacks import callback_resolver
 except ImportError as e:
     from molflux.modelzoo.errors import ExtrasDependencyImportError
 
     raise ExtrasDependencyImportError("lightning", e) from e
 
 
-def make_dvc_logger(**kwargs: Any) -> Any:
-    try:
-        from dvclive.lightning import DVCLiveLogger  # pyright: ignore
+logger_resolver = ClassResolver.from_subclasses(
+    pl_loggers.Logger,
+)
 
-        logging.getLogger("dvc_studio_client.post_live_metrics").setLevel(
-            logging.WARNING,
-        )
+try:
+    from dvclive.lightning import DVCLiveLogger  # pyright: ignore
 
-    except ImportError as err:
-        from exs.modelzoo.errors import OptionalDependencyImportError
+    logger_resolver.register(DVCLiveLogger)
 
-        raise OptionalDependencyImportError("DVCLive", "dvclive") from err
+    logging.getLogger("dvc_studio_client.post_live_metrics").setLevel(
+        logging.WARNING,
+    )
 
-    return DVCLiveLogger(**kwargs)
-
-
-AVAILABLE_LOGGERS: Dict[str, Callable] = {
-    "CometLogger": pl_loggers.CometLogger,
-    "CSVLogger": pl_loggers.CSVLogger,
-    "DVCLiveLogger": make_dvc_logger,
-    "MLFlowLogger": pl_loggers.MLFlowLogger,
-    "NeptuneLogger": pl_loggers.NeptuneLogger,
-    "TensorBoardLogger": pl_loggers.TensorBoardLogger,
-    "WandbLogger": pl_loggers.WandbLogger,
-}
-
-AVAILABLE_PROFILERS = {
-    "SimpleProfiler": pl_profilers.SimpleProfiler,
-    "AdvancedProfiler": pl_profilers.AdvancedProfiler,
-    "PyTorchProfiler": pl_profilers.PyTorchProfiler,
-}
+except ImportError:
+    pass
 
 
-AVAILABLE_STRATEGIES = {
-    "FSDPStrategy": pl_strategies.FSDPStrategy,
-    "DDPStrategy": pl_strategies.DDPStrategy,
-    "DeepSpeedStrategy": pl_strategies.DeepSpeedStrategy,
-}
+profiler_resolver = ClassResolver.from_subclasses(
+    pl_profilers.Profiler,
+)
+
+strategy_resolver = ClassResolver.from_subclasses(
+    pl_strategies.Strategy,
+)
 
 
 class ConfigDict:
@@ -80,7 +63,7 @@ def _dict_is_single_logger_config(logger_dict: Dict[str, Any]) -> bool:
     )
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class TrainerConfig:
     """
     Lightning Trainer config.
@@ -152,7 +135,7 @@ class TrainerConfig:
             callbacks = list(callbacks.values())
 
         return [
-            AVAILABLE_CALLBACKS[callback["name"]](**callback.get("config", {}))
+            callback_resolver.make(callback["name"], callback.get("config", {}))
             for callback in callbacks
         ]
 
@@ -176,7 +159,7 @@ class TrainerConfig:
                 logger = list(logger.values())
 
         return [
-            AVAILABLE_LOGGERS[logger_["name"]](**logger_.get("config", {}))
+            logger_resolver.make(logger_["name"], logger_.get("config", {}))
             for logger_ in logger
         ]
 
@@ -187,10 +170,7 @@ class TrainerConfig:
         if profiler is None:
             return profiler
 
-        out: pl_profilers.Profiler = AVAILABLE_PROFILERS[profiler["name"]](
-            **profiler.get("config", {}),
-        )
-        return out
+        return profiler_resolver.make(profiler["name"], profiler.get("config", {}))
 
     def convert_strategy(
         self,
@@ -199,19 +179,16 @@ class TrainerConfig:
         if isinstance(strategy, str):
             return strategy
 
-        out: pl_strategies.Strategy = AVAILABLE_STRATEGIES[strategy["name"]](
-            **strategy.get("config", {}),
-        )
-        return out
+        return strategy_resolver.make(strategy["name"], strategy.get("config", {}))
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class OptimizerConfig:
     name: str = "Adam"
     config: Dict[str, Any] = field(default_factory=lambda: {"lr": 1e-4})
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class SchedulerConfig:
     name: str = "CosineAnnealingLR"
     config: Dict[str, Any] = field(default_factory=lambda: {"T_max": "num_steps"})
@@ -241,7 +218,11 @@ class SchedulerConfig:
             self.interval = "epoch"
 
         return {
-            "scheduler": AVAILABLE_SCHEDULERS[self.name](optimizer, **self.config),
+            "scheduler": lr_scheduler_resolver.make(
+                self.name,
+                self.config,
+                optimizer=optimizer,
+            ),
             "interval": self.interval,
             "frequency": self.frequency,
             "monitor": self.monitor,
@@ -249,7 +230,7 @@ class SchedulerConfig:
         }
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class TransferLearningStage:
     freeze_modules: Optional[List[str]] = None
     trainer: Optional[Dict[str, Any]] = None
@@ -294,7 +275,7 @@ class TransferLearningStage:
         return scheduler
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class TransferLearningConfigBase:
     stages: List[TransferLearningStage]
     pre_trained_model_path: Optional[str] = None
@@ -320,7 +301,7 @@ class TransferLearningConfigBase:
                 self.stages[i] = TransferLearningStage(**self.stages[i])  # type: ignore
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class SplitConfig:
     """batch_size: The batch size to use for this data split, optionally as a
     dictionary assigning different batch sizes to different datasets."""
@@ -328,7 +309,7 @@ class SplitConfig:
     batch_size: Union[int, Dict[str, int]] = 1
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class TrainSplitConfig(SplitConfig):
     drop_last: bool = True
     mode: Literal[
@@ -338,7 +319,7 @@ class TrainSplitConfig(SplitConfig):
     ] = "max_size_cycle"
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class EvalSplitConfig(SplitConfig):
     mode: Literal[
         "max_size_cycle",
@@ -348,7 +329,7 @@ class EvalSplitConfig(SplitConfig):
     ] = "max_size"
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class DataModuleConfig:
     train: TrainSplitConfig = field(default_factory=TrainSplitConfig)
     validation: EvalSplitConfig = field(default_factory=EvalSplitConfig)
@@ -357,7 +338,7 @@ class DataModuleConfig:
     num_workers: Union[int, Literal["all"]] = 0
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class CompileConfig:
     mode: Literal["default", "reduce-overhead", "max-autotune"]
     dynamic: bool = False
@@ -366,7 +347,7 @@ class CompileConfig:
     backend_kwargs: Dict[str, Any] = field(default_factory=dict)
 
 
-@dataclass(config=ConfigDict)
+@dataclasses.dataclass(config=ConfigDict)
 class LightningConfig(ModelConfig):
     datamodule: DataModuleConfig = field(default_factory=DataModuleConfig)
     trainer: TrainerConfig = field(default_factory=TrainerConfig)

@@ -25,4 +25,4 @@ def test_none_split_returns_dataset_dict():
 def test_bad_dataset_name_raises_an_error():
     """That a name not in the catalogue or online raises an error"""
     with pytest.raises(FileNotFoundError):
-        load_dataset("exs_certainly_not_a_dataset")
+        load_dataset("molflux_certainly_not_a_dataset")

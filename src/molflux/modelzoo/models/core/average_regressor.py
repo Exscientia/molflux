@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, Literal, Tuple, Type
 
 import numpy as np
 import scipy.stats as st
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 import datasets
 from molflux.modelzoo.info import ModelInfo
@@ -48,7 +48,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class AverageRegressorConfig(ModelConfig):
     average_method: Literal["median", "mean"] = "median"
     deviation_method: Literal["std", "mad"] = "mad"

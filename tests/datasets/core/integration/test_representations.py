@@ -2,7 +2,7 @@ import molflux.features
 from molflux.datasets.interfaces import Representations
 
 
-def test_integrates_with_exs_prism():
+def test_integrates_with_molflux_features():
     """That the Representations interface used by datasets is compatible
     with the Representations defined by molflux.features.
 

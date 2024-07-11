@@ -38,7 +38,7 @@ def test_default_compute(fixture_representation):
     samples = [
         "CCCC1=NN(C2=C1NC(=NC2=O)C3=C(C=CC(=C3)S(=O)(=O)N4CCN(CC4)C)OCC)C",
     ]
-    result = representation.featurise(samples=samples, n_poly_max=2)
+    result = representation.featurise(samples, n_poly_max=2)
     expected_result = [
         [
             89.11933047322135,
@@ -67,7 +67,7 @@ def test_batch_compute(fixture_representation):
         "CCCC1=NN(C2=C1NC(=NC2=O)C3=C(C=CC(=C3)S(=O)(=O)N4CCN(CC4)C)OCC)C",
         "CC",
     ]
-    result = representation.featurise(samples=samples, n_poly_max=2)
+    result = representation.featurise(samples, n_poly_max=2)
     expected_results = [
         [
             89.11933047322135,

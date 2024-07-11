@@ -13,7 +13,7 @@ except ImportError as e:
 
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 if TYPE_CHECKING:
     from molflux.features.typing import Fingerprint, SmilesArray
@@ -37,7 +37,7 @@ class DRFP(RepresentationBase):
 
     def _featurise(
         self,
-        samples: SmilesArray,
+        *columns: SmilesArray,
         length: int = 2048,
         min_radius: int = 0,
         max_radius: int = 3,
@@ -70,6 +70,8 @@ class DRFP(RepresentationBase):
             {'drfp': [[1, 1, 1, 1]]}
         """
         del kwargs
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
 
         fingerprints: list[Fingerprint] = []
         for sample in samples:

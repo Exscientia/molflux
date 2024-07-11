@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Type, Union
 
 import numpy as np
 from numpy.random import RandomState
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.model import ModelConfig
@@ -210,7 +210,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class XGBRegressorConfig(ModelConfig):
     n_estimators: int = 100
     max_depth: Optional[int] = None

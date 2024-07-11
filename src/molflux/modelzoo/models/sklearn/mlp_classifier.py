@@ -2,7 +2,7 @@ from dataclasses import field
 from typing import List, Literal, Type, Union
 
 from numpy.random import RandomState
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.model import ModelConfig
@@ -162,7 +162,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class MLPClassifierConfig(ModelConfig):
     hidden_layer_sizes: List[int] = field(
         default_factory=lambda: [

@@ -22,4 +22,4 @@ def test_can_load_specific_builder_config():
 def test_bad_dataset_builder_name_raises_an_error():
     """That a name not in the catalogue raises an error"""
     with pytest.raises(FileNotFoundError):
-        load_dataset_builder("exs_certainly_not_a_dataset")
+        load_dataset_builder("molflux_certainly_not_a_dataset")

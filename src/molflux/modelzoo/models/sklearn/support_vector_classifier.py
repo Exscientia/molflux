@@ -1,7 +1,7 @@
 from typing import Any, Literal, Optional, Type, Union
 
 from numpy.random import RandomState
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 import datasets
 from molflux.modelzoo.info import ModelInfo
@@ -109,7 +109,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class SupportVectorClassifierConfig(ModelConfig):
     C: float = 1
     kernel: Kernel = "rbf"

@@ -47,7 +47,7 @@ def test_compute_one(fixture_representation):
     """That single scoring gives expected results."""
     representation = fixture_representation
     samples = ["C1NC1"]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [
         [
             0,
@@ -95,7 +95,7 @@ def test_compute_batch(fixture_representation):
     """That batch scoring gives expected results."""
     representation = fixture_representation
     samples = ["C1NC1", "CC(=CCCC(=CC=O)C)C"]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [
         [
             0,
@@ -184,6 +184,6 @@ def test_compute_zero(fixture_representation):
     """
     representation = fixture_representation
     samples: list = []
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result: list = []
     assert result[representation.tag] == expected_result

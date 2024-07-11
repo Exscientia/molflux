@@ -93,7 +93,7 @@ class RepresentationBase(ABC):
     def tag(self) -> str:
         return self._representation_info.tag
 
-    def featurise(self, samples: ArrayLike, **kwargs: Any) -> RepresentationResult:
+    def featurise(self, *columns: ArrayLike, **kwargs: Any) -> RepresentationResult:
         """Featurises the input samples."""
 
         # Merge explicit keyword arguments with those stored in the state
@@ -110,17 +110,21 @@ class RepresentationBase(ABC):
             )
 
         # Safeguard against non ArrayLike inputs
-        if isinstance(samples, (str, bytes)) or not isinstance(samples, Iterable):
-            samples = [samples]
+        columns = tuple(
+            [column]
+            if isinstance(column, (str, bytes)) or not isinstance(column, Iterable)
+            else column
+            for column in columns
+        )
 
-        logging_context: Dict[str, Any] = {"exs_prism_representation_tag": self.tag}
+        logging_context: Dict[str, Any] = {"molflux_representation_tag": self.tag}
         logger.info(
             f"Attempting to featurise samples... {logging_context}",
             extra=logging_context,
         )
 
         start = time.perf_counter()
-        results = self._featurise(samples, **kwargs)
+        results = self._featurise(*columns, **kwargs)
         elapsed = time.perf_counter() - start
 
         features = list(results.keys())
@@ -143,7 +147,7 @@ class RepresentationBase(ABC):
         return results
 
     @abstractmethod
-    def _featurise(self, samples: ArrayLike, **kwargs: Any) -> RepresentationResult:
+    def _featurise(self, *columns: ArrayLike, **kwargs: Any) -> RepresentationResult:
         """The featurisation callable to be implemented by subclasses."""
 
     def reset_state(self) -> None:

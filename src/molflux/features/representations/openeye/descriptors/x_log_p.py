@@ -13,7 +13,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.openeye._utils import to_digit, to_oemol
 from molflux.features.typing import MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 The XLogP algorithm ([Wang-1997-2]) is provided because its atom-type
@@ -43,7 +43,7 @@ class XLogP(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         digitise: bool = False,
         start: int = -3,
         stop: int = 7,
@@ -88,7 +88,8 @@ class XLogP(RepresentationBase):
             >>> representation.featurise(samples=samples)
             {'x_log_p': [-0.31300002336502075, 0.27699998021125793]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         results = []
         for sample in samples:
             with featurisation_error_harness(sample):

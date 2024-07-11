@@ -1,9 +1,10 @@
 import warnings
-from dataclasses import asdict
+from copy import copy
 from typing import Any, Dict, Final, Literal, Optional, Tuple, Type, Union
 
 import numpy as np
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
+from scipy.stats import norm
 
 import datasets
 from molflux.modelzoo.info import ModelInfo
@@ -12,12 +13,15 @@ from molflux.modelzoo.model import (
     ModelBase,
     ModelConfig,
     PredictionIntervalMixin,
+    SamplingMixin,
+    StandardDeviationMixin,
     UncertaintyCalibrationMixin,
 )
 from molflux.modelzoo.models.sklearn import SKLearnModelBase
 from molflux.modelzoo.protocols import Estimator
 from molflux.modelzoo.typing import PredictionResult
 from molflux.modelzoo.utils import (
+    format_wrapped_model_tag,
     get_concatenated_array,
     pick_features,
     validate_features,
@@ -149,7 +153,7 @@ def _as_mapie_estimator(model: Any) -> Any:
     """Converts a generic model into an estimator suitable for mapie.MapieRegressor.
 
     This allows us to expand the existing mapie interface to accept other inputs,
-    such as molflux.modelzoo estimators.
+    such as molflux-modelzoo estimators.
 
     Returns:
         An estimator that is compatible with the interface expected by mapie.
@@ -194,10 +198,9 @@ def _as_mapie_estimator(model: Any) -> Any:
 
 class Config:
     arbitrary_types_allowed = True
-    extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class MapieRegressorConfig(ModelConfig):
     estimator: Union[Estimator, RegressorMixin, None, str, Dict] = None
     method: Method = "plus"
@@ -223,8 +226,25 @@ class MapieRegressorConfig(ModelConfig):
 class MapieRegressor(
     UncertaintyCalibrationMixin,
     PredictionIntervalMixin,
+    StandardDeviationMixin,
+    SamplingMixin,
     ModelBase[MapieRegressorConfig],
 ):
+    def __init__(self, tag: Optional[str] = None, **config_kwargs: Any) -> None:
+        super().__init__(tag=tag, **config_kwargs)
+        estimator = self.model_config.estimator
+        if isinstance(estimator, Estimator):
+            base_estimator_tag = estimator.tag
+        elif isinstance(estimator, RegressorMixin):
+            base_estimator_tag = estimator.__name__
+        else:
+            base_estimator_tag = "linear_regressor"
+        if tag is None:
+            self.info.tag = format_wrapped_model_tag(
+                self.info.tag,
+                [base_estimator_tag],
+            )
+
     @property
     def _config_builder(self) -> Type[MapieRegressorConfig]:
         return MapieRegressorConfig
@@ -232,7 +252,7 @@ class MapieRegressor(
     @property
     def config(self) -> Dict[str, Any]:
         # handle unserializable config fields
-        config = asdict(self.model_config)
+        config = copy(self.model_config.__dict__)
         config["estimator"] = _UNLINKED_FLAG
         return config
 
@@ -244,13 +264,16 @@ class MapieRegressor(
 
     def _instantiate_model(self) -> MapieMapieRegressor:
         config = self.model_config
+
         # the conformity score is created on the fly
         conformity_score = AbsoluteConformityScore()
+
         # avoids automatic checks that sometimes produce errors depending on
         # the dataset and machine due to machine decimal errors
         # when using the conformal methods provided by mapie, there are
         # mathematical guarantees that such checks are redundant
         conformity_score.consistency_check = False
+
         mapie_regressor = MapieMapieRegressor(
             estimator=_as_mapie_estimator(config.estimator),
             method=config.method,
@@ -302,6 +325,68 @@ class MapieRegressor(
 
     def _calibrate_uncertainty(self, data: datasets.Dataset, **kwargs: Any) -> Any:
         return self._train(train_data=data, **kwargs)
+
+    def _predict_with_std(
+        self,
+        data: datasets.Dataset,
+        use_ensemble_predictions: bool = True,
+        **kwargs: Any,
+    ) -> Tuple[PredictionResult, PredictionResult]:
+        (
+            _,
+            prediction_interval_display_names,
+        ) = self._predict_with_prediction_interval_display_names
+        (
+            _,
+            prediction_std_display_names,
+        ) = self._predict_with_std_display_names
+        # Predict a 1-sigma prediction interval. Use this to provide a gaussian approximation
+        pred_output, pred_interval_output = self._predict_with_prediction_interval(
+            data=data,
+            confidence=norm.cdf(1) - norm.cdf(-1),  # approximately 0.6827
+            use_ensemble_predictions=use_ensemble_predictions,
+            **kwargs,
+        )
+        pred_std_output: PredictionResult = {}
+        for interval_display_name, std_display_name in zip(
+            prediction_interval_display_names,
+            prediction_std_display_names,
+        ):
+            pred_std_output[std_display_name] = [
+                (ub - lb) / 2.0
+                for lb, ub in pred_interval_output[interval_display_name]
+            ]
+
+        return pred_output, pred_std_output
+
+    def _sample(
+        self,
+        data: datasets.Dataset,
+        n_samples: int,
+        use_ensemble_predictions: bool = True,
+        **kwargs: Any,
+    ) -> PredictionResult:
+        display_names = self._sample_display_names
+
+        if not len(data):
+            return {display_name: [] for display_name in display_names}
+
+        prediction_mean_results, prediction_std_results = self._predict_with_std(
+            data=data,
+            use_ensemble_predictions=use_ensemble_predictions,
+            **kwargs,
+        )
+
+        prediction_results: PredictionResult = {}
+        for display_name, means, stds in zip(
+            display_names,
+            prediction_mean_results.values(),
+            prediction_std_results.values(),
+        ):
+            samples = np.random.normal(means, stds, (n_samples, len(means))).T
+            prediction_results[display_name] = samples.tolist()
+
+        return prediction_results
 
     def _predict_with_prediction_interval(
         self,

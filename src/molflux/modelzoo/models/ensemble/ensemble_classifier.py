@@ -4,7 +4,7 @@ from dataclasses import asdict
 from typing import Any, Dict, List, Optional, Type
 
 import numpy as np
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from datasets import Dataset
 from molflux.modelzoo import load_from_store, save_to_store
@@ -19,7 +19,7 @@ from molflux.modelzoo.models.ensemble._combo.utils import (
 )
 from molflux.modelzoo.protocols import SupportsClassification
 from molflux.modelzoo.typing import Classes, PredictionResult
-from molflux.modelzoo.utils import pick_features
+from molflux.modelzoo.utils import format_wrapped_model_tag, pick_features
 
 try:
     from molflux.modelzoo.models.sklearn.logistic_regressor import LogisticRegressor
@@ -73,7 +73,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class EnsembleClassifierConfig(ModelConfig):
     base_estimators: Optional[List[Dict[str, Any]]] = None
     meta_estimator: Optional[
@@ -103,6 +103,11 @@ class EnsembleClassifier(ClassificationMixin, ModelBase[EnsembleClassifierConfig
             load_from_dict(cfg) for cfg in config["base_estimators"]
         ]
         self.n_base_estimators_ = len(self.base_estimators)
+        if tag is None:
+            self.info.tag = format_wrapped_model_tag(
+                self.info.tag,
+                [estimator.tag for estimator in self.base_estimators],
+            )
 
         # validate input parameters
         if not isinstance(config["n_folds"], int):

@@ -9,6 +9,36 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ---------------------------------------------------------
+
+## [0.5.0] - 2024-07-11
+
+## Added
+- Enable multi-column representations
+- Add `linear_split_with_rotation` splitting strategy
+- Added a Bayesian ordinal regression model (`ordinal_classifier`).
+- `mapie_regressor` now has `predict_with_std` and `sample` methods implemented based on a Gaussian approximation for the prediction interval.
+- Added `calibration_gap` metric
+- Added option for masking inputs by the references
+- v2 featurisation metadata with support for multi-column inputs
+
+## Fixed
+- Fixed the dict for matching modules in lightning. Allows many to one matching.
+- `model_config` is now correctly overridden in LightningModules. Previously a stale config could have been used.
+- Release PyTorch upper bound (previously <2.1).
+
+## Changed
+- Compatible with Pydantic v1 & v2
+- Add lower pin on `botocore` / `boto3` to help dependency resolution
+- Lower pin on `botocore` / `boto3` to help dependency resolution when installed alongside `dvc-s3`
+- Use `class_resolver` to simplify and generalise modularity inside Lightning models.
+- `model.train` will now always accept a `validation_data` kwarg. If the underlying model implementation doesn't have `validation_data` in its `model._train` (or `model._train_multi_data`), it will be dropped with a warning.
+- Tag format for wrapped models (`ensemble_regressor`, `ensemble_classifier`, `mapie_regressor`, `sklearn_pipeline_regressor`, `sklearn_pipeline_classifier`) changed to make clearer which base models are included. The new tag format is of the form `'{model.tag}[{base_model.tag}]'`.
+- Changed behaviour of Gaussian NLL from summing likelihoods to averaging them
+
+## Removed
+- sd parser
+- Deprecate usage of `mean_squared_error` with `root=True` 
+
 ## [0.4.0] - 2024-06-03
 
 ## Removed

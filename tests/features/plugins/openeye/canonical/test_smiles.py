@@ -37,7 +37,7 @@ def test_default_compute(fixture_representation):
     """That default scoring gives expected results."""
     representation = fixture_representation
     samples = ["C#C[C@]1(O)CC[C@H]2[C@@H]3CCC4=Cc5oncc5C[C@]4(C)[C@H]3CC[C@@]21C"]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [
         "C[C@]12CC[C@H]3[C@H]([C@@H]1CC[C@]2(C#C)O)CCC4=Cc5c(cno5)C[C@]34C",
     ]
@@ -55,7 +55,7 @@ def test_with_remove_formal_charges_and_reasonable_protomer_raises(
 
     with pytest.raises(FeaturisationError):
         representation.featurise(
-            samples=samples,
+            samples,
             remove_formal_charges=True,
             reasonable_protomer=True,
         )
@@ -69,7 +69,7 @@ def test_with_remove_formal_charges_and_set_neutral_ph_raises(fixture_representa
 
     with pytest.raises(FeaturisationError):
         representation.featurise(
-            samples=samples,
+            samples,
             remove_formal_charges=True,
             set_neutral_ph=True,
         )
@@ -80,7 +80,7 @@ def test_with_sd_title_tag(fixture_representation):
     representation = fixture_representation
     samples = ["C#C[C@]1(O)CC[C@H]2[C@@H]3CCC4=Cc5oncc5C[C@]4(C)[C@H]3CC[C@@]21C"]
 
-    result = representation.featurise(samples=samples, sd_title_tag="pytest")
+    result = representation.featurise(samples, sd_title_tag="pytest")
     assert result
 
 
@@ -89,7 +89,7 @@ def test_with_clear_sd_data(fixture_representation):
     representation = fixture_representation
     samples = ["C#C[C@]1(O)CC[C@H]2[C@@H]3CCC4=Cc5oncc5C[C@]4(C)[C@H]3CC[C@@]21C"]
 
-    result = representation.featurise(samples=samples, clear_sd_data=True)
+    result = representation.featurise(samples, clear_sd_data=True)
     assert result
 
 
@@ -134,7 +134,7 @@ def test_with_reasonable_tautomer(fixture_representation):
     representation = fixture_representation
     samples = ["CC=C(O)C"]
 
-    result = representation.featurise(samples=samples, reasonable_tautomer=True)
+    result = representation.featurise(samples, reasonable_tautomer=True)
     expected_result = ["CCC(=O)C"]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -145,7 +145,7 @@ def test_with_neutral_ph(fixture_representation):
     representation = fixture_representation
     samples = ["CN(C)C"]
 
-    result = representation.featurise(samples=samples, set_neutral_ph=True)
+    result = representation.featurise(samples, set_neutral_ph=True)
     expected_result = ["C[NH+](C)C"]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -156,7 +156,7 @@ def test_with_reasonable_protomer(fixture_representation):
     representation = fixture_representation
     samples = ["NC(Cc1ccc(O)cc1)C(O)=O"]
 
-    result = representation.featurise(samples=samples, reasonable_protomer=True)
+    result = representation.featurise(samples, reasonable_protomer=True)
     expected_result = ["c1cc(ccc1CC(C(=O)[O-])[NH3+])O"]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -222,7 +222,7 @@ def test_with_remove_non_standard_stereo(fixture_representation):
     representation = fixture_representation
     samples = ["CC[N@@H+](C)F"]
 
-    result = representation.featurise(samples=samples, remove_non_standard_stereo=True)
+    result = representation.featurise(samples, remove_non_standard_stereo=True)
     expected_result = ["CC[NH+](C)F"]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -233,7 +233,7 @@ def test_with_rekekulise(fixture_representation):
     representation = fixture_representation
     samples = ["c1cnccn1"]
 
-    result = representation.featurise(samples=samples, rekekulise=True)
+    result = representation.featurise(samples, rekekulise=True)
     expected_result = ["C1=CN=CC=N1"]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -244,7 +244,7 @@ def test_combine_flags_with_output_flavors(fixture_representation):
     representation = fixture_representation
     samples = ["c1cnccn1"]
 
-    result = representation.featurise(samples=samples, explicit_h=True, rekekulise=True)
+    result = representation.featurise(samples, explicit_h=True, rekekulise=True)
     expected_result = ["[H]C1=C(N=C(C(=N1)[H])[H])[H]"]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -269,7 +269,7 @@ def test_with_tautomer_options(
     expected_result = [expected_output_sample]
 
     result = representation.featurise(
-        samples=samples,
+        samples,
         reasonable_tautomer=True,
         tautomer_options=tautomer_options,
     )
@@ -304,7 +304,7 @@ def test_with_tautomer_timeouts(
     expected_result = [expected_result]
 
     result = representation.featurise(
-        samples=samples,
+        samples,
         reasonable_tautomer=True,
         tautomer_timeouts=tautomer_timeouts,
     )

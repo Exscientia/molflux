@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Literal, TypeVar
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 import datasets
 
@@ -27,7 +27,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class PyODModelConfig(ModelConfig):
     def __post_init_post_parse__(self) -> None:
         if self.y_features:

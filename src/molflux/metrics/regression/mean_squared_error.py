@@ -1,23 +1,12 @@
 """Mean squared error regression loss."""
 
 import logging
-import warnings
-from importlib.metadata import version
 from typing import Any, List, Optional
 
 import evaluate
-from packaging.version import parse
 from sklearn.metrics import mean_squared_error
 
 import datasets
-
-if parse(version("scikit-learn")) >= parse("1.4.0"):
-    ROOT_MEAN_SQUARED_ERROR_AVAILABLE = True
-    from sklearn.metrics import root_mean_squared_error
-else:
-    ROOT_MEAN_SQUARED_ERROR_AVAILABLE = False
-
-
 from molflux.metrics.bases import HFMetric
 from molflux.metrics.typing import ArrayLike, MetricResult
 
@@ -40,12 +29,6 @@ Args:
             Returns a full set of errors in case of multioutput input.
         'uniform_average' :
             Errors of all outputs are averaged with uniform weight.
-    root (optional): If ``True`` returns RMSE value, if ``False`` returns MSE
-        value. Defaults to ``False``.
-
-        .. deprecated:: 0.23.0
-           `root` is deprecated in 0.23.0 and will be removed in future releases.
-           Use the `root_mean_squared_error` metric instead to calculate the root mean squared error.
 
 Returns:
     mean_squared_error: A non-negative floating point value (the best value
@@ -116,49 +99,13 @@ class MeanSquaredError(HFMetric):
         references: ArrayLike,
         sample_weight: Optional[List[float]] = None,
         multioutput: str = "uniform_average",
-        root: bool = "deprecated",  # type: ignore[assignment]
         **kwargs: Any,
     ) -> MetricResult:
-        root_kwarg_set_by_user = root != "deprecated"
-        if root_kwarg_set_by_user:
-            warnings.warn(
-                (
-                    "'root' is deprecated in version 0.24.0 and "
-                    "will be removed in future versions. To calculate the "
-                    "root mean squared error, use the metric "
-                    "'root_mean_squared_error'."
-                ),
-                FutureWarning,
-                stacklevel=1,
-            )
-        else:  # swap in with actual default value
-            root = False
-
-        # TODO(avianello): cleanup once we can drop python 3.8 (RMSE will always be available)
-        if ROOT_MEAN_SQUARED_ERROR_AVAILABLE:  # py3.9+
-            if root:
-                score = root_mean_squared_error(
-                    y_true=references,
-                    y_pred=predictions,
-                    sample_weight=sample_weight,
-                    multioutput=multioutput,
-                )
-
-            else:
-                score = mean_squared_error(
-                    y_true=references,
-                    y_pred=predictions,
-                    sample_weight=sample_weight,
-                    multioutput=multioutput,
-                )
-
-        else:  # py3.8
-            score = mean_squared_error(
-                y_true=references,
-                y_pred=predictions,
-                sample_weight=sample_weight,
-                multioutput=multioutput,
-                squared=not root,
-            )
+        score = mean_squared_error(
+            y_true=references,
+            y_pred=predictions,
+            sample_weight=sample_weight,
+            multioutput=multioutput,
+        )
 
         return {self.tag: score}

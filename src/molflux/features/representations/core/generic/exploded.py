@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.typing import ArrayLike
+from molflux.features.utils import assert_n_positional_args
 
 _DESCRIPTION = """
 A generic representation that splits iterable molfluxs into individual features.
@@ -15,7 +16,7 @@ class Exploded(RepresentationBase):
             description=_DESCRIPTION,
         )
 
-    def _featurise(self, samples: ArrayLike, **kwargs: Any) -> Dict[str, List[Any]]:
+    def _featurise(self, *columns: ArrayLike, **kwargs: Any) -> Dict[str, List[Any]]:
         """Explodes each array-like sample into individual features.
 
         Args:
@@ -31,6 +32,10 @@ class Exploded(RepresentationBase):
             >>> representation.featurise(samples)
             {'exploded::0': [1, 10, 100], 'exploded::1': [2, 20, 200], 'exploded::2': [3, 30, 300], 'exploded::3': [4, 40, 400]}
         """
+
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
+
         return {
             f"{self.tag}::{i}": value
             for i, value in enumerate(map(list, zip(*samples)))

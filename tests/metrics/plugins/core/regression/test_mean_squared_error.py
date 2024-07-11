@@ -38,18 +38,6 @@ def test_default_compute(fixture_metric):
     assert result["mean_squared_error"] == 0.375
 
 
-@pytest.mark.filterwarnings(
-    "ignore:'root' is deprecated in version 0.24.0 and will be removed in future versions:FutureWarning",
-)
-def test_root(fixture_metric):
-    """Root mean squared error."""
-    metric = fixture_metric
-    predictions = [2.5, 0.0, 2, 8]
-    references = [3, -0.5, 2, 7]
-    result = metric.compute(predictions=predictions, references=references, root=True)
-    assert pytest.approx(result["mean_squared_error"], 0.01) == 0.612
-
-
 def test_perfect_score(fixture_metric):
     """Test score on perfect predictions."""
     metric = fixture_metric
@@ -67,19 +55,6 @@ def test_multioutpout_default(fixture_metric):
     result = metric.compute(predictions=predictions, references=references)
     assert result
     assert pytest.approx(result["mean_squared_error"], 0.01) == 0.708
-
-
-@pytest.mark.filterwarnings(
-    "ignore:'root' is deprecated in version 0.24.0 and will be removed in future versions:FutureWarning",
-)
-def test_multioutpout_default_root(fixture_metric):
-    """RMSE Multioutput case with errors of all outputs averaged with uniform weight."""
-    metric = load_metric("mean_squared_error", config_name="multioutput")
-    predictions = [[0, 2], [-1, 2], [8, -5]]
-    references = [[0.5, 1], [-1, 1], [7, -6]]
-    result = metric.compute(predictions=predictions, references=references, root=True)
-    assert result
-    assert pytest.approx(result["mean_squared_error"], 0.01) == 0.822
 
 
 def test_multioutpout_raw_values(fixture_metric):

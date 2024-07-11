@@ -36,7 +36,7 @@ def test_default_fingerprint_length(fixture_representation):
     samples = [
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
     ]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     assert representation_name in result
     fingerprint = result[representation_name][0]
     assert len(fingerprint) == 2048
@@ -49,7 +49,7 @@ def test_custom_fingerprint_length(fixture_representation):
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
     ]
     length = 64
-    result = representation.featurise(samples=samples, length=length)
+    result = representation.featurise(samples, length=length)
     fingerprint = result[representation_name][0]
     assert len(fingerprint) == length
 
@@ -59,7 +59,7 @@ def test_empty_smiles_fingerprint_length(fixture_representation):
     representation = fixture_representation
     samples = [""]
     length = 16
-    result = representation.featurise(samples=samples, length=length)
+    result = representation.featurise(samples, length=length)
     fingerprint = result[representation_name][0]
     assert len(fingerprint) == length
 
@@ -70,7 +70,7 @@ def test_basic_compute(fixture_representation):
     samples = [
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
     ]
-    result = representation.featurise(samples=samples, length=16)
+    result = representation.featurise(samples, length=16)
     expected_result = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]]
     assert representation_name in result
     assert result[representation_name] == expected_result
@@ -83,7 +83,7 @@ def test_batch_compute(fixture_representation):
         "Cc1ccc2c(=O)c3cccc(CC(=O)OC4OC(C(=O)O)[C@@H](O)[C@@H](O)[C@@H]4O)c3oc2c1C",
         "CC",
     ]
-    result = representation.featurise(samples=samples, length=16)
+    result = representation.featurise(samples, length=16)
     expected_result = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
         [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

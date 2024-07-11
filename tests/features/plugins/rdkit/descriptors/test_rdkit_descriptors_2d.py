@@ -52,7 +52,7 @@ def test_number_output_features(fixture_representation):
     of features."""
     representation = fixture_representation
     samples = ["CCCC1=NN(C2=C1NC(=NC2=O)C3=C(C=CC(=C3)S(=O)(=O)N4CCN(CC4)C)OCC)C"]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     assert len(result) == _EXPECTED_NUM_2D_DESCRIPTORS
 
 
@@ -77,7 +77,7 @@ def test_include_selects_correct_number_of_computed_features(fixture_representat
     representation = fixture_representation
     samples = ["CCCC1=NN(C2=C1NC(=NC2=O)C3=C(C=CC(=C3)S(=O)(=O)N4CCN(CC4)C)OCC)C"]
     include = ["AvgIpc", "qed", "Chi0"]
-    result = representation.featurise(samples=samples, include=include)
+    result = representation.featurise(samples, include=include)
     assert len(result) == len(include)
 
 
@@ -93,7 +93,7 @@ def test_request_to_include_nonexistent_descriptor_raises(fixture_representation
         ValueError,
         match=r".*The following descriptor\(s\) are not available.*",
     ):
-        representation.featurise(samples=samples, include=include)
+        representation.featurise(samples, include=include)
 
 
 def test_request_to_include_nonexistent_similar_descriptor_raises_with_helpful_message(
@@ -106,7 +106,7 @@ def test_request_to_include_nonexistent_similar_descriptor_raises_with_helpful_m
     typo = "qeds"  # instead of qed
     include = ["AvgIpc", typo, "Chi0"]
     with pytest.raises(ValueError, match=r".*You might be looking for one of these.*"):
-        representation.featurise(samples=samples, include=include)
+        representation.featurise(samples, include=include)
 
 
 def test_exclude_deselects_correct_number_of_computed_features(fixture_representation):
@@ -115,7 +115,7 @@ def test_exclude_deselects_correct_number_of_computed_features(fixture_represent
     representation = fixture_representation
     samples = ["CCCC1=NN(C2=C1NC(=NC2=O)C3=C(C=CC(=C3)S(=O)(=O)N4CCN(CC4)C)OCC)C"]
     exclude = ["AvgIpc", "qed", "Chi0"]
-    result = representation.featurise(samples=samples, exclude=exclude)
+    result = representation.featurise(samples, exclude=exclude)
     assert len(result) == _EXPECTED_NUM_2D_DESCRIPTORS - len(exclude)
 
 
@@ -133,7 +133,7 @@ def test_no_descriptors_to_calculate_raises(fixture_representation):
     exclude = include
 
     with pytest.raises(ValueError, match=r".*No descriptors to calculate.*"):
-        representation.featurise(samples=samples, include=include, exclude=exclude)
+        representation.featurise(samples, include=include, exclude=exclude)
 
 
 def test_default_compute(fixture_representation):
@@ -142,7 +142,7 @@ def test_default_compute(fixture_representation):
     samples = ["COc1cc2c(cc1OCCCN3CCOCC3)c(ncn2)Sc4nccs4", "c1ccccc1"]
 
     include = ["MaxEStateIndex", "qed", "MolWt"]
-    result = representation.featurise(samples=samples, include=include)
+    result = representation.featurise(samples, include=include)
 
     expected = {
         "rdkit_descriptors_2d::MaxEStateIndex": [6.0566621787603925, 2.0],
@@ -160,7 +160,7 @@ def test_default_compute_one(fixture_representation):
     samples = ["COc1cc2c(cc1OCCCN3CCOCC3)c(ncn2)Sc4nccs4"]
 
     include = ["MaxEStateIndex", "qed", "MolWt"]
-    result = representation.featurise(samples=samples, include=include)
+    result = representation.featurise(samples, include=include)
 
     expected = {
         "rdkit_descriptors_2d::MaxEStateIndex": [6.0566621787603925],
@@ -178,7 +178,7 @@ def test_default_compute_zero(fixture_representation):
     samples: list[float] = []
 
     include = ["MaxEStateIndex", "qed", "MolWt"]
-    result = representation.featurise(samples=samples, include=include)
+    result = representation.featurise(samples, include=include)
 
     expected: dict[str, list[float]] = {
         "rdkit_descriptors_2d::MaxEStateIndex": [],
@@ -196,10 +196,10 @@ def test_ordered_results(fixture_representation):
     samples = ["COc1cc2c(cc1OCCCN3CCOCC3)c(ncn2)Sc4nccs4", "c1ccccc1"]
 
     include_a = ["MaxEStateIndex", "qed", "MolWt"]
-    result_a = representation.featurise(samples=samples, include=include_a)
+    result_a = representation.featurise(samples, include=include_a)
 
     include_b = include_a[::-1]
-    result_b = representation.featurise(samples=samples, include=include_b)
+    result_b = representation.featurise(samples, include=include_b)
 
     assert list(result_a.values()) == list(result_b.values())[::-1]
     assert list(result_a.keys()) == list(result_b.keys())[::-1]
@@ -220,7 +220,7 @@ def test_raises_featurisation_error_on_invalid_input_samples(
     """
     representation = fixture_representation
     with pytest.raises(FeaturisationError) as excinfo:
-        representation.featurise(samples=samples)
+        representation.featurise(samples)
 
         # check that a reference to the problematic sample is present in the error message
         assert samples[index_problematic] in str(excinfo.value)

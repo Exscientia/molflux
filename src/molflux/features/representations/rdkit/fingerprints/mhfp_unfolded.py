@@ -12,7 +12,7 @@ except ImportError as e:
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 if TYPE_CHECKING:
     from molflux.features.typing import MolArray
@@ -44,7 +44,7 @@ class MHFPUnfolded(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         n_permutations: int = 1024,
         radius: int = 3,
         rings: bool = True,
@@ -83,6 +83,9 @@ class MHFPUnfolded(RepresentationBase):
             >>> representation.featurise(samples, n_permutations=4)
             {'mhfp_unfolded': [[15876248, 33988699, 14316170, 98479663]]}
         """
+
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         encoder = MHFPEncoder(n_permutations=n_permutations, seed=seed)
 
         fingerprints: list[list[int]] = []

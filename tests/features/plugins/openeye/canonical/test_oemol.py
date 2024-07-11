@@ -36,7 +36,7 @@ def test_default_compute(fixture_representation):
     """That default scoring gives expected results."""
     representation = fixture_representation
     samples = ["C=C"]
-    result = representation.featurise(samples=samples)
+    result = representation.featurise(samples)
     expected_result = [
         b"\x0b\xb5\n\x93\x19\x85mol_0\x13\x87\x82CC\x81\x00\x01\x02 \x81\x00\x10"
         b"\x9b\x81\x80?\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
@@ -73,7 +73,7 @@ def test_with_tautomer_options(
     expected_result = [expected_output_sample]
 
     result = representation.featurise(
-        samples=samples,
+        samples,
         reasonable_tautomer=True,
         tautomer_options=tautomer_options,
     )

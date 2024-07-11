@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Optional, Tuple, Type
 
 import numpy as np
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 import datasets
 from molflux.modelzoo.info import ModelInfo
@@ -39,6 +39,8 @@ Parameters
 ----------
 num_chains : int, default=4  Number of MCMC chains to run. These can be run in parallel allowing faster sampling,
     and having multiple chains is also useful in diagnosing convergence.
+num_warmup: int, default=1000 Number of warmup/burnin samples to run to help ensure sampling
+    from stationary distribution.
 num_samples: int, default=1000 Number of MCMC samples produced per chain. More samples allows for more accurate
     estimation of expectations, and will help ensure convergence, but will take longer to compute.
 random_seed: Optional[int], default=None Random seed to be used during sampling for reproducibility
@@ -60,9 +62,10 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class SparseLinearRegressorConfig(ModelConfig):
     num_chains: int = 4
+    num_warmup: int = 1000
     num_samples: int = 1000
     random_seed: Optional[int] = None
 

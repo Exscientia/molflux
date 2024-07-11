@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from typing import Any, Dict, Literal, Type, Union
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.models.pyod import (
@@ -59,7 +59,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class HBOSDetectorConfig(PyODModelConfig):
     n_bins: Union[int, BinningMethod] = 10
     alpha: float = 0.1

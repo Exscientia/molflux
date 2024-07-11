@@ -1,6 +1,6 @@
 from typing import Literal, Type, Union
 
-from pydantic.dataclasses import dataclass
+from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.model import ModelConfig
@@ -75,7 +75,7 @@ class Config:
     extra = "forbid"
 
 
-@dataclass(config=Config)
+@dataclasses.dataclass(config=Config)
 class SupportVectorRegressorConfig(ModelConfig):
     kernel: Kernel = "rbf"
     degree: int = 3

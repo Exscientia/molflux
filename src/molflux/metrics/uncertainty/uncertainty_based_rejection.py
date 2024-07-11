@@ -145,7 +145,7 @@ class UncertaintyBasedRejection(PredictionIntervalMetric):
                 np.linspace(0, 1, num_of_threshold_steps),
             )
 
-        exs_metric = load_metric(metric_name)
+        molflux_metric = load_metric(metric_name)
 
         results_dic = {}
         for ii, thr in enumerate(
@@ -160,12 +160,12 @@ class UncertaintyBasedRejection(PredictionIntervalMetric):
             ref_filtered = references[mask]
             if len(ref_filtered) > 1:
                 if override_huggingface:
-                    results = exs_metric._compute(  # type: ignore[attr-defined]
+                    results = molflux_metric._compute(  # type: ignore[attr-defined]
                         references=ref_filtered,
                         predictions=pred_filtered,
                     )
                 else:
-                    results = exs_metric.compute(
+                    results = molflux_metric.compute(
                         references=ref_filtered,
                         predictions=pred_filtered,
                     )

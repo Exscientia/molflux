@@ -25,8 +25,8 @@ def fixture_sample_dataset() -> datasets.Dataset:
 
 
 @pytest.fixture()
-def fixture_sample_featurisation_metadata() -> Dict[str, Any]:
-    """A sample featurisation metadata for a dataset with 'canonical_smiles'"""
+def fixture_sample_featurisation_metadata_v1() -> Dict[str, Any]:
+    """A sample v1 featurisation metadata for a dataset with 'canonical_smiles'"""
     return {
         "version": 1,
         "config": [
@@ -51,6 +51,42 @@ def fixture_sample_featurisation_metadata() -> Dict[str, Any]:
     }
 
 
+@pytest.fixture()
+def fixture_sample_featurisation_metadata_v2() -> Dict[str, Any]:
+    """A sample v2 featurisation metadata for a dataset with 'canonical_smiles'"""
+    return {
+        "version": 2,
+        "config": [
+            {
+                "columns": ["canonical_smiles"],
+                "representations": [
+                    {
+                        "name": "character_count",
+                        "as": "character_count",
+                    },
+                    {
+                        "name": "character_count",
+                        "as": "my_alias",
+                        "config": {
+                            "tag": "c_count",
+                        },
+                        "presets": {},
+                    },
+                ],
+            },
+            {
+                "columns": ["character_count", "my_alias"],
+                "representations": [
+                    {
+                        "as": "character_count_plus_my_alias",
+                        "name": "sum",
+                    },
+                ],
+            },
+        ],
+    }
+
+
 def test_featurise_dataset_with_unsupported_featurisation_metadata_version_raises(
     fixture_sample_dataset,
 ):
@@ -64,31 +100,66 @@ def test_featurise_dataset_with_unsupported_featurisation_metadata_version_raise
         featurise_dataset(dataset, featurisation_metadata=featurisation_metadata)
 
 
+@pytest.mark.parametrize(
+    ["fixture_sample_featurisation_metadata", "expected_cols"],
+    (
+        [
+            "fixture_sample_featurisation_metadata_v1",
+            ["my_alias"],
+        ],
+        [
+            "fixture_sample_featurisation_metadata_v2",
+            ["character_count", "my_alias", "character_count_plus_my_alias"],
+        ],
+    ),
+)
 def test_featurise_dataset(
     fixture_sample_dataset,
     fixture_sample_featurisation_metadata,
+    expected_cols,
+    request,
 ):
     """That can featurise a dataset using well-formed featurisation metadata."""
 
     dataset = fixture_sample_dataset
-    featurisation_metadata = fixture_sample_featurisation_metadata
+    featurisation_metadata = request.getfixturevalue(
+        fixture_sample_featurisation_metadata,
+    )
 
     featurised_dataset = featurise_dataset(
         dataset,
         featurisation_metadata=featurisation_metadata,
     )
     assert len(featurised_dataset.column_names) > len(dataset.column_names)
-    assert "my_alias" in featurised_dataset.column_names
+    for col in expected_cols:
+        assert col in featurised_dataset.column_names
 
 
+@pytest.mark.parametrize(
+    ["fixture_sample_featurisation_metadata", "expected_cols"],
+    (
+        [
+            "fixture_sample_featurisation_metadata_v1",
+            ["my_alias"],
+        ],
+        [
+            "fixture_sample_featurisation_metadata_v2",
+            ["character_count", "my_alias", "character_count_plus_my_alias"],
+        ],
+    ),
+)
 def test_featurise_dataset_with_map_kwargs(
     fixture_sample_dataset,
     fixture_sample_featurisation_metadata,
+    expected_cols,
+    request,
 ):
     """That can featurise a dataset using well-formed featurisation metadata and use map_kwargs."""
 
     dataset = fixture_sample_dataset
-    featurisation_metadata = fixture_sample_featurisation_metadata
+    featurisation_metadata = request.getfixturevalue(
+        fixture_sample_featurisation_metadata,
+    )
 
     featurised_dataset = featurise_dataset(
         dataset,
@@ -96,18 +167,36 @@ def test_featurise_dataset_with_map_kwargs(
         batch_size=2,
     )
     assert len(featurised_dataset.column_names) > len(dataset.column_names)
-    assert "my_alias" in featurised_dataset.column_names
+    for col in expected_cols:
+        assert col in featurised_dataset.column_names
 
 
+@pytest.mark.parametrize(
+    ["fixture_sample_featurisation_metadata", "x_features"],
+    (
+        [
+            "fixture_sample_featurisation_metadata_v1",
+            ["my_alias"],
+        ],
+        [
+            "fixture_sample_featurisation_metadata_v2",
+            ["character_count", "my_alias", "character_count_plus_my_alias"],
+        ],
+    ),
+)
 def test_replay_featurisation(
     tmp_path,
     fixture_sample_dataset,
     fixture_sample_featurisation_metadata,
+    x_features,
+    request,
 ):
     """That can replay featurisation for a given saved model."""
 
     dataset = fixture_sample_dataset
-    featurisation_metadata = fixture_sample_featurisation_metadata
+    featurisation_metadata = request.getfixturevalue(
+        fixture_sample_featurisation_metadata,
+    )
     featurised_dataset = featurise_dataset(
         dataset,
         featurisation_metadata=featurisation_metadata,
@@ -115,7 +204,7 @@ def test_replay_featurisation(
 
     model = molflux.modelzoo.load_model(
         "linear_regressor",
-        x_features=["my_alias", "character_count"],
+        x_features=x_features,
         y_features=["y"],
     )
     model.train(featurised_dataset)
@@ -129,15 +218,32 @@ def test_replay_featurisation(
     assert replayed_dataset.column_names == featurised_dataset.column_names
 
 
+@pytest.mark.parametrize(
+    ["fixture_sample_featurisation_metadata", "x_features"],
+    (
+        [
+            "fixture_sample_featurisation_metadata_v1",
+            ["my_alias"],
+        ],
+        [
+            "fixture_sample_featurisation_metadata_v2",
+            ["character_count", "my_alias", "character_count_plus_my_alias"],
+        ],
+    ),
+)
 def test_replay_featurisation_with_map_kwargs(
     tmp_path,
     fixture_sample_dataset,
     fixture_sample_featurisation_metadata,
+    x_features,
+    request,
 ):
     """That can replay featurisation for a given saved model with map_kwargs."""
 
     dataset = fixture_sample_dataset
-    featurisation_metadata = fixture_sample_featurisation_metadata
+    featurisation_metadata = request.getfixturevalue(
+        fixture_sample_featurisation_metadata,
+    )
     featurised_dataset = featurise_dataset(
         dataset,
         featurisation_metadata=featurisation_metadata,
@@ -145,7 +251,7 @@ def test_replay_featurisation_with_map_kwargs(
 
     model = molflux.modelzoo.load_model(
         "linear_regressor",
-        x_features=["my_alias", "character_count"],
+        x_features=x_features,
         y_features=["y"],
     )
     model.train(featurised_dataset)

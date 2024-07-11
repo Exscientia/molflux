@@ -46,7 +46,7 @@ Examples:
     >>> upper_bound = [1, 1.5, 1.8, 2.8, 5.7]
     >>> prediction_intervals = list(zip(lower_bound, upper_bound))
     >>> m.compute(predictions=pred, references=ref, prediction_intervals=prediction_intervals)
-    {'expected_calibration_error': 0.02675...}
+    {'expected_calibration_error': 0.02595}
 """
 
 _CITATION = """\
@@ -80,7 +80,7 @@ class ExpectedCalibrationError(PredictionIntervalMetric):
         standard_deviations: Optional[ArrayLike] = None,
         prediction_intervals: Optional[ArrayLike] = None,
         confidence: float = 0.9,
-        num_thresholds: int = 20,
+        num_thresholds: int = 100,
         **kwargs: Any,
     ) -> MetricResult:
         if standard_deviations is None:

@@ -13,7 +13,7 @@ from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
 from molflux.features.representations.rdkit._utils import to_smiles
 from molflux.features.typing import Fingerprint, MolArray
-from molflux.features.utils import featurisation_error_harness
+from molflux.features.utils import assert_n_positional_args, featurisation_error_harness
 
 _DESCRIPTION = """
 Topological-torsion fingerprints, as described in:
@@ -52,7 +52,7 @@ class TopologicalTorsion(RepresentationBase):
 
     def _featurise(
         self,
-        samples: MolArray,
+        *columns: MolArray,
         include_chirality: bool = False,
         torsion_atom_count: int = 4,
         count_simulation: bool = True,
@@ -91,7 +91,8 @@ class TopologicalTorsion(RepresentationBase):
             >>> representation.featurise(samples, fp_size=16)
             {'topological_torsion': [[1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0]]}
         """
-
+        assert_n_positional_args(*columns, expected_size=1)
+        samples = columns[0]
         ttgen = rdFingerprintGenerator.GetTopologicalTorsionGenerator(
             includeChirality=include_chirality,
             torsionAtomCount=torsion_atom_count,
