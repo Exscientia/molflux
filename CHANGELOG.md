@@ -10,6 +10,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---------------------------------------------------------
 
+## [0.5.0] - 2024-07-11
+
 ## Added
 - Enable multi-column representations
 - Add `linear_split_with_rotation` splitting strategy
