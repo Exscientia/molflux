@@ -2,14 +2,14 @@ import warnings
 from copy import copy
 from typing import Any, Dict, Final, Literal, Optional, Tuple, Type, Union
 
+import datasets
 import numpy as np
 from pydantic.v1 import dataclasses
 from scipy.stats import norm
 
-import datasets
-from molflux.modelzoo.info import ModelInfo
-from molflux.modelzoo.load import load_from_dict
-from molflux.modelzoo.model import (
+from exs.modelzoo.info import ModelInfo
+from exs.modelzoo.load import load_from_dict
+from exs.modelzoo.model import (
     ModelBase,
     ModelConfig,
     PredictionIntervalMixin,
@@ -17,10 +17,10 @@ from molflux.modelzoo.model import (
     StandardDeviationMixin,
     UncertaintyCalibrationMixin,
 )
-from molflux.modelzoo.models.sklearn import SKLearnModelBase
-from molflux.modelzoo.protocols import Estimator
-from molflux.modelzoo.typing import PredictionResult
-from molflux.modelzoo.utils import (
+from exs.modelzoo.models.sklearn import SKLearnModelBase
+from exs.modelzoo.protocols import Estimator
+from exs.modelzoo.typing import PredictionResult
+from exs.modelzoo.utils import (
     format_wrapped_model_tag,
     get_concatenated_array,
     pick_features,
@@ -28,13 +28,17 @@ from molflux.modelzoo.utils import (
 )
 
 try:
-    from mapie.conformity_scores import AbsoluteConformityScore
+    from mapie.conformity_scores import (
+        AbsoluteConformityScore,
+        GammaConformityScore,
+        ResidualNormalisedScore,
+    )
     from mapie.regression import MapieRegressor as MapieMapieRegressor
     from sklearn.base import RegressorMixin
     from sklearn.model_selection import BaseCrossValidator
 
 except ImportError as e:
-    from molflux.modelzoo.errors import ExtrasDependencyImportError
+    from exs.modelzoo.errors import ExtrasDependencyImportError
 
     raise ExtrasDependencyImportError("mapie", e) from None
 
@@ -140,11 +144,30 @@ verbose : int, optional
     Above ``50``, the output is sent to stdout.
 
     By default ``0``.
+
+conformity_score: Optional[Union[str, ConformityScore]]
+    ConformityScore instance.
+    It defines the link between the observed values, the predicted ones
+    and the conformity scores. For instance, the default ``None`` value
+    correspondonds to a conformity score which assumes
+    y_obs = y_pred + conformity_score.
+
+    - default is ``AbsoluteConformityScore`` conformity
+      score
+    - ConformityScore: any ``ConformityScore`` class
+    - Currently only enable AbsoluteConformityScore, GammaConformityScore,
+      or ResidualNormalisedScore
+    - with ResidualNormalisedScore, normalisation is by an sklearn model -
+      at the moment, don't allow to configure this - use default linear regressor
 """
 
 Method = Literal["naive", "base", "plus", "minmax"]
 AggFunction = Literal["mean", "median"]
-
+Score = Literal[
+    "AbsoluteConformityScore",
+    "GammaConformityScore",
+    "ResidualNormalisedScore",
+]
 
 _UNLINKED_FLAG: Final = "UNLINKED"
 
@@ -153,7 +176,7 @@ def _as_mapie_estimator(model: Any) -> Any:
     """Converts a generic model into an estimator suitable for mapie.MapieRegressor.
 
     This allows us to expand the existing mapie interface to accept other inputs,
-    such as molflux-modelzoo estimators.
+    such as exs-modelzoo estimators.
 
     Returns:
         An estimator that is compatible with the interface expected by mapie.
@@ -208,6 +231,7 @@ class MapieRegressorConfig(ModelConfig):
     n_jobs: Optional[int] = None
     agg_function: Optional[AggFunction] = "mean"
     verbose: int = 0
+    conformity_score: Optional[Score] = "AbsoluteConformityScore"
 
     def __post_init_post_parse__(self) -> None:
         if self.y_features and len(self.y_features) != 1:
@@ -266,7 +290,12 @@ class MapieRegressor(
         config = self.model_config
 
         # the conformity score is created on the fly
-        conformity_score = AbsoluteConformityScore()
+        if config.conformity_score == "GammaConformityScore":
+            conformity_score = GammaConformityScore()
+        elif config.conformity_score == "ResidualNormalisedScore":
+            conformity_score = ResidualNormalisedScore()
+        else:
+            conformity_score = AbsoluteConformityScore()
 
         # avoids automatic checks that sometimes produce errors depending on
         # the dataset and machine due to machine decimal errors

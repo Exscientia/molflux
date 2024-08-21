@@ -10,6 +10,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---------------------------------------------------------
 
+## [0.6.0] - 2024-08-XX
+
+## Added
+- Added `GammaConformityScore` and `ResidualNormalisedScore` to `mapie_regressor`. These should allow for more adaptive prediction intervals
+
 ## [0.5.0] - 2024-07-11
 
 ## Added
