@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional, Type
+from typing import Any, Literal
 
 from pydantic.v1 import dataclasses
 
@@ -97,13 +97,13 @@ class KNNClassifierConfig(ModelConfig):
     leaf_size: int = 30
     p: int = 2
     metric: str = "minkowski"
-    metric_params: Optional[dict] = None
-    n_jobs: Optional[int] = None
+    metric_params: dict | None = None
+    n_jobs: int | None = None
 
 
 class KNNClassifier(SKLearnClassificationMixin, SKLearnModelBase[KNNClassifierConfig]):
     @property
-    def _config_builder(self) -> Type[KNNClassifierConfig]:
+    def _config_builder(self) -> type[KNNClassifierConfig]:
         return KNNClassifierConfig
 
     def _info(self) -> ModelInfo:

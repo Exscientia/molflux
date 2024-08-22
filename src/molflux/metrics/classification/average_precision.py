@@ -1,7 +1,7 @@
 """Compute average precision (AP) from prediction scores."""
 
 import logging
-from typing import Any, List, Optional, Union
+from typing import Any
 
 import evaluate
 from sklearn.metrics import average_precision_score
@@ -129,9 +129,9 @@ class AveragePrecision(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         average: str = "macro",
-        pos_label: Union[int, str] = 1,
+        pos_label: int | str = 1,
         **kwargs: Any,
     ) -> MetricResult:
         score = average_precision_score(

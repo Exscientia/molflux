@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye.oemolprop import OEGetLipinskiAcceptorCount
@@ -35,7 +35,7 @@ class NumAcceptors(RepresentationBase):
         stop: int = 10,
         num: int = 10,
         **kwargs: Any,
-    ) -> Dict[str, List[int]]:
+    ) -> dict[str, list[int]]:
         """Calculates the number of Lipinski acceptors in a molecule.
 
         Args:

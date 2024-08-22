@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from molflux.splits.catalogue import get_splitting_strategy_cls
 from molflux.splits.errors import DuplicateKeyError
@@ -6,7 +7,7 @@ from molflux.splits.parsers import Spec, dict_parser, yaml_parser
 from molflux.splits.strategy import SplittingStrategy
 from molflux.splits.typing import PathLike
 
-SplittingStrategies = Dict[str, SplittingStrategy]
+SplittingStrategies = dict[str, SplittingStrategy]
 
 
 def load_splitting_strategy(name: str, **init_kwargs: Any) -> SplittingStrategy:
@@ -33,7 +34,7 @@ def _load_from_spec(spec: Spec) -> SplittingStrategy:
     return strategy
 
 
-def load_from_dict(dictionary: Dict[str, Any]) -> SplittingStrategy:
+def load_from_dict(dictionary: dict[str, Any]) -> SplittingStrategy:
     """Loads a splitting strategy from a config dict."""
 
     # Validate dictionary
@@ -42,7 +43,7 @@ def load_from_dict(dictionary: Dict[str, Any]) -> SplittingStrategy:
     return _load_from_spec(spec=spec)
 
 
-def load_from_dicts(dictionaries: Iterable[Dict[str, Any]]) -> SplittingStrategies:
+def load_from_dicts(dictionaries: Iterable[dict[str, Any]]) -> SplittingStrategies:
     """Loads splitting strategies from an iterable of dicts."""
 
     strategies = (load_from_dict(dictionary) for dictionary in dictionaries)

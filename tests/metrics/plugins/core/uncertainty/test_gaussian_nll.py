@@ -37,7 +37,7 @@ def test_default_compute(fixture_metric):
     references = [0.5, 0.8, 1.2, 2.4, 4.5]
     lower_bound = [0.1, 0.1, 0.2, 2, 3]
     upper_bound = [1, 1.5, 1.8, 2.8, 5.7]
-    prediction_intervals = list(zip(lower_bound, upper_bound))
+    prediction_intervals = list(zip(lower_bound, upper_bound, strict=False))
     result = metric.compute(
         predictions=predictions,
         references=references,
@@ -54,7 +54,7 @@ def test_exact_compute(fixture_metric):
     references = [1, 2, 3, 4, 5]
     lower_bound = [0, 1, 2, 3, 4]
     upper_bound = [2, 3, 4, 5, 6]
-    prediction_intervals = list(zip(lower_bound, upper_bound))
+    prediction_intervals = list(zip(lower_bound, upper_bound, strict=False))
     confidence = 1 - 2 * (1 - norm.cdf(1))
     result = metric.compute(
         predictions=predictions,
@@ -66,6 +66,22 @@ def test_exact_compute(fixture_metric):
     assert pytest.approx(result["gaussian_nll"], 0.0001) == 1 / 2 * (
         np.log(2) + np.log(np.pi) + 1
     )
+
+
+def test_standard_deviations(fixture_metric):
+    """That the metric computes properly for standard deviations."""
+    metric = fixture_metric
+    predictions = [0, 0, 0, 0]
+    references = [0.9, 0.1, 0.2, 0.3]
+    standard_deviations = [0.5, 1, 0.5, 1]
+    result = metric.compute(
+        predictions=predictions,
+        references=references,
+        standard_deviations=standard_deviations,
+    )
+
+    expected = 1.009
+    assert np.isclose(result["gaussian_nll"], expected, atol=0.01)
 
 
 def test_raise_error_no_prediction_interval(fixture_metric):

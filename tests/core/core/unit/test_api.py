@@ -1,6 +1,7 @@
 """
 Tests ensuring desired API objects are part of the top-level namespace.
 """
+
 import pytest
 
 import molflux.core

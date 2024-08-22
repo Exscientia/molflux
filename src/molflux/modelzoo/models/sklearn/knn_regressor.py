@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional, Type
+from typing import Any, Literal
 
 from pydantic.v1 import dataclasses
 
@@ -95,13 +95,13 @@ class KNNRegressorConfig(ModelConfig):
     leaf_size: int = 30
     p: int = 2
     metric: str = "minkowski"
-    metric_params: Optional[dict] = None
-    n_jobs: Optional[int] = None
+    metric_params: dict | None = None
+    n_jobs: int | None = None
 
 
 class KNNRegressor(SKLearnModelBase[KNNRegressorConfig]):
     @property
-    def _config_builder(self) -> Type[KNNRegressorConfig]:
+    def _config_builder(self) -> type[KNNRegressorConfig]:
         return KNNRegressorConfig
 
     def _info(self) -> ModelInfo:

@@ -6,7 +6,7 @@ requires = ["setuptools>=64.0.0", "setuptools_scm>=6.2.0"]
 name = 'molflux'
 description = 'A foundational package for molecular predictive modelling'
 readme = 'README.md'
-requires-python = '>= 3.8'
+requires-python = '>= 3.10'
 authors = [{name = 'Exscientia'}]
 maintainers = [{name = 'Exscientia'}]
 classifiers = [
@@ -16,8 +16,6 @@ classifiers = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3 :: Only',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Typing :: Typed',
@@ -47,8 +45,7 @@ dependencies = [
     'pyyaml',
     'qlient',
     'requests',
-    'scikit-learn>=1.2.1',
-    'scikit-learn>=1.4.0; python_version > "3.8"',  # support for root_mean_squared_error, not available on 3.8. Cleanup when dropping 3.8 compatiblity
+    'scikit-learn>=1.4.0',
     'scipy>=1.7.0',
     'tenacity',
     'thefuzz[speedup]',
@@ -58,7 +55,6 @@ dependencies = [
 
 [project.optional-dependencies]
 openeye = [
-    'openeye-toolkits<2023.0.0; python_version == "3.8"',  # openeye 2023 not supported on python 3.8
     'openeye-toolkits',
 ]
 rdkit = [
@@ -96,7 +92,7 @@ xgboost = [
     'xgboost<2.0.0',  # flip pin once codebase upgraded to new >= 2.0.0 API
 ]
 dev = [
-    'nox',
+    'nox[uv]>=2024',
     'pre-commit',
 ]
 docs = [
@@ -184,6 +180,7 @@ atom_pair_unfolded = 'molflux.features.representations.rdkit.fingerprints.atom_p
 avalon = 'molflux.features.representations.rdkit.fingerprints.avalon:Avalon'
 layered = 'molflux.features.representations.rdkit.fingerprints.layered:Layered'
 maccs_rdkit = 'molflux.features.representations.rdkit.fingerprints.maccs:MACCSRdkit'
+map_light = 'molflux.features.representations.rdkit.fingerprints.map_light:MapLight'
 mhfp = 'molflux.features.representations.rdkit.fingerprints.mhfp:MHFP'
 mhfp_unfolded = 'molflux.features.representations.rdkit.fingerprints.mhfp_unfolded:MHFPUnfolded'
 morgan = 'molflux.features.representations.rdkit.fingerprints.morgan:Morgan'
@@ -223,6 +220,7 @@ tanimoto_rdkit = 'molflux.splits.strategies.rdkit.tanimoto:Tanimoto'
 
 [project.entry-points.'molflux.modelzoo.plugins.core']
 average_regressor = 'molflux.modelzoo.models.core.average_regressor:AverageRegressor'
+average_features_regressor = 'molflux.modelzoo.models.core.average_features_regressor:AverageFeaturesRegressor'
 
 [project.entry-points.'molflux.modelzoo.plugins.catboost']
 cat_boost_regressor = 'molflux.modelzoo.models.catboost.catboost_regressor:CatBoostRegressor'
@@ -310,6 +308,7 @@ mean_absolute_error = 'molflux.metrics.regression.mean_absolute_error:MeanAbsolu
 mean_squared_error = 'molflux.metrics.regression.mean_squared_error:MeanSquaredError'
 root_mean_squared_error = 'molflux.metrics.regression.root_mean_squared_error:RootMeanSquaredError'
 median_absolute_error = 'molflux.metrics.regression.median_absolute_error:MedianAbsoluteError'
+out_of_sample_r2 = 'molflux.metrics.regression.out_of_sample_r2:OutOfSampleR2'
 pearson = 'molflux.metrics.regression.pearson:Pearson'
 proportion_within_fold = 'molflux.metrics.regression.proportion_within_fold:ProportionWithinFold'
 r2 = 'molflux.metrics.regression.r2:R2'
@@ -325,7 +324,7 @@ prediction_interval_width = 'molflux.metrics.uncertainty.prediction_interval_wid
 uncertainty_based_rejection = 'molflux.metrics.uncertainty.uncertainty_based_rejection:UncertaintyBasedRejection'
 
 [project.urls]
-documentation = 'https://github.com/exscientia/molflux/issues'  # TODO: add docs url
+documentation = 'https://exscientia.github.io/molflux/'
 repository = 'https://github.com/exscientia/molflux.git'
 issue-tracker = 'https://github.com/exscientia/molflux/issues'
 changelog = 'https://github.com/exscientia/molflux/src/main/CHANGELOG.md'
@@ -443,8 +442,6 @@ filterwarnings = [
     # ignore ConvergenceWarnings during tests
     "ignore:Stochastic Optimizer.*Maximum iterations (.*) reached and the optimization hasn't converged yet",
     # [modelzoo.xgboost]
-    # ignore unhandled internal FutureWarning triggered by xgboost on python 3.8
-    "ignore:elementwise comparison failed; returning scalar instead:FutureWarning:xgboost.sklearn",
     # ignore warnings about constant input arrays
     "ignore:An input array is constant; the correlation coefficient is not defined",
     # ignore speed
@@ -472,6 +469,8 @@ src = ["src/molflux", "tests"]
 namespace-packages = ["src/molflux"]
 respect-gitignore = true
 show-fixes = true
+
+[tool.ruff.lint]
 select = [ # https://beta.ruff.rs/docs/rules/
     # "A",  # flake8-builtins
     # "ARG", # flake8-unused-arguments
@@ -508,9 +507,9 @@ select = [ # https://beta.ruff.rs/docs/rules/
     "W", # pycodestyle warning
     "YTT", # flake8-2020
 ]
-ignore = ["E501", "S101", "PD901", "PD003"]
+ignore = ["E501", "S101", "PD901", "PD003", "UP035", "UP007", "UP038", "TCH003"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "docs/source/conf.py" = ["ERA"]
 "src/molflux/__init__.py" = ["F401"]
 "src/molflux/*/__init__.py" = ["F401"]
@@ -520,10 +519,10 @@ ignore = ["E501", "S101", "PD901", "PD003"]
 "tests/*" = ["ARG001", "D", "S101", "PLR2004"]
 "noxfile.py" = ["T201"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["molflux"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.setuptools_scm]

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem.rdmolops import LayeredFingerprint
@@ -47,12 +47,12 @@ class Layered(RepresentationBase):
         min_path: int = 1,
         max_path: int = 7,
         fp_size: int = 2048,
-        atom_counts: Optional[List[int]] = None,
-        set_only_bits: Optional[ExplicitBitVect] = None,
+        atom_counts: list[int] | None = None,
+        set_only_bits: ExplicitBitVect | None = None,
         branched_paths: bool = True,
-        from_atoms: Optional[List] = None,
+        from_atoms: list | None = None,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Generates a layered fingerprint for each input molecule.
 
         Args:
@@ -97,7 +97,7 @@ class Layered(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        layered_fp_list: List[List] = []
+        layered_fp_list: list[list] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

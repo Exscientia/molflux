@@ -3,8 +3,10 @@
 https://raw.githubusercontent.com/reymond-group/drfp/main/src/drfp/fingerprint.py
 https://github.com/reymond-group/drfp/commit/6c5db5cc7d2057e932cb1e1be8d697dc2c3327e1
 """
+
+from collections.abc import Iterable
 from hashlib import blake2b
-from typing import Any, Dict, Iterable, List, Set, Tuple
+from typing import Any
 
 import numpy as np
 from rdkit.Chem import AllChem
@@ -34,7 +36,7 @@ class DrfpEncoder:
         min_radius: int = 0,
         root_central_atom: bool = True,
         include_hydrogens: bool = False,
-    ) -> List[bytes]:
+    ) -> list[bytes]:
         """Creates a molecular shingling from a RDKit molecule (rdkit.Chem.rdchem.Mol).
 
         Arguments:
@@ -87,7 +89,7 @@ class DrfpEncoder:
                     index,
                     useHs=include_hydrogens,
                 )
-                amap: Dict[int, Any] = {}
+                amap: dict[int, Any] = {}
                 submol = AllChem.PathToSubmol(in_mol, p, atomMap=amap)
 
                 if index not in amap:
@@ -124,7 +126,7 @@ class DrfpEncoder:
         include_rings: bool = True,
         root_central_atom: bool = True,
         include_hydrogens: bool = False,
-    ) -> Tuple[np.ndarray, List[bytes]]:
+    ) -> tuple[np.ndarray, list[bytes]]:
         """Creates an drfp array from a reaction SMILES string.
 
         Arguments:
@@ -149,8 +151,8 @@ class DrfpEncoder:
         left = sides[0].split(".")
         right = sides[2].split(".")
 
-        left_shingles: Set[bytes] = set()
-        right_shingles: Set[bytes] = set()
+        left_shingles: set[bytes] = set()
+        right_shingles: set[bytes] = set()
 
         for component in left:
             mol = AllChem.MolFromSmiles(component)
@@ -187,7 +189,7 @@ class DrfpEncoder:
         return DrfpEncoder.hash(list(s_diff)), list(s_diff)
 
     @staticmethod
-    def hash(shingling: List[bytes]) -> np.ndarray:
+    def hash(shingling: list[bytes]) -> np.ndarray:
         """Directly hash all the SMILES in a shingling to a 32-bit integerself.
 
         Arguments:
@@ -205,7 +207,7 @@ class DrfpEncoder:
     def fold(
         hash_values: np.ndarray,
         length: int = 2048,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Folds the hash values to a binary vector of a given length.
 
         Arguments:
@@ -231,7 +233,7 @@ class DrfpEncoder:
         include_rings: bool = True,
         root_central_atom: bool = True,
         include_hydrogens: bool = False,
-    ) -> List[List[int]]:
+    ) -> list[list[int]]:
         """Encodes a list of reaction SMILES using the drfp fingerprint.
 
         Args:
@@ -268,7 +270,7 @@ class DrfpEncoder:
         include_rings: bool,
         root_central_atom: bool,
         include_hydrogens: bool,
-    ) -> List[int]:
+    ) -> list[int]:
         """Encodes a reaction SMILES using the drfp fingerprint.
 
         Args:

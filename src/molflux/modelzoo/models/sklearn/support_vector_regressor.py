@@ -1,4 +1,4 @@
-from typing import Literal, Type, Union
+from typing import Literal, Union
 
 from pydantic.v1 import dataclasses
 
@@ -92,7 +92,7 @@ class SupportVectorRegressorConfig(ModelConfig):
 
 class SupportVectorRegressor(SKLearnModelBase[SupportVectorRegressorConfig]):
     @property
-    def _config_builder(self) -> Type[SupportVectorRegressorConfig]:
+    def _config_builder(self) -> type[SupportVectorRegressorConfig]:
         return SupportVectorRegressorConfig
 
     def _info(self) -> ModelInfo:

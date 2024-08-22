@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Any, Dict, Literal, Type, Union
+from typing import Any, Literal
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -108,16 +108,16 @@ class CBLOFDetectorConfig(PyODModelConfig):
     beta: float = 5
     use_weights: bool = False
     check_estimator: bool = False
-    random_state: Union[int, np.random.Generator, None] = None
+    random_state: int | np.random.Generator | None = None
 
 
 class CBLOFDetector(PyODClassificationMixin, PyODModelBase[CBLOFDetectorConfig]):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[CBLOFDetectorConfig]:
+    def _config_builder(self) -> type[CBLOFDetectorConfig]:
         return CBLOFDetectorConfig
 
     def _info(self) -> ModelInfo:

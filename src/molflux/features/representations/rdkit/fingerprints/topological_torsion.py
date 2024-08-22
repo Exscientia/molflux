@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem import rdFingerprintGenerator
@@ -56,11 +56,11 @@ class TopologicalTorsion(RepresentationBase):
         include_chirality: bool = False,
         torsion_atom_count: int = 4,
         count_simulation: bool = True,
-        count_bounds: Optional[object] = None,
+        count_bounds: object | None = None,
         fp_size: int = 2048,
-        atom_invariants_generator: Optional[object] = None,
+        atom_invariants_generator: object | None = None,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """
         Generates a folded topological torsion fingerprint for each input molecule from a fingerprint generator.
 
@@ -102,7 +102,7 @@ class TopologicalTorsion(RepresentationBase):
             atomInvariantsGenerator=atom_invariants_generator,
         )
 
-        topological_torsion_fp_list: List[Fingerprint] = []
+        topological_torsion_fp_list: list[Fingerprint] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smiles = to_smiles(sample)

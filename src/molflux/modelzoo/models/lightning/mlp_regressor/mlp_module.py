@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import torch
 
@@ -62,7 +62,7 @@ class MLPModule(LightningModuleBase):
     def _training_step_on_single_source_batch(
         self,
         single_source_batch: Any,
-        source_name: Optional[str],
+        source_name: str | None,
         batch_idx: int,
         *args: Any,
         **kwargs: Any,
@@ -84,7 +84,7 @@ class MLPModule(LightningModuleBase):
     def _validation_step_on_single_source_batch(
         self,
         single_source_batch: Any,
-        source_name: Optional[str],
+        source_name: str | None,
         batch_idx: int,
         *args: Any,
         **kwargs: Any,

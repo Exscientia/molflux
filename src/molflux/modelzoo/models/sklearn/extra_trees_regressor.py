@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Type, Union
+from typing import Literal
 
 from pydantic.v1 import dataclasses
 
@@ -147,21 +147,21 @@ class Config:
 class ExtraTreesRegressorConfig(ModelConfig):
     n_estimators: int = 100
     criterion: Criterion = "squared_error"
-    max_depth: Optional[int] = None
-    min_samples_split: Union[int, float] = 2
-    min_samples_leaf: Union[int, float] = 1
+    max_depth: int | None = None
+    min_samples_split: int | float = 2
+    min_samples_leaf: int | float = 1
     min_weight_fraction_leaf: float = 0.0
-    max_features: Optional[Union[float, MaxFeaturesCallable]] = "sqrt"
-    max_leaf_nodes: Optional[int] = None
+    max_features: float | MaxFeaturesCallable | None = "sqrt"
+    max_leaf_nodes: int | None = None
     min_impurity_decrease: float = 0.0
     bootstrap: bool = False
     oob_score: bool = False
-    n_jobs: Optional[int] = None
-    random_state: Optional[int] = None
+    n_jobs: int | None = None
+    random_state: int | None = None
     verbose: int = 0
     warm_start: bool = False
     ccp_alpha: float = 0.0
-    max_samples: Optional[Union[int, float]] = None
+    max_samples: int | float | None = None
 
     def __post_init_post_parse__(self) -> None:
         if self.ccp_alpha < 0:
@@ -170,7 +170,7 @@ class ExtraTreesRegressorConfig(ModelConfig):
 
 class ExtraTreesRegressor(SKLearnModelBase[ExtraTreesRegressorConfig]):
     @property
-    def _config_builder(self) -> Type[ExtraTreesRegressorConfig]:
+    def _config_builder(self) -> type[ExtraTreesRegressorConfig]:
         return ExtraTreesRegressorConfig
 
     def _info(self) -> ModelInfo:

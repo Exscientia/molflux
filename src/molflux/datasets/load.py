@@ -1,5 +1,6 @@
 import warnings
-from typing import Any, Dict, Iterable, Literal, Optional, Union, overload
+from collections.abc import Iterable
+from typing import Any, Literal, overload
 
 import datasets
 from datasets import (
@@ -16,7 +17,7 @@ from molflux.datasets.typing import PathLike
 
 def load_dataset_builder(
     name: str,
-    config_name: Optional[str] = None,
+    config_name: str | None = None,
     **kwargs: Any,
 ) -> DatasetBuilder:
     """Load a dataset builder from the catalogue or from the hf hub.
@@ -71,59 +72,55 @@ def load_dataset_builder(
 @overload
 def load_dataset(
     name: str,
-    config_name: Optional[str] = None,
+    config_name: str | None = None,
     *,
     split: str = "all",
     streaming: Literal[False] = False,
     **kwargs: Any,
-) -> Dataset:
-    ...
+) -> Dataset: ...
 
 
 @overload
 def load_dataset(
     name: str,
-    config_name: Optional[str] = None,
+    config_name: str | None = None,
     *,
     split: str = "all",
     streaming: Literal[True],
     **kwargs: Any,
-) -> IterableDataset:
-    ...
+) -> IterableDataset: ...
 
 
 @overload
 def load_dataset(
     name: str,
-    config_name: Optional[str] = None,
+    config_name: str | None = None,
     *,
     split: None,
     streaming: Literal[False] = False,
     **kwargs: Any,
-) -> DatasetDict:
-    ...
+) -> DatasetDict: ...
 
 
 @overload
 def load_dataset(
     name: str,
-    config_name: Optional[str] = None,
+    config_name: str | None = None,
     *,
     split: None,
     streaming: Literal[True],
     **kwargs: Any,
-) -> IterableDatasetDict:
-    ...
+) -> IterableDatasetDict: ...
 
 
 def load_dataset(
     name: str,
-    config_name: Optional[str] = None,
+    config_name: str | None = None,
     *,
-    split: Optional[str] = "all",
+    split: str | None = "all",
     streaming: bool = False,
     **kwargs: Any,
-) -> Union[Dataset, DatasetDict, IterableDataset, IterableDatasetDict]:
+) -> Dataset | DatasetDict | IterableDataset | IterableDatasetDict:
     """Load a dataset (or dataset dict) from the catalogue or from the hf hub.
 
     You can find the list of available datasets with :func:`molflux.datasets.list_datasets()`.
@@ -185,15 +182,15 @@ def load_dataset(
         )
 
 
-def _load_from_spec(spec: Spec) -> Union[Dataset, DatasetDict]:
+def _load_from_spec(spec: Spec) -> Dataset | DatasetDict:
     """Loads a dataset from a validated Spec."""
 
-    dataset: Union[Dataset, DatasetDict] = load_dataset(name=spec.name, **spec.config)
+    dataset: Dataset | DatasetDict = load_dataset(name=spec.name, **spec.config)
 
     return dataset
 
 
-def load_from_dict(dictionary: Dict[str, Any]) -> Union[Dataset, DatasetDict]:
+def load_from_dict(dictionary: dict[str, Any]) -> Dataset | DatasetDict:
     """Loads a dataset from a config dict."""
 
     # Validate dictionary
@@ -202,10 +199,10 @@ def load_from_dict(dictionary: Dict[str, Any]) -> Union[Dataset, DatasetDict]:
     return _load_from_spec(spec=spec)
 
 
-Datasets = Dict[str, Union[Dataset, DatasetDict, IterableDataset, IterableDatasetDict]]
+Datasets = dict[str, Dataset | DatasetDict | IterableDataset | IterableDatasetDict]
 
 
-def load_from_dicts(dictionaries: Iterable[Dict[str, Any]]) -> Datasets:
+def load_from_dicts(dictionaries: Iterable[dict[str, Any]]) -> Datasets:
     """Loads a collection of datasets from an iterable of dicts."""
 
     datasets = (load_from_dict(dictionary) for dictionary in dictionaries)

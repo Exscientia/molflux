@@ -5,7 +5,8 @@ Abstract Base Classes for classes implementing the SplittingStrategy protocol.
 import inspect
 import types
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Iterator, Optional
+from collections.abc import Iterator
+from typing import Any
 
 from molflux import __version__
 from molflux.splits.info import SplittingStrategyInfo
@@ -17,7 +18,7 @@ from molflux.splits.utils import copyfunc
 class SplittingStrategyBase(ABC):
     """The abstract base class for all concrete splitting strategies."""
 
-    def __init__(self, tag: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, tag: str | None = None, **kwargs: Any) -> None:
         """Initialises the strategy."""
 
         # build info
@@ -31,12 +32,12 @@ class SplittingStrategyBase(ABC):
         self._splitting_strategy_info = info
 
         # Initialise a null state
-        self._state: Dict[str, Any] = {}
+        self._state: dict[str, Any] = {}
 
         # Update 'split' docstring with detailed kwargs description from .info()
         # need to copy method to avoid changing the docstring of every instance
         self.split = types.MethodType(copyfunc(self.split), self)  # type: ignore[method-assign]
-        self.split.__func__.__doc__ += self._splitting_strategy_info.split_description  # type: ignore[attr-defined]
+        self.split.__func__.__doc__ += self._splitting_strategy_info.split_description  # type: ignore[operator]
 
         # The split signature
         self.split_signature = inspect.signature(self._split)
@@ -71,7 +72,7 @@ class SplittingStrategyBase(ABC):
         """
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         return self._splitting_strategy_info.to_dict()
 
     @property
@@ -79,7 +80,7 @@ class SplittingStrategyBase(ABC):
         return self._splitting_strategy_info.name
 
     @property
-    def state(self) -> Dict[str, Any]:
+    def state(self) -> dict[str, Any]:
         return self._state
 
     @property
@@ -89,8 +90,8 @@ class SplittingStrategyBase(ABC):
     def split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         **kwargs: Any,
     ) -> Iterator[SplitIndices]:
         """
@@ -115,8 +116,8 @@ class SplittingStrategyBase(ABC):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         **kwargs: Any,
     ) -> Iterator[SplitIndices]:
         """The actual split callable to be implemented by subclasses."""

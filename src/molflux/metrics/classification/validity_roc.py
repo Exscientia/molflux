@@ -1,7 +1,7 @@
 """Computes an ROC curve over SMILES strings"""
 
 import logging
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import evaluate
 import numpy as np
@@ -70,9 +70,9 @@ class ValidityRoc(HFMetric):
 
     def _pre_process_inputs(
         self,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
-    ) -> Tuple[Optional[ArrayLike], ...]:
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
+    ) -> tuple[ArrayLike | None, ...]:
         """Converts None inputs to strings to allow using None as invalid token.
 
         Otherwise, None molfluxs would raise as they do not count as string features.
@@ -92,7 +92,7 @@ class ValidityRoc(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        invalid_token: Optional[str] = None,
+        invalid_token: str | None = None,
         average: bool = False,
         **kwargs: Any,
     ) -> MetricResult:
@@ -107,7 +107,7 @@ class ValidityRoc(HFMetric):
             for one_set_of_preds in predictions
         ]
 
-        def running_mean(x: List[Any]) -> np.ndarray:
+        def running_mean(x: list[Any]) -> np.ndarray:
             cumsum = np.cumsum(x)
             norm = np.arange(1, np.shape(x)[0] + 1)
             mean: np.ndarray = cumsum / norm
@@ -118,6 +118,6 @@ class ValidityRoc(HFMetric):
         if average:
             running_means = running_means.mean(axis=0, keepdims=True)
 
-        validity_roc: List[float] = running_means.tolist()
+        validity_roc: list[float] = running_means.tolist()
 
         return {self.tag: validity_roc}

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
@@ -16,7 +16,7 @@ class Exploded(RepresentationBase):
             description=_DESCRIPTION,
         )
 
-    def _featurise(self, *columns: ArrayLike, **kwargs: Any) -> Dict[str, List[Any]]:
+    def _featurise(self, *columns: ArrayLike, **kwargs: Any) -> dict[str, list[Any]]:
         """Explodes each array-like sample into individual features.
 
         Args:
@@ -38,5 +38,5 @@ class Exploded(RepresentationBase):
 
         return {
             f"{self.tag}::{i}": value
-            for i, value in enumerate(map(list, zip(*samples)))
+            for i, value in enumerate(map(list, zip(*samples, strict=False)))
         }

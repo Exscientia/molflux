@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterable, List, Literal
+from collections.abc import Iterable
+from typing import Any, Literal
 
 import yaml
 from pydantic.v1 import BaseModel, Field, ValidationError
@@ -8,16 +9,16 @@ from molflux.modelzoo.typing import PathLike
 
 class Spec(BaseModel):
     name: str
-    config: Dict[str, Any] = Field(default_factory=dict)
+    config: dict[str, Any] = Field(default_factory=dict)
 
 
 class YamlConfig(BaseModel):
     version: str
     kind: Literal["models"]
-    specs: List[Dict[str, Any]]
+    specs: list[dict[str, Any]]
 
 
-def dict_parser(dictionary: Dict[str, Any]) -> Spec:
+def dict_parser(dictionary: dict[str, Any]) -> Spec:
     """Parses a dictionary into a spec."""
     try:
         return Spec(**dictionary)

@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, Type
+from collections.abc import Iterable
 
 from pydantic.v1 import dataclasses
 
@@ -54,9 +54,9 @@ class Config:
 @dataclasses.dataclass(config=Config)
 class BernoulliNBConfig(ModelConfig):
     alpha: float = 1
-    binarize: Optional[float] = 0
+    binarize: float | None = 0
     fit_prior: bool = True
-    class_prior: Optional[Iterable] = None
+    class_prior: Iterable | None = None
 
 
 class BernoulliNBClassifier(
@@ -64,7 +64,7 @@ class BernoulliNBClassifier(
     SKLearnModelBase[BernoulliNBConfig],
 ):
     @property
-    def _config_builder(self) -> Type[BernoulliNBConfig]:
+    def _config_builder(self) -> type[BernoulliNBConfig]:
         return BernoulliNBConfig
 
     def _info(self) -> ModelInfo:

@@ -1,7 +1,7 @@
 """Matthews correlation coefficient (MCC)."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
 from sklearn.metrics import matthews_corrcoef
@@ -81,7 +81,7 @@ class MatthewsCorrcoef(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         score = matthews_corrcoef(

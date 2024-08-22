@@ -1,7 +1,7 @@
 """Computes a diversity ROC curve over SMILES string."""
 
 import logging
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import evaluate
 import numpy as np
@@ -69,9 +69,9 @@ class DiversityRoc(HFMetric):
 
     def _pre_process_inputs(
         self,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
-    ) -> Tuple[Optional[ArrayLike], ...]:
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
+    ) -> tuple[ArrayLike | None, ...]:
         """Converts None inputs to strings to allow using None as invalid token.
 
         Otherwise, None molfluxs would raise as they do not count as string features.
@@ -99,7 +99,7 @@ class DiversityRoc(HFMetric):
         max_k = len(predictions[0])
 
         # vector of 0./1. representing whether a prediction is repeated
-        def mark_new_predictions(preds: List[str]) -> np.ndarray:
+        def mark_new_predictions(preds: list[str]) -> np.ndarray:
             idxs = sorted([preds.index(p) for p in set(preds)])
             new_predictions = np.zeros((max_k,))
             new_predictions[idxs] = 1
@@ -118,6 +118,6 @@ class DiversityRoc(HFMetric):
         if average:
             running_diversities = running_diversities.mean(axis=0, keepdims=True)
 
-        diversity_roc: List[float] = running_diversities.tolist()
+        diversity_roc: list[float] = running_diversities.tolist()
 
         return {self.tag: diversity_roc}

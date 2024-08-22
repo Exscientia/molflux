@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import warnings
 from pathlib import Path
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Union
 
 from cloudpathlib import AnyPath, CloudPath
 
@@ -83,7 +83,7 @@ def _save_binaries(artefact: ModelArtefact, directory: _AnyPath) -> str:
     return str(artefacts_dir)
 
 
-def _load_model_metadata(directory: _AnyPath) -> Tuple[str, str, Dict[str, Any]]:
+def _load_model_metadata(directory: _AnyPath) -> tuple[str, str, dict[str, Any]]:
     """Loads model metadata from a directory.
 
     The directory is expected to contain a metadata file as generated
@@ -93,7 +93,7 @@ def _load_model_metadata(directory: _AnyPath) -> Tuple[str, str, Dict[str, Any]]
 
     log_file = directory / config.MODEL_CONFIG_FILENAME
     with log_file.open("r", encoding="utf-8") as f:
-        metadata: Dict[str, Any] = json.load(f)
+        metadata: dict[str, Any] = json.load(f)
 
     # Peek at stored model versioning
     version = metadata.get("version")
@@ -122,7 +122,7 @@ def _load_from_binaries(
     directory: _AnyPath,
     name: str,
     tag: str,
-    model_config: Dict[str, Any],
+    model_config: dict[str, Any],
 ) -> Model:
     """Deserialises a model that has been serialised in a given directory.
 

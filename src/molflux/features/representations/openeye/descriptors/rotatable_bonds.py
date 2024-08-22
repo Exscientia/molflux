@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye.oemolprop import OEGetRotatableBondCount
@@ -38,7 +38,7 @@ class RotatableBonds(RepresentationBase):
         num: int = 8,
         adjust: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[int]]:
+    ) -> dict[str, list[int]]:
         """Calculates the number of rotatable bond counts for each input molecule.
 
         Args:

@@ -1,9 +1,9 @@
 import importlib.metadata
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
-def get_runtime() -> Dict[str, str]:
+def get_runtime() -> dict[str, str]:
     distributions = importlib.metadata.distributions()
     return {
         distribution.metadata["Name"]: distribution.version
@@ -26,22 +26,22 @@ class ModelInfo:
 
     # Generic model metadata
     tag: str = field(default_factory=str)
-    version: Optional[str] = None
+    version: str | None = None
 
     model_description: str = field(default_factory=str)
 
-    task_types: List[str] = field(default_factory=list)
+    task_types: list[str] = field(default_factory=list)
 
     # Model config metadata
-    config: Dict[str, Any] = field(default_factory=dict)
+    config: dict[str, Any] = field(default_factory=dict)
     config_description: str = field(default_factory=str)
 
     # Runtime metadata
-    runtime: Dict[str, str] = field(default_factory=get_runtime)
+    runtime: dict[str, str] = field(default_factory=get_runtime)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, dictionary: Dict[str, Any]) -> "ModelInfo":
+    def from_dict(cls, dictionary: dict[str, Any]) -> "ModelInfo":
         return cls(**dictionary)

@@ -3,21 +3,21 @@ import functools
 import inspect
 import logging
 from collections import defaultdict
+from collections.abc import Callable
 from importlib.metadata import EntryPoint, entry_points
-from typing import Callable, Dict, List, Type
 
 from molflux.metrics.metric import Metric
 from molflux.metrics.naming import camelcase_to_snakecase
 
 logger = logging.getLogger(__name__)
 
-MetricT = Type[Metric]
+MetricT = type[Metric]
 
 # Only ever call this once for performance reasons
 NAMESPACE = "molflux.metrics.plugins."
 
 # This is where entrypoints will be registered {<name>: <Entrypoint>}
-METRICS_CATALOGUE: Dict[str, EntryPoint] = {}
+METRICS_CATALOGUE: dict[str, EntryPoint] = {}
 
 
 @functools.lru_cache
@@ -80,13 +80,13 @@ def get_metric_cls(metric_name: str) -> MetricT:
     return metric_cls  # type: ignore[return-value]
 
 
-def list_metrics() -> Dict[str, List[str]]:
+def list_metrics() -> dict[str, list[str]]:
     """List all available metrics in the catalogue.
 
     The catalogue is returned as a view of metric names keyed by kind.
     """
 
-    view: Dict[str, List[str]] = defaultdict(list)
+    view: dict[str, list[str]] = defaultdict(list)
 
     for metric_name, metric_entrypoint in METRICS_CATALOGUE.items():
         metric_kind = metric_entrypoint.group.split(".")[-1]

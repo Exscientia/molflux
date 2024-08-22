@@ -97,12 +97,20 @@ def test_indices_rotation(fixture_sample_dataset, fixture_test_strategy):
     )
     test_indices_rot = (test_indices_unrot + ceil(len(dataset) / 2)) % len(dataset)
 
-    assert all(i == j for i, j in zip(train_indices1, train_indices_unrot))
-    assert all(i == j for i, j in zip(validation_indices1, validation_indices_unrot))
-    assert all(i == j for i, j in zip(test_indices1, test_indices_unrot))
-    assert all(i == j for i, j in zip(train_indices2, train_indices_rot))
-    assert all(i == j for i, j in zip(validation_indices2, validation_indices_rot))
-    assert all(i == j for i, j in zip(test_indices2, test_indices_rot))
+    assert all(
+        i == j for i, j in zip(train_indices1, train_indices_unrot, strict=False)
+    )
+    assert all(
+        i == j
+        for i, j in zip(validation_indices1, validation_indices_unrot, strict=False)
+    )
+    assert all(i == j for i, j in zip(test_indices1, test_indices_unrot, strict=False))
+    assert all(i == j for i, j in zip(train_indices2, train_indices_rot, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices2, validation_indices_rot, strict=False)
+    )
+    assert all(i == j for i, j in zip(test_indices2, test_indices_rot, strict=False))
 
 
 def test_splits_are_disjoint(fixture_sample_dataset, fixture_test_strategy):

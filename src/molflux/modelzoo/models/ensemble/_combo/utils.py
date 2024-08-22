@@ -1,5 +1,5 @@
 import numbers
-from typing import Any, Union
+from typing import Any
 
 import numpy as np
 
@@ -10,9 +10,9 @@ MIN_INT = -1 * MAX_INT - 1
 
 
 def check_parameter(
-    param: Union[int, float],
-    low: Union[int, float] = MIN_INT,
-    high: Union[int, float] = MAX_INT,
+    param: int | float,
+    low: int | float = MIN_INT,
+    high: int | float = MAX_INT,
     param_name: str = "",
     include_left: bool = False,
     include_right: bool = False,
@@ -80,7 +80,7 @@ def check_parameter(
         return True
 
 
-def list_diff(first_list: list, second_list: list) -> Union[list, set]:
+def list_diff(first_list: list, second_list: list) -> list | set:
     """Utility function to calculate list difference (first_list-second_list)
     For duplicated values, both duplicates are removed such that
     eg. >>> list_diff([1,2,2],[1,2])

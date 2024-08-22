@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Type, Union
+from typing import TYPE_CHECKING, Any, Literal
 
 from pydantic.v1 import dataclasses
 
@@ -157,105 +157,105 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class CatBoostClassifierConfig(ModelConfig):
-    iterations: Optional[int] = None
-    learning_rate: Optional[float] = None
-    depth: Optional[int] = None
-    l2_leaf_reg: Optional[int] = None
-    model_size_reg: Optional[float] = None
-    rsm: Optional[int] = None
-    loss_function: Optional[LossFunctions] = None
-    border_count: Optional[int] = None
-    feature_border_type: Optional[str] = None
-    per_float_feature_quantization: Optional[List[str]] = None
-    input_borders: Optional[str] = None
-    output_borders: Optional[str] = None
-    fold_permutation_block: Optional[int] = None
-    od_pval: Optional[float] = None
-    od_wait: Optional[int] = None
-    od_type: Optional[str] = None
-    nan_mode: Optional[str] = None
-    counter_calc_method: Optional[str] = None
-    leaf_estimation_iterations: Optional[int] = None
-    leaf_estimation_method: Optional[str] = None
-    thread_count: Optional[int] = None
-    random_seed: Optional[int] = None
-    use_best_model: Optional[bool] = None
-    verbose: Optional[bool] = None
-    logging_level: Optional[Union[int, str]] = "Silent"
-    metric_period: Optional[int] = None
-    ctr_leaf_count_limit: Optional[int] = None
-    store_all_simple_ctr: Optional[bool] = None
-    max_ctr_complexity: Optional[int] = None
-    has_time: Optional[bool] = None
-    allow_const_label: Optional[bool] = None
-    one_hot_max_size: Optional[int] = None
-    random_strength: Optional[int] = None
-    catboost_name: Optional[str] = None
-    ignored_features: Optional[Union[List[int], List[str]]] = None
-    train_dir: Optional[str] = None
-    custom_metric: Optional[str] = None
-    eval_metric: Optional[str] = None
-    bagging_temperature: Optional[float] = None
-    save_snapshot: Optional[bool] = None
-    snapshot_file: Optional[str] = None
-    snapshot_interval: Optional[int] = None
-    fold_len_multiplier: Optional[float] = None
-    used_ram_limit: Optional[float] = None
-    gpu_ram_part: Optional[float] = None
-    allow_writing_files: Optional[bool] = None
-    final_ctr_computation_mode: Optional[str] = None
-    approx_on_full_history: Optional[bool] = None
-    boosting_type: Optional[str] = None
-    simple_ctr: Optional[bool] = None
-    combinations_ctr: Optional[str] = None
-    per_feature_ctr: Optional[str] = None
-    task_type: Optional[str] = None
-    device_config: Optional[str] = None
-    devices: Optional[str] = None
-    bootstrap_type: Optional[str] = None
-    subsample: Optional[bool] = None
-    sampling_unit: Optional[str] = None
-    dev_score_calc_obj_block_size: Optional[int] = None
-    max_depth: Optional[int] = None
-    n_estimators: Optional[int] = None
-    num_boost_round: Optional[int] = None
-    num_trees: Optional[int] = None
-    colsample_bylevel: Optional[int] = None
-    random_state: Optional[int] = None
-    reg_lambda: Optional[float] = None
-    objective: Optional[str] = None
-    eta: Optional[float] = None
-    max_bin: Optional[int] = None
-    gpu_cat_features_storage: Optional[str] = None
-    data_partition: Optional[str] = None
-    metadata: Optional[Dict] = None
-    early_stopping_rounds: Optional[int] = None
-    cat_features: Optional[List[str]] = None
-    grow_policy: Optional[str] = None
-    min_data_in_leaf: Optional[int] = None
-    min_child_samples: Optional[int] = None
-    max_leaves: Optional[int] = None
-    num_leaves: Optional[int] = None
-    score_function: Optional[str] = None
-    leaf_estimation_backtracking: Optional[str] = None
-    ctr_history_unit: Optional[int] = None
-    monotone_constraints: Optional[Union[List[str], str, Dict, List]] = None
-    feature_weights: Optional[Union[List, str, Dict]] = None
-    penalties_coefficient: Optional[float] = None
-    first_feature_use_penalties: Optional[bool] = None
-    model_shrink_rate: Optional[float] = None
-    model_shrink_mode: Optional[str] = None
-    langevin: Optional[bool] = None
-    diffusion_temperature: Optional[float] = None
-    posterior_sampling: Optional[bool] = None
-    boost_from_average: Optional[bool] = None
-    auto_class_weights: Optional[str] = None
-    dictionaries: Optional[Any] = None
-    feature_calcers: Optional[Any] = None
-    scale_pos_weight: Optional[Any] = None
-    text_features: Optional[Any] = None
-    text_processing: Optional[Any] = None
-    tokenizers: Optional[Any] = None
+    iterations: int | None = None
+    learning_rate: float | None = None
+    depth: int | None = None
+    l2_leaf_reg: int | None = None
+    model_size_reg: float | None = None
+    rsm: int | None = None
+    loss_function: LossFunctions | None = None
+    border_count: int | None = None
+    feature_border_type: str | None = None
+    per_float_feature_quantization: list[str] | None = None
+    input_borders: str | None = None
+    output_borders: str | None = None
+    fold_permutation_block: int | None = None
+    od_pval: float | None = None
+    od_wait: int | None = None
+    od_type: str | None = None
+    nan_mode: str | None = None
+    counter_calc_method: str | None = None
+    leaf_estimation_iterations: int | None = None
+    leaf_estimation_method: str | None = None
+    thread_count: int | None = None
+    random_seed: int | None = None
+    use_best_model: bool | None = None
+    verbose: bool | None = None
+    logging_level: int | str | None = "Silent"
+    metric_period: int | None = None
+    ctr_leaf_count_limit: int | None = None
+    store_all_simple_ctr: bool | None = None
+    max_ctr_complexity: int | None = None
+    has_time: bool | None = None
+    allow_const_label: bool | None = None
+    one_hot_max_size: int | None = None
+    random_strength: int | None = None
+    catboost_name: str | None = None
+    ignored_features: list[int] | list[str] | None = None
+    train_dir: str | None = None
+    custom_metric: str | None = None
+    eval_metric: str | None = None
+    bagging_temperature: float | None = None
+    save_snapshot: bool | None = None
+    snapshot_file: str | None = None
+    snapshot_interval: int | None = None
+    fold_len_multiplier: float | None = None
+    used_ram_limit: float | None = None
+    gpu_ram_part: float | None = None
+    allow_writing_files: bool | None = None
+    final_ctr_computation_mode: str | None = None
+    approx_on_full_history: bool | None = None
+    boosting_type: str | None = None
+    simple_ctr: bool | None = None
+    combinations_ctr: str | None = None
+    per_feature_ctr: str | None = None
+    task_type: str | None = None
+    device_config: str | None = None
+    devices: str | None = None
+    bootstrap_type: str | None = None
+    subsample: bool | None = None
+    sampling_unit: str | None = None
+    dev_score_calc_obj_block_size: int | None = None
+    max_depth: int | None = None
+    n_estimators: int | None = None
+    num_boost_round: int | None = None
+    num_trees: int | None = None
+    colsample_bylevel: int | None = None
+    random_state: int | None = None
+    reg_lambda: float | None = None
+    objective: str | None = None
+    eta: float | None = None
+    max_bin: int | None = None
+    gpu_cat_features_storage: str | None = None
+    data_partition: str | None = None
+    metadata: dict | None = None
+    early_stopping_rounds: int | None = None
+    cat_features: list[str] | None = None
+    grow_policy: str | None = None
+    min_data_in_leaf: int | None = None
+    min_child_samples: int | None = None
+    max_leaves: int | None = None
+    num_leaves: int | None = None
+    score_function: str | None = None
+    leaf_estimation_backtracking: str | None = None
+    ctr_history_unit: int | None = None
+    monotone_constraints: list[str] | str | dict | list | None = None
+    feature_weights: list | str | dict | None = None
+    penalties_coefficient: float | None = None
+    first_feature_use_penalties: bool | None = None
+    model_shrink_rate: float | None = None
+    model_shrink_mode: str | None = None
+    langevin: bool | None = None
+    diffusion_temperature: float | None = None
+    posterior_sampling: bool | None = None
+    boost_from_average: bool | None = None
+    auto_class_weights: str | None = None
+    dictionaries: Any | None = None
+    feature_calcers: Any | None = None
+    scale_pos_weight: Any | None = None
+    text_features: Any | None = None
+    text_processing: Any | None = None
+    tokenizers: Any | None = None
 
 
 class CatBoostClassifier(
@@ -270,11 +270,11 @@ class CatBoostClassifier(
     """
 
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[CatBoostClassifierConfig]:
+    def _config_builder(self) -> type[CatBoostClassifierConfig]:
         return CatBoostClassifierConfig
 
     def _info(self) -> ModelInfo:

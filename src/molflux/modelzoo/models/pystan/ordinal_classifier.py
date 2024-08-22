@@ -1,4 +1,4 @@
-from typing import Any, Optional, Type
+from typing import Any
 
 from pydantic.v1 import dataclasses
 from scipy import stats
@@ -57,7 +57,7 @@ class OrdinalClassifierConfig(ModelConfig):
     num_chains: int = 4
     num_warmup: int = 1000
     num_samples: int = 1000
-    random_seed: Optional[int] = None
+    random_seed: int | None = None
     sigma_prior: float = 1.0
     mu_prior: float = 2.0
 
@@ -73,7 +73,7 @@ class OrdinalClassifier(
     ModelBase[OrdinalClassifierConfig],
 ):
     @property
-    def _config_builder(self) -> Type[OrdinalClassifierConfig]:
+    def _config_builder(self) -> type[OrdinalClassifierConfig]:
         return OrdinalClassifierConfig
 
     def _info(self) -> ModelInfo:
@@ -89,7 +89,8 @@ class OrdinalClassifier(
     def classes(self) -> Classes:
         classes = [range(self.model_config.num_classes)]
         return {
-            task: list(class_int) for task, class_int in zip(self.y_features, classes)
+            task: list(class_int)
+            for task, class_int in zip(self.y_features, classes, strict=False)
         }
 
     def _train(self, train_data: datasets.Dataset, **kwargs: Any) -> Any:
@@ -226,6 +227,7 @@ class OrdinalClassifier(
         for task, display_name in zip(
             self.y_features,
             display_names,
+            strict=False,
         ):
             prob_preds = [
                 sum(pred == ii for pred in preds) / len(preds)

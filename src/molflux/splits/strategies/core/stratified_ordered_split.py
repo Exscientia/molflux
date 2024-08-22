@@ -1,4 +1,5 @@
-from typing import Any, Iterator, List, Optional, Union
+from collections.abc import Iterator
+from typing import Any
 
 import numpy as np
 
@@ -31,18 +32,18 @@ class StratifiedOrderedSplit(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         *,
-        train_fraction: Union[float, List[float]] = 0.8,
-        gap_train_validation_fraction: Optional[Union[float, List[float]]] = None,
-        validation_fraction: Union[float, List[float]] = 0.1,
-        gap_validation_test_fraction: Optional[Union[float, List[float]]] = None,
-        test_fraction: Union[float, List[float]] = 0.1,
-        gap_test_end_fraction: Optional[Union[float, List[float]]] = None,
+        train_fraction: float | list[float] = 0.8,
+        gap_train_validation_fraction: float | list[float] | None = None,
+        validation_fraction: float | list[float] = 0.1,
+        gap_validation_test_fraction: float | list[float] | None = None,
+        test_fraction: float | list[float] = 0.1,
+        gap_test_end_fraction: float | list[float] | None = None,
         undefined_groups_in_train: bool = True,
-        stratify_targets_to_ignore: Optional[List] = None,
-        min_test_size_per_target: Optional[Union[int, List[int]]] = None,
+        stratify_targets_to_ignore: list | None = None,
+        min_test_size_per_target: int | list[int] | None = None,
         same_group_same_set: bool = True,
         **kwargs: Any,
     ) -> Iterator[SplitIndices]:

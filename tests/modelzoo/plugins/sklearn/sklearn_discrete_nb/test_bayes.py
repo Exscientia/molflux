@@ -41,6 +41,7 @@ def test_corrected_nb_fitting_features_work(fixture_training_data):
         for cls_idx, Fc in zip(
             range(len(clf.classes_)),
             clf.feature_count_[:, feat_idx],
+            strict=False,
         ):
             p_smooth = (Fc + 1) / (Ftot + 1 / (pbases[cls_idx]))
             p_norm_smooth = p_smooth / pbases[cls_idx]
@@ -75,6 +76,7 @@ def test_coverage_nb_fitting_features_work(fixture_training_data):
         for cls_idx, Fc in zip(
             range(len(clf.classes_)),
             clf.feature_count_[:, feat_idx],
+            strict=False,
         ):
             p_smooth = (Fc + 1) / (Ftot + 1 / (pbases[cls_idx]))
             p_norm_smooth = p_smooth / pbases[cls_idx]
@@ -110,6 +112,7 @@ def test_pipelinepilot_nb_fitting_features_work(fixture_training_data):
         for cls_idx, Fc in zip(
             range(len(clf.classes_)),
             clf.feature_count_[:, feat_idx],
+            strict=False,
         ):
             p_smooth = (Fc + 1) / (Ftot + 1 / (pbases[cls_idx]))
             p_norm_smooth = p_smooth / pbases[cls_idx]

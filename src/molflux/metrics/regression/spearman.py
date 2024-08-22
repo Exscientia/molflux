@@ -1,7 +1,7 @@
 """Spearman correlation coefficient score function."""
 
 import logging
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 import evaluate
 import scipy.stats
@@ -104,7 +104,7 @@ class Spearman(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        axis: Optional[int] = 0,
+        axis: int | None = 0,
         nan_policy: NanPolicy = "propagate",
         alternative: Alternative = "two-sided",
         **kwargs: Any,

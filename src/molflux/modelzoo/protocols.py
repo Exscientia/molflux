@@ -1,6 +1,4 @@
-from typing import Any, Dict, Protocol, Tuple, Union, runtime_checkable
-
-from typing_extensions import TypeGuard
+from typing import Any, Protocol, TypeGuard, Union, runtime_checkable
 
 from molflux.modelzoo.typing import Classes, DataFrameLike, Features, PredictionResult
 
@@ -13,7 +11,7 @@ class Estimator(Protocol):
         """Initialises the model."""
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         """Model metadata."""
 
     @property
@@ -25,7 +23,7 @@ class Estimator(Protocol):
         """The arbitrary tag name of the model."""
 
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         """The essential config that fully defines the model."""
 
     @property
@@ -38,8 +36,8 @@ class Estimator(Protocol):
 
     def train(
         self,
-        train_data: Union[DataFrameLike, Dict[str, DataFrameLike]],
-        validation_data: Union[DataFrameLike, Dict[str, DataFrameLike], None] = None,
+        train_data: DataFrameLike | dict[str, DataFrameLike],
+        validation_data: DataFrameLike | dict[str, DataFrameLike] | None = None,
         **kwargs: Any,
     ) -> Any:
         """Trains the model."""
@@ -72,7 +70,7 @@ class SupportsCovariance(Estimator, Protocol):
         self,
         data: DataFrameLike,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """Performs a model prediction with associated covariance matrix."""
 
 
@@ -85,7 +83,7 @@ class SupportsPredictionInterval(Estimator, Protocol):
         data: DataFrameLike,
         confidence: float,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """Performs a model prediction with associated prediction interval."""
 
 
@@ -110,7 +108,7 @@ class SupportsStandardDeviation(Estimator, Protocol):
         self,
         data: DataFrameLike,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """Performs a model prediction with associated standard deviation."""
 
 
@@ -163,4 +161,4 @@ Model = Union[
     SupportsStandardDeviation,
     SupportsUncertaintyCalibration,
 ]
-Models = Dict[str, Model]
+Models = dict[str, Model]

@@ -1,6 +1,7 @@
 import contextlib
+from collections.abc import Callable, Iterator
 from types import FunctionType
-from typing import Any, Callable, Iterator
+from typing import Any
 
 from molflux.features.errors import FeaturisationError, InvalidNumberOfPositionalArgs
 

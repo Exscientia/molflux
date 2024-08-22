@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Any, Dict, List, Literal, Optional, Protocol, TypedDict, Union
+from typing import Any, Literal, Protocol, TypedDict
 
 import datasets
 
@@ -22,15 +22,14 @@ from molflux.modelzoo.models.lightning.config import (
 
 
 class DataCollator(Protocol):
-    def __call__(self, examples: List[Dict[str, Any]]) -> Dict[str, Any]:
-        ...
+    def __call__(self, examples: list[dict[str, Any]]) -> dict[str, Any]: ...
 
 
 class Datasets(TypedDict):
-    train: Optional[Dict[Optional[str], datasets.Dataset]]
-    validation: Optional[Dict[Optional[str], datasets.Dataset]]
-    test: Optional[Dict[Optional[str], datasets.Dataset]]
-    predict: Optional[datasets.Dataset]
+    train: dict[str | None, datasets.Dataset] | None
+    validation: dict[str | None, datasets.Dataset] | None
+    test: dict[str | None, datasets.Dataset] | None
+    predict: datasets.Dataset | None
 
 
 class LightningDataModule(pl.LightningDataModule):
@@ -39,10 +38,10 @@ class LightningDataModule(pl.LightningDataModule):
     def __init__(
         self,
         model_config: LightningConfig,
-        train_data: Optional[Dict[Optional[str], datasets.Dataset]] = None,
-        validation_data: Optional[Dict[Optional[str], datasets.Dataset]] = None,
-        test_data: Optional[Dict[Optional[str], datasets.Dataset]] = None,
-        predict_data: Optional[datasets.Dataset] = None,
+        train_data: dict[str | None, datasets.Dataset] | None = None,
+        validation_data: dict[str | None, datasets.Dataset] | None = None,
+        test_data: dict[str | None, datasets.Dataset] | None = None,
+        predict_data: datasets.Dataset | None = None,
         **kwargs: Any,
     ):
         super().__init__()
@@ -61,7 +60,7 @@ class LightningDataModule(pl.LightningDataModule):
         self,
         data: datasets.Dataset,
         split: str,
-        name: Optional[str] = None,
+        name: str | None = None,
         **kwargs: Any,
     ) -> datasets.Dataset:
         """A method to prepare any input dataset type into a torch dataset ready for torch dataloaders.
@@ -210,10 +209,10 @@ class LightningDataModule(pl.LightningDataModule):
 
     def prepare_datasets(
         self,
-        train_data: Optional[Dict[Optional[str], datasets.Dataset]],
-        validation_data: Optional[Dict[Optional[str], datasets.Dataset]],
-        test_data: Optional[Dict[Optional[str], datasets.Dataset]],
-        predict_data: Optional[datasets.Dataset],
+        train_data: dict[str | None, datasets.Dataset] | None,
+        validation_data: dict[str | None, datasets.Dataset] | None,
+        test_data: dict[str | None, datasets.Dataset] | None,
+        predict_data: datasets.Dataset | None,
         **kwargs: Any,
     ) -> Datasets:
         """Prepares datasets by applying logic in `prepare_dataset` to all
@@ -251,10 +250,9 @@ class LightningDataModule(pl.LightningDataModule):
     @property
     def num_workers(self) -> int:
         """Number of workers servicing each individual dataloader."""
-        config_num_workers: Union[
-            int,
-            Literal["all"],
-        ] = self.model_config.datamodule.num_workers
+        config_num_workers: int | Literal["all"] = (
+            self.model_config.datamodule.num_workers
+        )
 
         if isinstance(config_num_workers, int):
             return config_num_workers
@@ -270,7 +268,7 @@ class LightningDataModule(pl.LightningDataModule):
     def _get_batch_size(
         self,
         split: Literal["train", "validation", "test", "predict"],
-        dataset_name: Optional[str],
+        dataset_name: str | None,
     ) -> int:
         split_config: SplitConfig = getattr(self.model_config.datamodule, split)
 
@@ -282,7 +280,7 @@ class LightningDataModule(pl.LightningDataModule):
             return split_config.batch_size[dataset_name]
 
     @property
-    def collate_fn(self) -> Optional[DataCollator]:
+    def collate_fn(self) -> DataCollator | None:
         """Collator for dataloaders.
 
         Derived classes can override this."""

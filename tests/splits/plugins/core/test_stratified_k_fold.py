@@ -127,12 +127,16 @@ def test_unshuffled_by_default(fixture_test_strategy):
     # [0 1 2 3 4] [5 6 7 8 9] ()
 
     # fold 1
-    assert all(i == j for i, j in zip(train_indices1, [5, 6, 7, 8, 9]))
-    assert all(i == j for i, j in zip(validation_indices1, [0, 1, 2, 3, 4]))
+    assert all(i == j for i, j in zip(train_indices1, [5, 6, 7, 8, 9], strict=False))
+    assert all(
+        i == j for i, j in zip(validation_indices1, [0, 1, 2, 3, 4], strict=False)
+    )
 
     # fold 2
-    assert all(i == j for i, j in zip(train_indices2, [0, 1, 2, 3, 4]))
-    assert all(i == j for i, j in zip(validation_indices2, [5, 6, 7, 8, 9]))
+    assert all(i == j for i, j in zip(train_indices2, [0, 1, 2, 3, 4], strict=False))
+    assert all(
+        i == j for i, j in zip(validation_indices2, [5, 6, 7, 8, 9], strict=False)
+    )
 
 
 def test_deterministic_by_default(fixture_sample_inputs, fixture_test_strategy):
@@ -151,10 +155,16 @@ def test_deterministic_by_default(fixture_sample_inputs, fixture_test_strategy):
     train_indices_b2, validation_indices_b2, _ = next(indices_b)
 
     # Check that we get the same results across folds
-    assert all(i == j for i, j in zip(train_indices_a1, train_indices_b1))
-    assert all(i == j for i, j in zip(validation_indices_a1, validation_indices_b1))
-    assert all(i == j for i, j in zip(train_indices_a2, train_indices_b2))
-    assert all(i == j for i, j in zip(validation_indices_a2, validation_indices_b2))
+    assert all(i == j for i, j in zip(train_indices_a1, train_indices_b1, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices_a1, validation_indices_b1, strict=False)
+    )
+    assert all(i == j for i, j in zip(train_indices_a2, train_indices_b2, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices_a2, validation_indices_b2, strict=False)
+    )
 
 
 def test_non_deterministic_if_shuffled(fixture_sample_inputs, fixture_test_strategy):
@@ -173,10 +183,16 @@ def test_non_deterministic_if_shuffled(fixture_sample_inputs, fixture_test_strat
     train_indices_b2, validation_indices_b2, _ = next(indices_b)
 
     # Check that we do not get the same results across folds
-    assert any(i != j for i, j in zip(train_indices_a1, train_indices_b1))
-    assert any(i != j for i, j in zip(validation_indices_a1, validation_indices_b1))
-    assert any(i != j for i, j in zip(train_indices_a2, train_indices_b2))
-    assert any(i != j for i, j in zip(validation_indices_a2, validation_indices_b2))
+    assert any(i != j for i, j in zip(train_indices_a1, train_indices_b1, strict=False))
+    assert any(
+        i != j
+        for i, j in zip(validation_indices_a1, validation_indices_b1, strict=False)
+    )
+    assert any(i != j for i, j in zip(train_indices_a2, train_indices_b2, strict=False))
+    assert any(
+        i != j
+        for i, j in zip(validation_indices_a2, validation_indices_b2, strict=False)
+    )
 
 
 def test_deterministic_if_shuffled_and_seed_set(
@@ -198,7 +214,13 @@ def test_deterministic_if_shuffled_and_seed_set(
     train_indices_b2, validation_indices_b2, _ = next(indices_b)
 
     # Check that we didn't get the same results across folds
-    assert all(i == j for i, j in zip(train_indices_a1, train_indices_b1))
-    assert all(i == j for i, j in zip(validation_indices_a1, validation_indices_b1))
-    assert all(i == j for i, j in zip(train_indices_a2, train_indices_b2))
-    assert all(i == j for i, j in zip(validation_indices_a2, validation_indices_b2))
+    assert all(i == j for i, j in zip(train_indices_a1, train_indices_b1, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices_a1, validation_indices_b1, strict=False)
+    )
+    assert all(i == j for i, j in zip(train_indices_a2, train_indices_b2, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices_a2, validation_indices_b2, strict=False)
+    )

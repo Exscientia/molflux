@@ -15,8 +15,7 @@ def test_raise_on_unrecognised_parameters_raises_on_unrecognised_parameters():
     """That an error is raised if passing parameters not defined by the
     function."""
 
-    def my_callable(a: str, b: int = 2, c: bool = False, **kwargs: Any) -> None:
-        ...
+    def my_callable(a: str, b: int = 2, c: bool = False, **kwargs: Any) -> None: ...
 
     kwargs = {"b": 3, "not specified": "any"}
     with pytest.raises(ValueError, match=r"Unknown my_callable parameter\(s\)"):
@@ -27,8 +26,7 @@ def test_raise_on_unrecognised_parameters_does_not_raise_on_recognised_parameter
     """That an error is not raised if passing parameters defined by the
     function."""
 
-    def my_callable(a: str, b: int = 2, c: bool = False, **kwargs: Any) -> None:
-        ...
+    def my_callable(a: str, b: int = 2, c: bool = False, **kwargs: Any) -> None: ...
 
     kwargs = {"a": "a", "b": 3}
     raise_on_unrecognised_parameters(my_callable, **kwargs)

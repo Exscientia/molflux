@@ -1,6 +1,7 @@
 """
 Tests for API features advertised as part of the Estimator protocol.
 """
+
 from typing import Protocol
 
 from molflux.modelzoo.protocols import Estimator

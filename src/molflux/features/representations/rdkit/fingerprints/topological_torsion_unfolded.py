@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem.AtomPairs.Torsions import GetTopologicalTorsionFingerprint
@@ -54,12 +54,12 @@ class TopologicalTorsionUnfolded(RepresentationBase):
         self,
         *columns: MolArray,
         target_size: int = 4,
-        from_atoms: Optional[List[int]] = None,
-        ignore_atoms: Optional[List[int]] = None,
-        atom_invariants: Optional[List[int]] = None,
+        from_atoms: list[int] | None = None,
+        ignore_atoms: list[int] | None = None,
+        atom_invariants: list[int] | None = None,
         include_chirality: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[Dict[str, int]]]:
+    ) -> dict[str, list[dict[str, int]]]:
         """Generates unfolded topological-torsion fingerprints for each input
         molecule.
 
@@ -93,7 +93,7 @@ class TopologicalTorsionUnfolded(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        torsion_fp_list: List[Dict[str, int]] = []
+        torsion_fp_list: list[dict[str, int]] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

@@ -3,20 +3,20 @@ import functools
 import inspect
 import logging
 from collections import defaultdict
+from collections.abc import Callable
 from importlib.metadata import EntryPoint, entry_points
-from typing import Callable, Dict, List, Type
 
 from molflux.features.naming import camelcase_to_snakecase
 from molflux.features.representation import Representation
 
 logger = logging.getLogger(__name__)
 
-RepresentationT = Type[Representation]
+RepresentationT = type[Representation]
 
 NAMESPACE = "molflux.features.plugins."
 
 # This is where entrypoints will be registered {<name>: <Entrypoint>}
-REPRESENTATIONS_CATALOGUE: Dict[str, EntryPoint] = {}
+REPRESENTATIONS_CATALOGUE: dict[str, EntryPoint] = {}
 
 
 @functools.lru_cache
@@ -82,14 +82,14 @@ def get_representation_cls(representation_name: str) -> RepresentationT:
     return representation_cls  # type: ignore[return-value]
 
 
-def list_representations() -> Dict[str, List[str]]:
+def list_representations() -> dict[str, list[str]]:
     """List all available representations.
 
     The catalogue is returned as a view of representation names keyed by
     kind.
     """
 
-    view: Dict[str, List[str]] = defaultdict(list)
+    view: dict[str, list[str]] = defaultdict(list)
 
     for (
         representation_name,

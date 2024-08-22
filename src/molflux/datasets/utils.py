@@ -1,5 +1,5 @@
+from collections.abc import Mapping, Sequence
 from os import PathLike as OSPathLike
-from typing import Mapping, Optional, Sequence
 
 from molflux.datasets.typing import DataFiles, HFDataFiles
 
@@ -11,7 +11,7 @@ def _is_cloud_file(file: str) -> bool:
     return False
 
 
-def is_cloud_data(data_files: Optional[HFDataFiles]) -> bool:
+def is_cloud_data(data_files: HFDataFiles | None) -> bool:
     """Validates if data files refer to data in the cloud."""
 
     if data_files is None:

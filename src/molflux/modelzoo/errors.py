@@ -1,5 +1,3 @@
-from typing import Optional
-
 from colorama import Fore, Style
 
 
@@ -39,6 +37,6 @@ class NotTrainedError(ValueError, AttributeError):
         https://scikit-learn.org/stable/modules/generated/sklearn.exceptions.NotFittedError.html
     """
 
-    def __init__(self, message: Optional[str] = None) -> None:
+    def __init__(self, message: str | None = None) -> None:
         default_message = "This estimator has not been trained yet: please train the estimator with appropriate arguments."
         super().__init__(message or default_message)

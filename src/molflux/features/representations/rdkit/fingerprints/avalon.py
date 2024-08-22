@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from rdkit.Avalon.pyAvalonTools import GetAvalonFP
@@ -34,7 +34,7 @@ class Avalon(RepresentationBase):
         reset_vect: bool = False,
         bit_flags: int = 15761407,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Generates the Avalon fingerprint for each input molecule.
 
         Args:
@@ -56,7 +56,7 @@ class Avalon(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        avalon_fp_list: List[List] = []
+        avalon_fp_list: list[list] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem.AtomPairs.Pairs import GetAtomPairFingerprint
@@ -53,14 +53,14 @@ class AtomPairUnfolded(RepresentationBase):
         *columns: MolArray,
         min_length: int = 1,
         max_length: int = 30,
-        from_atoms: Optional[List[int]] = None,
-        ignore_atoms: Optional[List[int]] = None,
-        atom_invariants: Optional[List[int]] = None,
+        from_atoms: list[int] | None = None,
+        ignore_atoms: list[int] | None = None,
+        atom_invariants: list[int] | None = None,
         include_chirality: bool = False,
         use_2d: bool = True,
         conf_id: int = -1,
         **kwargs: Any,
-    ) -> Dict[str, List[Dict[str, int]]]:
+    ) -> dict[str, list[dict[str, int]]]:
         """Generates an atom-pair fingerprint for each input molecule.
 
         Args:
@@ -97,7 +97,7 @@ class AtomPairUnfolded(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        atom_pairs_fp_list: List[Dict[str, int]] = []
+        atom_pairs_fp_list: list[dict[str, int]] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

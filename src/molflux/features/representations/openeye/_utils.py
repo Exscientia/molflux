@@ -3,7 +3,8 @@ from __future__ import annotations
 import ctypes
 import difflib
 import logging
-from typing import Any, Callable, Iterable, Iterator
+from collections.abc import Callable, Iterable, Iterator
+from typing import Any
 
 import numpy as np
 

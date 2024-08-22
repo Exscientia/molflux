@@ -1,22 +1,12 @@
 """Root mean squared error regression loss."""
 
 import logging
-from importlib.metadata import version
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
-from packaging.version import parse
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import root_mean_squared_error
 
 import datasets
-
-if parse(version("scikit-learn")) >= parse("1.4.0"):
-    ROOT_MEAN_SQUARED_ERROR_AVAILABLE = True
-    from sklearn.metrics import root_mean_squared_error
-else:
-    ROOT_MEAN_SQUARED_ERROR_AVAILABLE = False
-
-
 from molflux.metrics.bases import HFMetric
 from molflux.metrics.typing import ArrayLike, MetricResult
 
@@ -101,24 +91,14 @@ class RootMeanSquaredError(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         multioutput: str = "uniform_average",
         **kwargs: Any,
     ) -> MetricResult:
-        # TODO(avianello): cleanup once we can drop python 3.8 (RMSE will always be available)
-        if ROOT_MEAN_SQUARED_ERROR_AVAILABLE:  # py3.9+
-            score = root_mean_squared_error(
-                y_true=references,
-                y_pred=predictions,
-                sample_weight=sample_weight,
-                multioutput=multioutput,
-            )
-        else:  # py3.8
-            score = mean_squared_error(
-                y_true=references,
-                y_pred=predictions,
-                sample_weight=sample_weight,
-                multioutput=multioutput,
-                squared=False,
-            )
+        score = root_mean_squared_error(
+            y_true=references,
+            y_pred=predictions,
+            sample_weight=sample_weight,
+            multioutput=multioutput,
+        )
         return {self.tag: score}

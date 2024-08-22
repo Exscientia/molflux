@@ -4,11 +4,6 @@ from abc import abstractmethod
 from dataclasses import asdict, is_dataclass, replace
 from typing import (
     Any,
-    Dict,
-    List,
-    Optional,
-    Type,
-    Union,
 )
 
 from datasets import Dataset
@@ -54,7 +49,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
 
     @property
     @abstractmethod
-    def _datamodule_builder(self) -> Type[LightningDataModule]:
+    def _datamodule_builder(self) -> type[LightningDataModule]:
         """The DataModule for this model class.
 
         Implementations should subclass from the ModelZoo LightningDataModule."""
@@ -62,10 +57,10 @@ class LightningModelBase(ModelBase[LightningConfigT]):
 
     def _instantiate_datamodule(
         self,
-        train_data: Optional[Dict[Optional[str], Dataset]] = None,
-        validation_data: Optional[Dict[Optional[str], Dataset]] = None,
-        test_data: Optional[Dict[Optional[str], Dataset]] = None,
-        predict_data: Optional[Dataset] = None,
+        train_data: dict[str | None, Dataset] | None = None,
+        validation_data: dict[str | None, Dataset] | None = None,
+        test_data: dict[str | None, Dataset] | None = None,
+        predict_data: Dataset | None = None,
         **kwargs: Any,
     ) -> LightningDataModule:
         """Prepares the datamodule.
@@ -87,22 +82,17 @@ class LightningModelBase(ModelBase[LightningConfigT]):
 
     def _train_multi_data(
         self,
-        train_data: Dict[Optional[str], Dataset],
-        validation_data: Union[
-            Dict[Optional[str], Dataset],
-            None,
-        ] = None,
-        datamodule_config: Union[DataModuleConfig, Dict[str, Any], None] = None,
-        trainer_config: Union[TrainerConfig, Dict[str, Any], None] = None,
-        optimizer_config: Union[OptimizerConfig, Dict[str, Any], None] = None,
-        scheduler_config: Union[SchedulerConfig, Dict[str, Any], None] = None,
-        transfer_learning_config: Union[
-            TransferLearningConfigBase,
-            Dict[str, Any],
-            None,
-        ] = None,
-        compile_config: Union[CompileConfig, Dict[str, Any], bool, None] = None,
-        ckpt_path: Optional[str] = None,
+        train_data: dict[str | None, Dataset],
+        validation_data: dict[str | None, Dataset] | None = None,
+        datamodule_config: DataModuleConfig | dict[str, Any] | None = None,
+        trainer_config: TrainerConfig | dict[str, Any] | None = None,
+        optimizer_config: OptimizerConfig | dict[str, Any] | None = None,
+        scheduler_config: SchedulerConfig | dict[str, Any] | None = None,
+        transfer_learning_config: TransferLearningConfigBase
+        | dict[str, Any]
+        | None = None,
+        compile_config: CompileConfig | dict[str, Any] | bool | None = None,
+        ckpt_path: str | None = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -148,7 +138,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
         self,
         new_module: LightningModuleBase,
         old_module: LightningModuleBase,
-        modules_to_match: Optional[Dict[str, str]],
+        modules_to_match: dict[str, str] | None,
     ) -> None:
         if modules_to_match is not None:
             list_of_old_modules = [name for name, _ in old_module.named_modules()]
@@ -193,7 +183,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
     def _freeze_modules(
         self,
         module: LightningModuleBase,
-        freeze_modules: Optional[List[str]],
+        freeze_modules: list[str] | None,
     ) -> None:
         if freeze_modules is not None:
             list_of_modules = [name for name, _ in module.named_modules()]
@@ -209,8 +199,8 @@ class LightningModelBase(ModelBase[LightningConfigT]):
 
     def _transfer_learn(
         self,
-        train_data: Dict[Optional[str], Dataset],
-        validation_data: Optional[Dict[Optional[str], Dataset]] = None,
+        train_data: dict[str | None, Dataset],
+        validation_data: dict[str | None, Dataset] | None = None,
     ) -> None:
         if self.model_config.transfer_learning is None:
             return None
@@ -233,7 +223,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
             old_module=pre_trained_model.module,
             modules_to_match=self.model_config.transfer_learning.modules_to_match,
         )
-        ckpt_for_next_stage: Dict = self.state_dict
+        ckpt_for_next_stage: dict = self.state_dict
 
         for stage in self.model_config.transfer_learning.stages:
             with self.override_config(
@@ -266,8 +256,8 @@ class LightningModelBase(ModelBase[LightningConfigT]):
     def _predict(
         self,
         data: Dataset,
-        datamodule_config: Union[DataModuleConfig, Dict[str, Any], None] = None,
-        trainer_config: Union[TrainerConfig, Dict[str, Any], None] = None,
+        datamodule_config: DataModuleConfig | dict[str, Any] | None = None,
+        trainer_config: TrainerConfig | dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> PredictionResult:
         """Implements a single prediction step.
@@ -293,7 +283,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
             )
 
             # Expect a list of Tensors, which may need to be overwritten for some Torch models
-            batch_preds: List[torch.Tensor] = trainer.predict(  # pyright: ignore
+            batch_preds: list[torch.Tensor] = trainer.predict(  # pyright: ignore
                 self.module,
                 datamodule,
             )
@@ -331,7 +321,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
             # )
 
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     def override_config(self, **section_overrides: Any) -> "ConfigOverride":
@@ -349,7 +339,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
         return module.state_dict()
 
     @state_dict.setter
-    def state_dict(self, state_dict: Dict[str, torch.Tensor]) -> None:
+    def state_dict(self, state_dict: dict[str, torch.Tensor]) -> None:
         module = self.module if not self.is_compiled else self.module._orig_mod
         module.load_state_dict(state_dict)
 
@@ -366,7 +356,7 @@ class LightningModelBase(ModelBase[LightningConfigT]):
         """Loads a model from a directory."""
 
         ckpt_path = os.path.join(directory, "module_checkpoint.ckpt")
-        checkpoint = torch.load(ckpt_path, map_location="cpu")
+        checkpoint = torch.load(ckpt_path, map_location="cpu", weights_only=True)
 
         self.module = self._instantiate_module()
         self.state_dict = checkpoint["state_dict"]
@@ -376,7 +366,7 @@ class ConfigOverride:
     def __init__(
         self,
         model: LightningModelBase[LightningConfigT],
-        **section_overrides: Union[Dict[str, Any], bool],
+        **section_overrides: dict[str, Any] | bool,
     ):
         self.model = model
         self.section_overrides = {
@@ -392,18 +382,18 @@ class ConfigOverride:
             old_section = getattr(self.original_config, section)
 
             # Checks if override is a dataclass instance (not type) with suitable type
-            override_obj: Union[bool, Dict[str, Any]]
+            override_obj: bool | dict[str, Any]
             if (
                 is_dataclass(override)
-                and not isinstance(override, type)
+                and not isinstance(override, type)  # type: ignore[unreachable]
                 and (
                     isinstance(override, type(old_section))
                     or (old_section is None)
                     or isinstance(old_section, bool)
                 )
             ):
-                override_obj = asdict(override)
-            elif isinstance(override, Dict) or isinstance(override, bool):
+                override_obj = asdict(override)  # type: ignore[unreachable]
+            elif isinstance(override, dict) or isinstance(override, bool):
                 override_obj = override
             else:
                 raise RuntimeError(
@@ -436,9 +426,9 @@ class ConfigOverride:
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[Any],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: Any | None,
     ) -> None:
         del exc_type, exc_val, exc_tb
         self.model.model_config = self.original_config

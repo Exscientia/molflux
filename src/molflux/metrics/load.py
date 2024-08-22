@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterable, List, Optional
+from collections.abc import Iterable
+from typing import Any
 
 from molflux.metrics.catalogue import get_metric_cls
 from molflux.metrics.metric import Metric, Metrics
@@ -19,7 +20,7 @@ def load_metric(name: str, **metric_init_kwargs: Any) -> Metric:
     return metric
 
 
-def load_metrics(*names: str, tags: Optional[List[str]] = None) -> Metrics:
+def load_metrics(*names: str, tags: list[str] | None = None) -> Metrics:
     """Loads a `metrics.Metrics` collection from metric names.
 
     This is a utility functions for loading a number of metrics at once, when
@@ -29,7 +30,7 @@ def load_metrics(*names: str, tags: Optional[List[str]] = None) -> Metrics:
     tags = tags or [None for _ in names]  # type:ignore[misc]
 
     metrics = Metrics()
-    for name, tag in zip(names, tags):
+    for name, tag in zip(names, tags, strict=False):
         metric = load_metric(name=name, tag=tag)
         metrics.add_metric(metric=metric)
 
@@ -48,7 +49,7 @@ def _load_from_spec(spec: Spec) -> Metric:
     return metric
 
 
-def load_from_dict(dictionary: Dict[str, Any]) -> Metric:
+def load_from_dict(dictionary: dict[str, Any]) -> Metric:
     """Loads a metric from a config dict."""
 
     # Validate dictionary
@@ -57,7 +58,7 @@ def load_from_dict(dictionary: Dict[str, Any]) -> Metric:
     return _load_from_spec(spec=spec)
 
 
-def load_from_dicts(dictionaries: Iterable[Dict[str, Any]]) -> Metrics:
+def load_from_dicts(dictionaries: Iterable[dict[str, Any]]) -> Metrics:
     """Loads a collection of metrics from an iterable of dicts."""
 
     metrics = Metrics()

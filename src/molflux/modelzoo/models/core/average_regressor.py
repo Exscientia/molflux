@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from dataclasses import asdict
-from typing import Any, Callable, Dict, Literal, Tuple, Type
+from typing import Any, Literal
 
 import numpy as np
 import scipy.stats as st
@@ -33,11 +34,11 @@ deviation_method: Literal, default = "mad". Method by which to summarise the dev
 """
 
 # mapping from method strings to fns
-_AVERAGE_METHOD_DICT: Dict[str, Callable] = {
+_AVERAGE_METHOD_DICT: dict[str, Callable] = {
     "median": np.nanmedian,
     "mean": np.nanmean,
 }
-_DEVIATION_METHOD_DICT: Dict[str, Callable] = {
+_DEVIATION_METHOD_DICT: dict[str, Callable] = {
     "std": np.nanstd,
     "mad": st.median_abs_deviation,
 }
@@ -62,11 +63,11 @@ class AverageRegressor(
     ModelBase[AverageRegressorConfig],
 ):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[AverageRegressorConfig]:
+    def _config_builder(self) -> type[AverageRegressorConfig]:
         return AverageRegressorConfig
 
     def _info(self) -> ModelInfo:
@@ -99,14 +100,14 @@ class AverageRegressor(
 
         return {
             display_name: np.full(len(data), mu).tolist()
-            for display_name, mu in zip(display_names, self.model["mu"])
+            for display_name, mu in zip(display_names, self.model["mu"], strict=False)
         }
 
     def _predict_with_std(
         self,
         data: datasets.Dataset,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         (
             prediction_display_names,
             prediction_std_display_names,
@@ -119,12 +120,17 @@ class AverageRegressor(
 
         return {
             display_name: np.full(len(data), mu).tolist()
-            for display_name, mu in zip(prediction_display_names, self.model["mu"])
+            for display_name, mu in zip(
+                prediction_display_names,
+                self.model["mu"],
+                strict=False,
+            )
         }, {
             display_name: np.full(len(data), sigma).tolist()
             for display_name, sigma in zip(
                 prediction_std_display_names,
                 self.model["sigma"],
+                strict=False,
             )
         }
 
@@ -133,7 +139,7 @@ class AverageRegressor(
         data: datasets.Dataset,
         confidence: float,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         (
             prediction_display_names,
             prediction_interval_display_names,
@@ -155,6 +161,7 @@ class AverageRegressor(
             prediction_interval_display_names,
             prediction_mean_results.values(),
             prediction_std_results.values(),
+            strict=False,
         ):
             # compute the prediction interval
             lower_bound, upper_bound = st.norm.interval(
@@ -168,9 +175,9 @@ class AverageRegressor(
             upper_bound = np.where(~np.isnan(upper_bound), upper_bound, mean)
 
             prediction_results[prediction_display_name] = mean
-            prediction_prediction_interval_results[
-                prediction_interval_display_name
-            ] = list(zip(lower_bound, upper_bound))
+            prediction_prediction_interval_results[prediction_interval_display_name] = (
+                list(zip(lower_bound, upper_bound, strict=False))
+            )
 
         return prediction_results, prediction_prediction_interval_results
 
@@ -192,6 +199,7 @@ class AverageRegressor(
             display_names,
             prediction_mean_results.values(),
             prediction_std_results.values(),
+            strict=False,
         ):
             samples = np.random.normal(means, stds, (n_samples, len(means))).T
             prediction_results[display_name] = samples.tolist()

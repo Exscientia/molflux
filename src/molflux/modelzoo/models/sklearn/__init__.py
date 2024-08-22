@@ -24,19 +24,21 @@ class _SKLearnBaseAPI(Protocol):
     class that defines these two methods.
     """
 
-    def fit(self, X: np.ndarray, y: Optional[np.ndarray] = None, **kwargs: Any) -> Any:
-        ...
+    def fit(
+        self,
+        X: np.ndarray,
+        y: np.ndarray | None = None,
+        **kwargs: Any,
+    ) -> Any: ...
 
-    def predict(self, X: np.ndarray, **kwargs: Any) -> np.ndarray:
-        ...
+    def predict(self, X: np.ndarray, **kwargs: Any) -> np.ndarray: ...
 
 
 class SKLearnModelBase(ModelBase[_ModelConfigT], ABC):
     """Base model for all models based on the sklearn API"""
 
     @abstractmethod
-    def _instantiate_model(self) -> _SKLearnBaseAPI:
-        ...
+    def _instantiate_model(self) -> _SKLearnBaseAPI: ...
 
     def _train(
         self,
@@ -93,11 +95,15 @@ class SKLearnModelBase(ModelBase[_ModelConfigT], ABC):
         # (n_tasks, n_samples)
         return {
             display_name: task_predictions.tolist()
-            for display_name, task_predictions in zip(display_names, y_predict.T)
+            for display_name, task_predictions in zip(
+                display_names,
+                y_predict.T,
+                strict=False,
+            )
         }
 
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     def as_dir(self, directory: str) -> None:
@@ -132,10 +138,9 @@ class _SKLearnClassifierAPI(Protocol):
     class that defines it
     """
 
-    classes_: List[str]
+    classes_: list[str]
 
-    def predict_proba(self, X: np.ndarray, **kwargs: Any) -> np.ndarray:
-        ...
+    def predict_proba(self, X: np.ndarray, **kwargs: Any) -> np.ndarray: ...
 
 
 class SKLearnClassificationMixin(ClassificationMixin):
@@ -156,7 +161,8 @@ class SKLearnClassificationMixin(ClassificationMixin):
         classes = sklearn_classes if is_multitask else [sklearn_classes]  # type: ignore[list-item]
 
         return {
-            task: classes.tolist() for task, classes in zip(self.y_features, classes)  # type: ignore[attr-defined]
+            task: classes.tolist()  # type: ignore[attr-defined]
+            for task, classes in zip(self.y_features, classes, strict=False)
         }
 
     def _predict_proba(self, data: datasets.Dataset, **kwargs: Any) -> PredictionResult:
@@ -187,6 +193,7 @@ class SKLearnClassificationMixin(ClassificationMixin):
             self.y_features,
             y_predict,
             display_names,
+            strict=False,
         ):
             n_samples, n_classes = np.shape(task_predictions)
 

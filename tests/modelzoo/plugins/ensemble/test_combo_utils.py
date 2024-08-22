@@ -1,5 +1,3 @@
-from typing import List
-
 import pandas as pd
 import pytest
 
@@ -29,15 +27,15 @@ def test_list_diff_example():
     actual = list_diff([1, 2, -9, -3], [1, -3])
     expected = [2, -9]
     assert len(actual) == len(expected)
-    assert all(a == b for a, b in zip(actual, expected))
+    assert all(a == b for a, b in zip(actual, expected, strict=False))
 
 
 def test_list_diff_duplicates():
     """test that list diff removes duplicates properly"""
     actual = list_diff([1, 2, 2], [1, 2])
-    expected: List[int] = []
+    expected: list[int] = []
     assert len(actual) == len(expected)
-    assert all(a == b for a, b in zip(actual, expected))
+    assert all(a == b for a, b in zip(actual, expected, strict=False))
 
 
 def test_get_split_indices():
@@ -49,7 +47,7 @@ def test_get_split_indices():
     expected = list(range(train_dataset.shape[0]))
     assert len(actual) == n_folds
     assert len(flat_actual_list) == train_dataset.shape[0]
-    assert all(a == b for a, b in zip(flat_actual_list, expected))
+    assert all(a == b for a, b in zip(flat_actual_list, expected, strict=False))
 
 
 def test_check_parameter():

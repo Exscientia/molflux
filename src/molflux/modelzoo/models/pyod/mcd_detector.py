@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -81,17 +81,17 @@ class MCDDetectorConfig(PyODModelConfig):
     contamination: float = 0.1
     store_precision: bool = True
     assume_centered: bool = False
-    support_fraction: Optional[float] = None
-    random_state: Union[int, np.random.Generator, None] = None
+    support_fraction: float | None = None
+    random_state: int | np.random.Generator | None = None
 
 
 class MCDDetector(PyODClassificationMixin, PyODModelBase[MCDDetectorConfig]):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[MCDDetectorConfig]:
+    def _config_builder(self) -> type[MCDDetectorConfig]:
         return MCDDetectorConfig
 
     def _info(self) -> ModelInfo:

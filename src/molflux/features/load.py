@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from molflux.features.catalogue import get_representation_cls
 from molflux.features.parsers import Spec, dict_parser, yaml_parser
@@ -35,7 +36,7 @@ def _load_from_spec(spec: Spec) -> Representation:
     return representation
 
 
-def load_from_dict(dictionary: Dict[str, Any]) -> Representation:
+def load_from_dict(dictionary: dict[str, Any]) -> Representation:
     """Loads a representation from a config dict."""
 
     # Validate dictionary
@@ -44,7 +45,7 @@ def load_from_dict(dictionary: Dict[str, Any]) -> Representation:
     return _load_from_spec(spec=spec)
 
 
-def load_from_dicts(dictionaries: Iterable[Dict[str, Any]]) -> Representations:
+def load_from_dicts(dictionaries: Iterable[dict[str, Any]]) -> Representations:
     """Loads a collection of Representations from an iterable of dicts."""
 
     representations = Representations()

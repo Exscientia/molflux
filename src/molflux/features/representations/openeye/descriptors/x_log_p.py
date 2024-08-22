@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from openeye.oechem import OEFloatArray
@@ -48,10 +48,10 @@ class XLogP(RepresentationBase):
         start: int = -3,
         stop: int = 7,
         num: int = 10,
-        atom_xlogps: Optional[OEFloatArray] = None,
+        atom_xlogps: OEFloatArray | None = None,
         remove_formal_charge: bool = True,
         **kwargs: Any,
-    ) -> Dict[str, List[float]]:
+    ) -> dict[str, list[float]]:
         """Calculates the XLogP value for each input molecule.
 
         .. hint::

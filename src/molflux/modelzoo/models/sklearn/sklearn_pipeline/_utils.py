@@ -2,16 +2,11 @@
 This file implements the functions mapping json-serializable configs of SKLearn classes to actual python instances.
 """
 
-import sys
 from importlib import import_module
 from importlib.util import find_spec
-from typing import Any, Dict, List, Optional
 
 # https://docs.pydantic.dev/latest/usage/types/#typeddict
-if sys.version_info < (3, 9, 2):
-    from typing_extensions import TypedDict
-else:
-    from typing import TypedDict
+from typing import Any, TypedDict
 
 try:
     from sklearn.pipeline import Pipeline, make_pipeline
@@ -57,11 +52,11 @@ class StepConfig(TypedDict):
     """Type definition of the dictionary structure for a single pipeline step in an SKLearnPipeline config"""
 
     class_name: str
-    hyperparameters: Optional[Dict[str, Any]]
+    hyperparameters: dict[str, Any] | None
 
 
 # type definition of the config expected by SKLearnPipeline models
-StepConfigsT = List[StepConfig]
+StepConfigsT = list[StepConfig]
 
 
 def _get_step_object(step_config: StepConfig) -> Any:

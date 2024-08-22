@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 try:
     from openeye.oechem import OEMolBase, OEWriteMolToBytes
@@ -47,10 +47,10 @@ class CanonicalOemol(RepresentationBase):
         clear_sd_data: bool = False,
         gen_2d_coords: bool = False,
         as_bytes: bool = True,
-        tautomer_options: Optional[Dict[str, Any]] = None,
-        tautomer_timeouts: Optional[List[float]] = None,
+        tautomer_options: dict[str, Any] | None = None,
+        tautomer_timeouts: list[float] | None = None,
         **kwargs: Any,
-    ) -> Dict[str, List[Union[bytes, OEMolBase]]]:
+    ) -> dict[str, list[bytes | OEMolBase]]:
         r"""Featurises the input molecules as canonical OEMols.
 
         Args:

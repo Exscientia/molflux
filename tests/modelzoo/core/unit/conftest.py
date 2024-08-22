@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any
 
 import pytest
 
@@ -10,15 +10,14 @@ from molflux.modelzoo.model import ModelBase, ModelConfig
 from molflux.modelzoo.protocols import Model
 
 
-class MockModelConfig(ModelConfig):
-    ...
+class MockModelConfig(ModelConfig): ...
 
 
 # Registers a mock model in the catalogue
 @register_model(kind="pytest", name="mock_model")
 class MockModel(ModelBase[MockModelConfig]):
     @property
-    def _config_builder(self) -> Type[MockModelConfig]:
+    def _config_builder(self) -> type[MockModelConfig]:
         return MockModelConfig
 
     def _info(self) -> ModelInfo:
@@ -32,7 +31,7 @@ class MockModel(ModelBase[MockModelConfig]):
         if "validation_data" in kwargs:
             raise ValueError("Should not call with validation_data.")
 
-    def _predict(self, data: datasets.Dataset, **kwargs: Any) -> Dict[str, Any]:
+    def _predict(self, data: datasets.Dataset, **kwargs: Any) -> dict[str, Any]:
         return {self.tag: "Spooky Result!"}
 
 
@@ -41,7 +40,7 @@ class MockModelWithValidationDataArg(MockModel):
     def _train(
         self,
         train_data: datasets.Dataset,
-        validation_data: Union[datasets.Dataset, None] = None,
+        validation_data: datasets.Dataset | None = None,
         **kwargs: Any,
     ) -> None:
         self.model = True
@@ -60,7 +59,7 @@ class MockModelMultiData(MockModel):
 
     def _train_multi_data(
         self,
-        train_data: Dict[Optional[str], datasets.Dataset],
+        train_data: dict[str | None, datasets.Dataset],
         **kwargs: Any,
     ) -> None:
         self.model = True
@@ -82,8 +81,8 @@ class MockModelMultiDataWithValidationDataArg(MockModel):
 
     def _train_multi_data(
         self,
-        train_data: Dict[Optional[str], datasets.Dataset],
-        validation_data: Union[Dict[Optional[str], datasets.Dataset], None] = None,
+        train_data: dict[str | None, datasets.Dataset],
+        validation_data: dict[str | None, datasets.Dataset] | None = None,
         **kwargs: Any,
     ) -> None:
         self.model = True

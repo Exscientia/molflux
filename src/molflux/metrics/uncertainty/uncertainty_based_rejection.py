@@ -1,7 +1,7 @@
 """Uncertainty measure: Computes a given metric over a range of thresholded datasets based on uncertainty."""
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import evaluate
 import numpy as np
@@ -10,7 +10,7 @@ from tqdm.auto import tqdm
 
 import datasets
 from molflux.metrics import load_metric
-from molflux.metrics.bases import PredictionIntervalMetric
+from molflux.metrics.bases import UncertaintyMetric
 from molflux.metrics.typing import ArrayLike, MetricResult
 
 logger = logging.getLogger(__name__)
@@ -38,8 +38,8 @@ _KWARGS_DESCRIPTION = """
 Args:
     predictions: Estimated targets as returned by a classifier/regressor.
     references: Ground truth (correct) target values.
-    uncertainties: Estimated uncertainties for the predictions. The lower the value the more confident that the
-                prediction is correct.
+    standard_deviations: Estimated standard deviations for the predictions. The lower the value the more confident
+        that the prediction is correct.
     metric_name (optional): The name of the metric, used to compute performance over the alternating thresholded
         dataset. All metrics from the catalogue are possible. Defaults to mean_squared_error.
     num_of_threshold_steps: The number of thresholds (unique values in `uncertainties`) to use for computing curve
@@ -53,18 +53,18 @@ Returns:
                 size_of_thresholded_ds --> Number of samples in the thresholded dataset.
                 frac_of_retained_data --> Fraction of the thresholded dataset in comparison to the original dataset.
 
-        If num_of_theshold_steps != -1, the number of molfluxs of the dictionary will be less.
+        If num_of_theshold_steps != -1, the number of elements of the dictionary will be less.
 
 Examples:
     >>> from molflux.metrics import load_metric
     >>> m = load_metric("uncertainty_based_rejection")
     >>> ref = [0, 1, 2, 3, 4]
     >>> pred = [0, 2, 2, 3, 5]
-    >>> uncertainties = [0, 1, 0.2, 0.2, 1.5]
-    >>> result = m.compute(references=ref, predictions=pred, uncertainties=uncertainties)
+    >>> standard_deviations = [0, 1, 0.2, 0.2, 1.5]
+    >>> result = m.compute(references=ref, predictions=pred, standard_deviations=standard_deviations)
     >>> result["uncertainty_based_rejection"][1]
     {'mean_squared_error': 0.0, 'uncertainty_thr': 0.2..., 'size_of_thresholded_ds': 3, 'frac_of_retained_data': 0.6}
-    >>> result = m.compute(references=ref, predictions=pred, uncertainties=uncertainties, metric_name='max_error')
+    >>> result = m.compute(references=ref, predictions=pred, standard_deviations=standard_deviations, metric_name='max_error')
     >>> result["uncertainty_based_rejection"][2]
     {'max_error': 1.0, 'uncertainty_thr': 1.0, 'size_of_thresholded_ds': 4, 'frac_of_retained_data': 0.8}
 
@@ -72,7 +72,7 @@ Examples:
 
 
 @evaluate.utils.file_utils.add_start_docstrings(_DESCRIPTION, _KWARGS_DESCRIPTION)
-class UncertaintyBasedRejection(PredictionIntervalMetric):
+class UncertaintyBasedRejection(UncertaintyMetric):
     def _info(self) -> evaluate.MetricInfo:
         return evaluate.MetricInfo(
             description=_DESCRIPTION,
@@ -91,8 +91,8 @@ class UncertaintyBasedRejection(PredictionIntervalMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        uncertainties: Optional[ArrayLike] = None,
-        prediction_intervals: Optional[ArrayLike] = None,
+        standard_deviations: ArrayLike | None = None,
+        prediction_intervals: ArrayLike | None = None,
         metric_name: str = "mean_squared_error",
         progress_bar: bool = True,
         num_of_threshold_steps: int = -1,
@@ -117,10 +117,10 @@ class UncertaintyBasedRejection(PredictionIntervalMetric):
 
         """
 
-        if uncertainties is not None:
-            uncertainties = np.array(uncertainties)
+        if standard_deviations is not None:
+            uncertainties = np.array(standard_deviations)
         elif prediction_intervals is not None:
-            lower_bound, upper_bound = zip(*prediction_intervals)
+            lower_bound, upper_bound = zip(*prediction_intervals, strict=False)
             uncertainties = np.array(upper_bound) - np.array(lower_bound)
         else:
             raise ValueError(

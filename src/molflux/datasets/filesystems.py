@@ -2,7 +2,7 @@ import functools
 import logging
 import os
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 import botocore.session
 import pyarrow as pa
@@ -29,26 +29,26 @@ class S3FileSystem(ArrowFSWrapper):
 
     def __init__(
         self,
-        aws_access_key_id: Optional[str] = None,
-        aws_secret_access_key: Optional[str] = None,
-        aws_session_token: Optional[str] = None,
-        aws_region_name: Optional[str] = None,
-        scheme: Optional[str] = None,
-        endpoint_override: Optional[str] = None,
+        aws_access_key_id: str | None = None,
+        aws_secret_access_key: str | None = None,
+        aws_session_token: str | None = None,
+        aws_region_name: str | None = None,
+        scheme: str | None = None,
+        endpoint_override: str | None = None,
         background_writes: bool = True,
-        default_metadata: Optional[Union[Dict, pa.KeyValueMetadata]] = None,
-        role_arn: Optional[str] = None,
-        session_name: Optional[str] = None,
-        external_id: Optional[str] = None,
+        default_metadata: dict | pa.KeyValueMetadata | None = None,
+        role_arn: str | None = None,
+        session_name: str | None = None,
+        external_id: str | None = None,
         load_frequency: int = 900,
-        proxy_options: Optional[Union[str, Dict]] = None,
+        proxy_options: str | dict | None = None,
         allow_bucket_creation: bool = False,
         allow_bucket_deletion: bool = False,
-        botocore_session: Optional[botocore.session.Session] = None,
-        boto3_session: Optional[Session] = None,
-        retry_strategy: Optional[S3RetryStrategy] = None,
+        botocore_session: botocore.session.Session | None = None,
+        boto3_session: Session | None = None,
+        retry_strategy: S3RetryStrategy | None = None,
         session_ttl: int = 60 * 60,
-        refresh_in: Optional[int] = None,
+        refresh_in: int | None = None,
         **kwargs: Any,
     ) -> None:
         if retry_strategy is None:
@@ -181,13 +181,13 @@ class S3FileSystem(ArrowFSWrapper):
 
 
 def get_refreshable_boto3_session(
-    aws_access_key_id: Optional[str] = None,
-    aws_secret_access_key: Optional[str] = None,
-    aws_session_token: Optional[str] = None,
-    aws_region_name: Optional[str] = None,
-    profile_name: Optional[str] = None,
-    botocore_session: Optional[botocore.session.Session] = None,
-    boto3_session: Optional[Session] = None,
+    aws_access_key_id: str | None = None,
+    aws_secret_access_key: str | None = None,
+    aws_session_token: str | None = None,
+    aws_region_name: str | None = None,
+    profile_name: str | None = None,
+    botocore_session: botocore.session.Session | None = None,
+    boto3_session: Session | None = None,
     session_ttl: int = 60 * 60,
 ) -> Session:
     """Returns a boto3 session with automatically refreshing credentials.
@@ -210,7 +210,7 @@ def get_refreshable_boto3_session(
         https://stackoverflow.com/a/69226170
     """
 
-    def _get_session_credentials() -> Dict[str, Any]:
+    def _get_session_credentials() -> dict[str, Any]:
         """The refresh callable."""
         if boto3_session is not None:
             session = boto3_session

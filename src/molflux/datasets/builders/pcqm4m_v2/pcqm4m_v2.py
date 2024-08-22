@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import Any, ClassVar, List, Literal, Optional
+from typing import Any, ClassVar, Literal
 
 import pandas as pd
 
@@ -38,7 +38,7 @@ class PCQM4MV2(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIG_CLASS = PCQM4MV2Config
     config: PCQM4MV2Config
 
-    BUILDER_CONFIGS: ClassVar[List[datasets.BuilderConfig]] = [
+    BUILDER_CONFIGS: ClassVar[list[datasets.BuilderConfig]] = [
         PCQM4MV2Config(
             name="openeye",
             backend="openeye",
@@ -65,7 +65,7 @@ class PCQM4MV2(datasets.GeneratorBasedBuilder):
     def _split_generators(
         self,
         dl_manager: datasets.DownloadManager,
-    ) -> List[datasets.SplitGenerator]:
+    ) -> list[datasets.SplitGenerator]:
         raw_file_dict = dl_manager.download_and_extract(_BASE_URL_DICT)
 
         mols_file = os.path.join(raw_file_dict["mols_file"], "pcqm4m-v2-train.sdf")
@@ -93,8 +93,8 @@ class PCQM4MV2(datasets.GeneratorBasedBuilder):
 
     def _generate_examples_openeye(
         self,
-        mols_file: Optional[str] = None,
-        csv_file: Optional[str] = None,
+        mols_file: str | None = None,
+        csv_file: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         try:
@@ -120,7 +120,9 @@ class PCQM4MV2(datasets.GeneratorBasedBuilder):
         # find mol iterator
         mols_iterator = oemolistream(mols_file).GetOEGraphMols()
 
-        for index, (mol, (_, row)) in enumerate(zip(mols_iterator, df.iterrows())):
+        for index, (mol, (_, row)) in enumerate(
+            zip(mols_iterator, df.iterrows(), strict=False),
+        ):
             row_dict = row.to_dict()
             row_dict["mol_bytes"] = OEWriteMolToBytes(".oeb", mol)
 
@@ -128,8 +130,8 @@ class PCQM4MV2(datasets.GeneratorBasedBuilder):
 
     def _generate_examples_rdkit(
         self,
-        mols_file: Optional[str] = None,
-        csv_file: Optional[str] = None,
+        mols_file: str | None = None,
+        csv_file: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         try:
@@ -152,7 +154,9 @@ class PCQM4MV2(datasets.GeneratorBasedBuilder):
             removeHs=False,
         )
 
-        for index, (mol, (_, row)) in enumerate(zip(supplier, df.iterrows())):
+        for index, (mol, (_, row)) in enumerate(
+            zip(supplier, df.iterrows(), strict=False),
+        ):
             row_dict = row.to_dict()
             row_dict["mol_bytes"] = mol.ToBinary()
 

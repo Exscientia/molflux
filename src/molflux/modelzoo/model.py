@@ -1,6 +1,7 @@
 """
 Abstract Base Classes for classes implementing the Model protocol.
 """
+
 import inspect
 import logging
 import os
@@ -9,7 +10,7 @@ import warnings
 from abc import ABC, abstractmethod
 from dataclasses import field
 from functools import cached_property
-from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union
+from typing import Any, Generic, TypeVar
 
 from pydantic.v1 import dataclasses
 
@@ -39,9 +40,9 @@ logger = logging.getLogger(__name__)
 class ModelConfig:
     x_features: Features = field(default_factory=list)
     y_features: Features = field(default_factory=list)
-    train_features: Union[Features, Dict[str, Features], None] = None
+    train_features: Features | dict[str, Features] | None = None
 
-    def resolve_train_features(self, name: Optional[str] = None) -> Features:
+    def resolve_train_features(self, name: str | None = None) -> Features:
         """Returns the features expected in training dataset `name`."""
         if self.train_features is None:
             return self.x_features + self.y_features
@@ -62,7 +63,7 @@ _ModelConfigT = TypeVar("_ModelConfigT", bound=ModelConfig)
 class ModelBase(Generic[_ModelConfigT], ABC):
     _train_multi_data_enabled: bool = False
 
-    def __init__(self, *, tag: Optional[str] = None, **config_kwargs: Any) -> None:
+    def __init__(self, *, tag: str | None = None, **config_kwargs: Any) -> None:
         """Initialises a new model."""
 
         # build default config
@@ -80,7 +81,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
         self.model: Any = None
 
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return self.model_config.__dict__
 
     @cached_property
@@ -117,7 +118,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
         return self.model_config.y_features
 
     @property
-    def train_features(self) -> Union[Features, Dict[str, Features], None]:
+    def train_features(self) -> Features | dict[str, Features] | None:
         return self.model_config.train_features
 
     def __str__(self) -> str:
@@ -135,7 +136,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
 
     @property
     @abstractmethod
-    def _config_builder(self) -> Type[_ModelConfigT]:
+    def _config_builder(self) -> type[_ModelConfigT]:
         """The callable that initialises the model config object.
 
         To be implemented by subclasses.
@@ -149,7 +150,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
         """
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         return self.info.to_dict()
 
     @property
@@ -162,12 +163,8 @@ class ModelBase(Generic[_ModelConfigT], ABC):
 
     def train(
         self,
-        train_data: Union[DataFrameLike, Dict[Optional[str], DataFrameLike]],
-        validation_data: Union[
-            DataFrameLike,
-            Dict[Optional[str], DataFrameLike],
-            None,
-        ] = None,
+        train_data: DataFrameLike | dict[str | None, DataFrameLike],
+        validation_data: DataFrameLike | dict[str | None, DataFrameLike] | None = None,
         **kwargs: Any,
     ) -> Any:
         """Trains the model."""
@@ -190,7 +187,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
                         stacklevel=2,
                     )
 
-            all_multi_datasets: Dict[str, Dict[Union[str, None], Dataset]] = {}
+            all_multi_datasets: dict[str, dict[str | None, Dataset]] = {}
             for split, data in all_data.items():
                 # if passed a single dataset, convert to dict
                 if not isinstance(data, dict):
@@ -230,7 +227,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
                         stacklevel=2,
                     )
 
-            all_datasets: Dict[str, Dataset] = {}
+            all_datasets: dict[str, Dataset] = {}
             for split, data in all_data.items():
                 if isinstance(data, dict):
                     dataset = concatenate_datasets(
@@ -260,7 +257,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
 
     def _train_multi_data(
         self,
-        train_data: Dict[Optional[str], Dataset],
+        train_data: dict[str | None, Dataset],
         **kwargs: Any,
     ) -> Any:
         """The training callable for multiple datasets.
@@ -301,7 +298,7 @@ class ModelBase(Generic[_ModelConfigT], ABC):
         """
 
     @property
-    def _predict_display_names(self) -> List[str]:
+    def _predict_display_names(self) -> list[str]:
         """The display names for prediction outputs.
 
         These are not part of the API, we just provide this utility function
@@ -379,7 +376,7 @@ class ClassificationMixin(ABC):
         """
 
     @property
-    def _predict_proba_display_names(self) -> List[str]:
+    def _predict_proba_display_names(self) -> list[str]:
         """The display names for prediction outputs.
 
         These are not part of the API, we just provide this utility function
@@ -454,7 +451,7 @@ class PredictionIntervalMixin(ABC):
         data: DataFrameLike,
         confidence: float,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """Return a model prediction with an associated prediction interval"""
 
         # make sure data is a datasets.Dataset
@@ -495,7 +492,7 @@ class PredictionIntervalMixin(ABC):
         data: Dataset,
         confidence: float,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """The prediction interval prediction callable for prediction intervals.
 
         To be implemented by subclasses.
@@ -504,7 +501,7 @@ class PredictionIntervalMixin(ABC):
     @property
     def _predict_with_prediction_interval_display_names(
         self,
-    ) -> Tuple[List[str], List[str]]:
+    ) -> tuple[list[str], list[str]]:
         """The display names for prediction outputs.
 
         These are not part of the API, we just provide this utility function
@@ -515,6 +512,7 @@ class PredictionIntervalMixin(ABC):
                 (f"{self.tag}::{task}", f"{self.tag}::{task}::prediction_interval")
                 for task in self.y_features
             ],
+            strict=False,
         )
 
     def __str__(self) -> str:
@@ -540,7 +538,7 @@ class StandardDeviationMixin(ABC):
         self,
         data: DataFrameLike,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """Return a model prediction with an associated standard deviation"""
 
         # make sure data is a datasets.Dataset
@@ -570,14 +568,14 @@ class StandardDeviationMixin(ABC):
         self,
         data: Dataset,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """The prediction callable for prediction standard deviations.
 
         To be implemented by subclasses.
         """
 
     @property
-    def _predict_with_std_display_names(self) -> Tuple[List[str], List[str]]:
+    def _predict_with_std_display_names(self) -> tuple[list[str], list[str]]:
         """The display names for prediction outputs.
 
         These are not part of the API, we just provide this utility function
@@ -588,6 +586,7 @@ class StandardDeviationMixin(ABC):
                 (f"{self.tag}::{task}", f"{self.tag}::{task}::std")
                 for task in self.y_features
             ],
+            strict=False,
         )
 
     def __str__(self) -> str:
@@ -613,7 +612,7 @@ class CovarianceMixin(ABC):
         self,
         data: DataFrameLike,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """Return a model prediction with an associated standard deviation"""
 
         # make sure data is a datasets.Dataset
@@ -646,14 +645,14 @@ class CovarianceMixin(ABC):
         self,
         data: Dataset,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         """The prediction callable for prediction covariances.
 
         To be implemented by subclasses.
         """
 
     @property
-    def _predict_with_covariance_display_names(self) -> Tuple[List[str], List[str]]:
+    def _predict_with_covariance_display_names(self) -> tuple[list[str], list[str]]:
         """The display names for prediction outputs.
 
         These are not part of the API, we just provide this utility function
@@ -664,6 +663,7 @@ class CovarianceMixin(ABC):
                 (f"{self.tag}::{task}", f"{self.tag}::{task}::covariance")
                 for task in self.y_features
             ],
+            strict=False,
         )
 
     def __str__(self) -> str:
@@ -724,7 +724,7 @@ class SamplingMixin(ABC):
         """
 
     @property
-    def _sample_display_names(self) -> List[str]:
+    def _sample_display_names(self) -> list[str]:
         """The display names for prediction outputs.
 
         These are not part of the API, we just provide this utility function

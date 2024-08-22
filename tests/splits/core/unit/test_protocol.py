@@ -1,6 +1,7 @@
 """
 Tests for API features advertised as part of the SplittingStrategy protocol.
 """
+
 from typing import Protocol
 
 from molflux.splits.strategy import SplittingStrategy

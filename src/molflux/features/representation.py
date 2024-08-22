@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterator, Protocol, runtime_checkable
+from collections.abc import Iterator
+from typing import Any, Protocol, runtime_checkable
 
 from molflux.features.errors import DuplicateKeyError
 from molflux.features.typing import ArrayLike, RepresentationResult
@@ -12,7 +13,7 @@ class Representation(Protocol):
         """Initialises the representation."""
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         """Representation metadata."""
 
     @property
@@ -24,7 +25,7 @@ class Representation(Protocol):
         """The arbitrary tag name of the representation."""
 
     @property
-    def state(self) -> Dict[str, Any]:
+    def state(self) -> dict[str, Any]:
         """The internal state config."""
 
     def featurise(self, *columns: ArrayLike, **kwargs: Any) -> RepresentationResult:
@@ -41,7 +42,7 @@ class Representations:
     """A collection of Representations."""
 
     def __init__(self) -> None:
-        self._stack: Dict[str, Representation] = {}
+        self._stack: dict[str, Representation] = {}
 
     def __contains__(self, item: str) -> bool:
         return item in self._stack

@@ -55,9 +55,11 @@ def test_deterministic_split(fixture_sample_dataset, fixture_test_strategy):
     train_indices1, validation_indices1, test_indices1 = next(indices)
     train_indices2, validation_indices2, test_indices2 = next(indices)
 
-    assert all(i == j for i, j in zip(train_indices1, train_indices2))
-    assert all(i == j for i, j in zip(validation_indices1, validation_indices2))
-    assert all(i == j for i, j in zip(test_indices1, test_indices2))
+    assert all(i == j for i, j in zip(train_indices1, train_indices2, strict=False))
+    assert all(
+        i == j for i, j in zip(validation_indices1, validation_indices2, strict=False)
+    )
+    assert all(i == j for i, j in zip(test_indices1, test_indices2, strict=False))
 
 
 def test_splits_are_disjoint(fixture_sample_dataset, fixture_test_strategy):

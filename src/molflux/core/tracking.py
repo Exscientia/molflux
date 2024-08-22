@@ -1,6 +1,7 @@
 import os
 import pathlib
-from typing import Any, Dict, Mapping, Optional
+from collections.abc import Mapping
+from typing import Any
 
 import molflux.datasets
 import molflux.modelzoo
@@ -31,10 +32,10 @@ def log_dataset(dataset: Dataset, path: PathLike) -> str:
 
 def log_dataset_dict(
     dataset_dict: DatasetDict,
-    paths_dict: Dict[str, str],
-) -> Dict[str, str]:
+    paths_dict: dict[str, str],
+) -> dict[str, str]:
     """Logs an arbitrary dataset_dict to disk"""
-    save_paths: Dict[str, str] = {}
+    save_paths: dict[str, str] = {}
     for split_name, dataset in dataset_dict.items():
         save_path = log_dataset(dataset, path=paths_dict[split_name])
         save_paths[split_name] = save_path
@@ -48,7 +49,7 @@ def log_featurised_dataset(featurised_dataset: Dataset, directory: PathLike) -> 
 
 
 def log_featurisation_metadata(
-    featurisation_metadata: Optional[Dict[str, Any]],
+    featurisation_metadata: dict[str, Any] | None,
     directory: PathLike,
 ) -> str:
     """Logs featurisation metadata to disk.
@@ -62,9 +63,9 @@ def log_featurisation_metadata(
     )
 
 
-def log_fold(fold: DatasetDict, directory: PathLike) -> Dict[str, str]:
+def log_fold(fold: DatasetDict, directory: PathLike) -> dict[str, str]:
     """Logs a fold to disk as a set of .parquet files."""
-    save_paths: Dict[str, str] = {}
+    save_paths: dict[str, str] = {}
     for split, dataset in fold.items():
         _SPLIT_FILENAME = f"{split}.parquet"
         path = os.path.join(directory, _SPLIT_FILENAME)
@@ -73,7 +74,7 @@ def log_fold(fold: DatasetDict, directory: PathLike) -> Dict[str, str]:
     return save_paths
 
 
-def log_predictions(predictions: DatasetDict, directory: str) -> Dict[str, str]:
+def log_predictions(predictions: DatasetDict, directory: str) -> dict[str, str]:
     """Logs fold predictions to storage as a set of standardised parquet files."""
     paths_dict = {
         split_name: os.path.join(directory, f"{split_name}_predictions.parquet")
@@ -82,7 +83,7 @@ def log_predictions(predictions: DatasetDict, directory: str) -> Dict[str, str]:
     return log_dataset_dict(predictions, paths_dict=paths_dict)
 
 
-def log_references(references: DatasetDict, directory: str) -> Dict[str, str]:
+def log_references(references: DatasetDict, directory: str) -> dict[str, str]:
     """Logs fold references to storage as a set of standardised parquet files."""
     paths_dict = {
         split_name: os.path.join(directory, f"{split_name}_references.parquet")
@@ -91,7 +92,7 @@ def log_references(references: DatasetDict, directory: str) -> Dict[str, str]:
     return log_dataset_dict(references, paths_dict=paths_dict)
 
 
-def log_inputs(inputs: DatasetDict, directory: str) -> Dict[str, str]:
+def log_inputs(inputs: DatasetDict, directory: str) -> dict[str, str]:
     """Logs a fold's model input features to storage as parquet."""
     paths_dict = {
         split_name: os.path.join(directory, f"{split_name}_inputs.parquet")

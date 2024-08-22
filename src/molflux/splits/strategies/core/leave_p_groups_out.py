@@ -1,4 +1,5 @@
-from typing import Any, Iterable, Iterator, Optional
+from collections.abc import Iterable, Iterator
+from typing import Any
 
 import sklearn.model_selection
 
@@ -32,9 +33,9 @@ class LeavePGroupsOut(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
-        p: Optional[int] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
+        p: int | None = None,
         **kwargs: Any,
     ) -> Iterator[SplitIndices]:
         """

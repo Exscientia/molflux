@@ -1,4 +1,5 @@
-from typing import Any, Iterable, Iterator, Optional, Sized, Tuple
+from collections.abc import Iterable, Iterator, Sized
+from typing import Any
 
 import pytest
 
@@ -18,10 +19,10 @@ class SplittingStrategyMock:
     def split(
         self,
         dataset: Sized,
-        y: Optional[Iterable] = None,
-        groups: Optional[Iterable] = None,
+        y: Iterable | None = None,
+        groups: Iterable | None = None,
         **kwargs: Any,
-    ) -> Iterator[Tuple[Iterable[int], Iterable[int], Iterable[int]]]:
+    ) -> Iterator[tuple[Iterable[int], Iterable[int], Iterable[int]]]:
         """Splits the dataset into thirds."""
         n = len(dataset)
         indices = range(n)

@@ -2,20 +2,20 @@ import functools
 import inspect
 import logging
 from collections import defaultdict
+from collections.abc import Callable
 from importlib.metadata import EntryPoint, entry_points
-from typing import Callable, Dict, List, Type
 
 from molflux.splits.naming import camelcase_to_snakecase
 from molflux.splits.strategy import SplittingStrategy
 
 logger = logging.getLogger(__name__)
 
-SplittingStrategyT = Type[SplittingStrategy]
+SplittingStrategyT = type[SplittingStrategy]
 
 NAMESPACE = "molflux.splits.plugins."
 
 # This is where entrypoints will be registered {<name>: <Entrypoint>}
-SPLITTING_STRATEGIES_CATALOGUE: Dict[str, EntryPoint] = {}
+SPLITTING_STRATEGIES_CATALOGUE: dict[str, EntryPoint] = {}
 
 
 @functools.lru_cache
@@ -49,9 +49,9 @@ def put_splitting_strategy_entrypoint(
         else:
             raise KeyError(f"Duplicate splitting strategy: {splitting_strategy_name!r}")
 
-    SPLITTING_STRATEGIES_CATALOGUE[
-        splitting_strategy_name
-    ] = splitting_strategy_entrypoint
+    SPLITTING_STRATEGIES_CATALOGUE[splitting_strategy_name] = (
+        splitting_strategy_entrypoint
+    )
 
 
 def get_splitting_strategy_entrypoint(splitting_strategy_name: str) -> EntryPoint:
@@ -84,13 +84,13 @@ def get_splitting_strategy_cls(splitting_strategy_name: str) -> SplittingStrateg
     return splitting_strategy_cls  # type: ignore[return-value]
 
 
-def list_splitting_strategies() -> Dict[str, List[str]]:
+def list_splitting_strategies() -> dict[str, list[str]]:
     """List all available splitting strategies.
 
     The catalogue is returned as a view of strategy names keyed by kind.
     """
 
-    view: Dict[str, List[str]] = defaultdict(list)
+    view: dict[str, list[str]] = defaultdict(list)
 
     for (
         splitting_strategy_name,

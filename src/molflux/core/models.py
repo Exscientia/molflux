@@ -1,5 +1,6 @@
 import warnings
-from typing import Any, Dict, Iterable, Mapping, Optional, Tuple, Union
+from collections.abc import Iterable, Mapping
+from typing import Any
 
 import datasets
 import molflux.modelzoo
@@ -13,7 +14,7 @@ from molflux.modelzoo import Model
 def save_model(
     model: Model,
     path: PathLike,
-    featurisation_metadata: Optional[Dict[str, Any]],
+    featurisation_metadata: dict[str, Any] | None,
 ) -> str:
     """Packages a trained model to disk into a standard format.
 
@@ -78,21 +79,24 @@ def get_inputs(model: Model, fold: DatasetDict) -> DatasetDict:
 
 def _dict_of_iterables_to_iterable_of_dicts(
     d: Mapping[str, Iterable[Any]],
-) -> Iterable[Dict[str, Any]]:
+) -> Iterable[dict[str, Any]]:
     """Split dictionary of iterables into iterable of dictionaries.
 
     References:
         https://stackoverflow.com/a/1780295
     """
-    return map(dict, zip(*[[(k, v) for v in value] for k, value in d.items()]))
+    return map(
+        dict,
+        zip(*[[(k, v) for v in value] for k, value in d.items()], strict=False),
+    )
 
 
 def predict(
     model: Model,
     fold: DatasetDict,
     prediction_method: AllowedInferenceMethods = "predict",
-    prediction_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
-) -> Union[DatasetDict, Tuple[DatasetDict, ...]]:
+    prediction_kwargs: dict[str, dict[str, Any]] | None = None,
+) -> DatasetDict | tuple[DatasetDict, ...]:
     """Calculates model predictions for each split in a fold.
 
     Model predictions follow the molflux.modelzoo predictions output format, where
@@ -113,7 +117,7 @@ def predict(
 
     # Initialise the dictionary of prediction outputs for each input split dataset
     # ensuring same ordering of split names for more intuitive behaviour
-    fold_prediction_outputs: Dict[str, Tuple[DatasetDict, ...]] = dict.fromkeys(
+    fold_prediction_outputs: dict[str, tuple[DatasetDict, ...]] = dict.fromkeys(
         fold,
         (DatasetDict(),),
     )
@@ -153,8 +157,8 @@ def inference(
     model: Model,
     dataset: Dataset,
     prediction_method: AllowedInferenceMethods = "predict",
-    prediction_kwargs: Optional[Dict[str, Any]] = None,
-) -> Union[Dataset, Tuple[Dataset, ...]]:
+    prediction_kwargs: dict[str, Any] | None = None,
+) -> Dataset | tuple[Dataset, ...]:
     """Calculates model predictions on a single dataset."""
 
     predictor = getattr(model, prediction_method)

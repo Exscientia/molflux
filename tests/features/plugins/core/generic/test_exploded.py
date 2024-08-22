@@ -48,5 +48,5 @@ def test_enumerate_fingerprints(fixture_representation):
     # should return a column with all the first molfluxs, one with all the
     # second molfluxs, and so on...
     expected_results = [[1, 1, 1, 1], [0, 1, 1, 1], [0, 0, 1, 1], [0, 0, 0, 1]]
-    for actual, expected in zip(results.values(), expected_results):
+    for actual, expected in zip(results.values(), expected_results, strict=False):
         assert actual == expected

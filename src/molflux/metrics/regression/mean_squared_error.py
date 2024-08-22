@@ -1,7 +1,7 @@
 """Mean squared error regression loss."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
 from sklearn.metrics import mean_squared_error
@@ -97,7 +97,7 @@ class MeanSquaredError(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         multioutput: str = "uniform_average",
         **kwargs: Any,
     ) -> MetricResult:

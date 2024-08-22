@@ -1,5 +1,3 @@
-from typing import Dict, List, Optional, Type, Union
-
 from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
@@ -79,17 +77,17 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class KernelRidgeConfig(ModelConfig):
-    alpha: Union[float, List[float]] = 1.0
+    alpha: float | list[float] = 1.0
     kernel: str = "linear"
-    gamma: Optional[float] = None
+    gamma: float | None = None
     degree: int = 3
     coef0: float = 1.0
-    kernel_params: Optional[Dict] = None
+    kernel_params: dict | None = None
 
 
 class KernelRidgeRegressor(SKLearnModelBase[KernelRidgeConfig]):
     @property
-    def _config_builder(self) -> Type[KernelRidgeConfig]:
+    def _config_builder(self) -> type[KernelRidgeConfig]:
         return KernelRidgeConfig
 
     def _info(self) -> ModelInfo:

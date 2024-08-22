@@ -49,8 +49,7 @@ class PyODModelBase(ModelBase[_PyODModelConfigT], ABC):
     """Base model for all models based on the PyOD API"""
 
     @abstractmethod
-    def _instantiate_model(self) -> pyod.models.base.BaseDetector:
-        ...
+    def _instantiate_model(self) -> pyod.models.base.BaseDetector: ...
 
     def _train(self, train_data: datasets.Dataset, **kwargs: Any) -> Any:
         x_data = pick_features(train_data, self.x_features)

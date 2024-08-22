@@ -1,6 +1,7 @@
 """
 Tests for API features advertised as part of the Representations protocol.
 """
+
 from molflux.features.representation import Representations
 
 

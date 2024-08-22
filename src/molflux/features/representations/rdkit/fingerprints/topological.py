@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem import RDKFingerprint
@@ -54,12 +54,12 @@ class Topological(RepresentationBase):
         min_size: int = 128,
         branched_paths: bool = True,
         use_bond_order: bool = True,
-        atom_invariants: Optional[List[int]] = None,
-        from_atoms: Optional[List] = None,
-        atom_bits: Optional[List] = None,
-        bit_info: Optional[Dict] = None,
+        atom_invariants: list[int] | None = None,
+        from_atoms: list | None = None,
+        atom_bits: list | None = None,
+        bit_info: dict | None = None,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Generates topological (Daylight like) fingerprints for each input
         molecules.
 
@@ -102,7 +102,7 @@ class Topological(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        topo_fp_list: List[List] = []
+        topo_fp_list: list[list] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

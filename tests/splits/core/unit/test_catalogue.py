@@ -40,8 +40,7 @@ def test_register_strategy(monkeypatch):
     assert "pytest_strategy" not in list_splitting_strategies()
 
     @register_splitting_strategy(kind="testing", name="pytest_strategy")
-    class PytestStrategy:
-        ...
+    class PytestStrategy: ...
 
     assert "testing" in list_splitting_strategies()
     assert "pytest_strategy" in list_splitting_strategies()["testing"]

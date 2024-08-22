@@ -1,6 +1,5 @@
 import functools
 import importlib.metadata
-from typing import Dict, List
 
 from cloudpathlib import AnyPath
 
@@ -9,12 +8,12 @@ from molflux.core.typing import PathLike
 _REQUIREMENTS_FILENAME = "requirements.txt"
 
 
-def pip_working_set() -> Dict[str, str]:
+def pip_working_set() -> dict[str, str]:
     return _cached_pip_working_set().copy()
 
 
 @functools.lru_cache
-def _cached_pip_working_set() -> Dict[str, str]:
+def _cached_pip_working_set() -> dict[str, str]:
     distributions = importlib.metadata.distributions()
     return {
         distribution.metadata["Name"]: distribution.version
@@ -23,7 +22,7 @@ def _cached_pip_working_set() -> Dict[str, str]:
 
 
 @functools.lru_cache
-def _get_pinned_pip_environment() -> List[str]:
+def _get_pinned_pip_environment() -> list[str]:
     """Returns a list of pinned package versions in the active python environment.
 
     This is cached for performance reasons.

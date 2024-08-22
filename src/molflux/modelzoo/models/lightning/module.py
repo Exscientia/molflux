@@ -1,8 +1,8 @@
 from abc import abstractmethod
-from typing import Any, Dict, List, Literal, Mapping, Optional, Tuple, cast
+from collections.abc import Mapping
+from typing import Any, Literal, TypeAlias, cast
 
 from lightning.pytorch.utilities.types import _METRIC
-from typing_extensions import TypeAlias
 
 from molflux.modelzoo.models.lightning.config import LightningConfig
 
@@ -18,9 +18,9 @@ except ImportError as e:
 
 
 Loss: TypeAlias = torch.Tensor
-TensorsToLog: TypeAlias = Dict[str, torch.Tensor]
+TensorsToLog: TypeAlias = dict[str, torch.Tensor]
 BatchSize: TypeAlias = int
-SingleBatchStepOutput: TypeAlias = Tuple[Loss, TensorsToLog, BatchSize]
+SingleBatchStepOutput: TypeAlias = tuple[Loss, TensorsToLog, BatchSize]
 Split = Literal["train", "val"]
 
 
@@ -37,7 +37,7 @@ class LightningModuleBase(LightningModule):
     def _training_step_on_single_source_batch(
         self,
         single_source_batch: Any,
-        source_name: Optional[str],
+        source_name: str | None,
         batch_idx: int,
         *args: Any,
         **kwargs: Any,
@@ -52,7 +52,7 @@ class LightningModuleBase(LightningModule):
     def _validation_step_on_single_source_batch(
         self,
         single_source_batch: Any,
-        source_name: Optional[str],
+        source_name: str | None,
         batch_idx: int,
         *args: Any,
         **kwargs: Any,
@@ -65,7 +65,7 @@ class LightningModuleBase(LightningModule):
 
     def training_step(
         self,
-        batch: Dict[Optional[str], Any],
+        batch: dict[str | None, Any],
         batch_idx: int,
         *args: Any,
         **kwargs: Any,
@@ -77,8 +77,8 @@ class LightningModuleBase(LightningModule):
         _training_step_on_single_source_batch instead."""
 
         # compute losses
-        losses: Dict[Optional[str], Dict[str, torch.Tensor]] = {}
-        batch_sizes: Dict[Optional[str], int] = {}
+        losses: dict[str | None, dict[str, torch.Tensor]] = {}
+        batch_sizes: dict[str | None, int] = {}
         for name, single_source_batch in batch.items():
             # can also get {"a": single_source_batch, "b": None} batches
             if single_source_batch is None:
@@ -102,7 +102,7 @@ class LightningModuleBase(LightningModule):
 
     def validation_step(
         self,
-        batch: Dict[Optional[str], Any],
+        batch: dict[str | None, Any],
         batch_idx: int,
         *args: Any,
         **kwargs: Any,
@@ -114,8 +114,8 @@ class LightningModuleBase(LightningModule):
         _validation_step_on_single_source_batch instead."""
 
         # compute losses
-        losses: Dict[Optional[str], Dict[str, torch.Tensor]] = {}
-        batch_sizes: Dict[Optional[str], int] = {}
+        losses: dict[str | None, dict[str, torch.Tensor]] = {}
+        batch_sizes: dict[str | None, int] = {}
         for name, single_source_batch in batch.items():
             # can also get {"a": single_source_batch, "b": None} batches
             if single_source_batch is None:
@@ -137,7 +137,7 @@ class LightningModuleBase(LightningModule):
         total_loss = self._process_and_log_losses("val", losses, batch_sizes)
         return total_loss
 
-    def configure_optimizers(self) -> Dict[str, Any]:
+    def configure_optimizers(self) -> dict[str, Any]:
         """Returns an optimizer and (optional) scheduler.
 
         Expected by PyTorch Lightning.
@@ -153,7 +153,7 @@ class LightningModuleBase(LightningModule):
             **optimizer_config.config,
             params=filter(lambda p: p.requires_grad, self.parameters()),
         )
-        out: Dict[str, Any] = {"optimizer": optimizer}
+        out: dict[str, Any] = {"optimizer": optimizer}
 
         if self.model_config.scheduler is not None:
             out["lr_scheduler"] = self.model_config.scheduler.prepare_scheduler(
@@ -167,7 +167,7 @@ class LightningModuleBase(LightningModule):
         """Logs gradient magnitudes during training."""
         del optimizer
 
-        grads = cast(Dict[str, torch.Tensor], grad_norm(self, norm_type=2))
+        grads = cast(dict[str, torch.Tensor], grad_norm(self, norm_type=2))
         # `grads` includes individual layer grads as well as an overall Frobenius norm
         grad_norm_total = grads.pop("grad_2.0_norm_total").item()
         grad_norm_max = max(t.item() for t in grads.values())
@@ -183,7 +183,7 @@ class LightningModuleBase(LightningModule):
         source: str,
         name: str,
         value: _METRIC,
-        batch_size: Optional[int] = None,
+        batch_size: int | None = None,
     ) -> None:
         """Convenience method for logging."""
         if split == "train":
@@ -213,7 +213,7 @@ class LightningModuleBase(LightningModule):
         split: Split,
         source: str,
         dictionary: Mapping[str, _METRIC],
-        batch_size: Optional[int] = None,
+        batch_size: int | None = None,
     ) -> None:
         """Convenience method for logging multiple metrics simultaneously."""
         if split == "train":
@@ -245,8 +245,8 @@ class LightningModuleBase(LightningModule):
     def _process_and_log_losses(
         self,
         split: Split,
-        losses: Dict[Optional[str], Dict[str, torch.Tensor]],
-        batch_sizes: Dict[Optional[str], int],
+        losses: dict[str | None, dict[str, torch.Tensor]],
+        batch_sizes: dict[str | None, int],
     ) -> torch.Tensor:
         """Logs single source losses and metrics and returns the mean of all loss components."""
 
@@ -263,7 +263,7 @@ class LightningModuleBase(LightningModule):
 
         # for multiple datasets we log the total loss (optimisation target)
         # and, per source, each metric or loss component
-        total_loss_list: List[torch.Tensor] = []
+        total_loss_list: list[torch.Tensor] = []
 
         for source, single_source_losses in losses.items():
             if source is None:

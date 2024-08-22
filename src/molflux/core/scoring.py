@@ -1,7 +1,8 @@
 import warnings
 from collections import defaultdict
+from collections.abc import Mapping, MutableMapping
 from enum import Enum
-from typing import Any, DefaultDict, Dict, Final, Mapping, MutableMapping, Optional
+from typing import Any, Final
 
 import mergedeep
 from thefuzz import fuzz
@@ -39,7 +40,7 @@ def _compute_scores(
     # some predictions/references might be empty (e.g. from cross-validation strategy splits)
     # return an empty dictionary with empty scores dict for each task
     if not predictions.num_rows or not references.num_rows:
-        return dict.fromkeys(references.column_names, {})
+        return dict.fromkeys(references.column_names, {})  # noqa: RUF024
 
     references_dict, predictions_dict = references.to_dict(), predictions.to_dict()
 
@@ -47,6 +48,7 @@ def _compute_scores(
     for (task_name, task_references), (predicted_task_name, task_predictions) in zip(
         references_dict.items(),
         predictions_dict.items(),
+        strict=False,
     ):
         # we are allowing predicted tasks to be named differently than
         # reference tasks (e.g. my-model::y1). It's up to the user to make
@@ -73,7 +75,7 @@ def compute_scores(
     predictions: DatasetDict,
     references: DatasetDict,
     metrics: Metrics,
-    scoring_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
+    scoring_kwargs: dict[str, dict[str, Any]] | None = None,
 ) -> FoldScores:
     """Computes scores for a model based on given fold predictions and references.
 
@@ -127,8 +129,8 @@ def score_model(
     model: Model,
     fold: DatasetDict,
     metrics: Metrics,
-    prediction_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
-    scoring_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
+    prediction_kwargs: dict[str, dict[str, Any]] | None = None,
+    scoring_kwargs: dict[str, dict[str, Any]] | None = None,
 ) -> FoldScores:
     """Scores a model on a given fold (DatasetDict) based on a suite of metrics.
 
@@ -177,7 +179,7 @@ def invert_scores_hierarchy(scores: FoldScores) -> FoldScores:
     This is a convenience wrapper to be used in situations where it might be
     easier to iterate over scores across tasks rather than splits.
     """
-    flipped: DefaultDict[str, Dict[str, Any]] = defaultdict(dict)
+    flipped: defaultdict[str, dict[str, Any]] = defaultdict(dict)
     for key, val in scores.items():
         for subkey, subval in val.items():
             flipped[subkey][key] = subval

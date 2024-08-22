@@ -1,7 +1,7 @@
 """Area Under the Receiver Operating Characteristic Curve (ROC AUC) from prediction scores."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
 from sklearn.metrics import roc_auc_score
@@ -204,11 +204,11 @@ class RocAuc(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         average: str = "macro",
-        max_fpr: Optional[float] = None,
+        max_fpr: float | None = None,
         multi_class: str = "raise",
-        labels: Optional[List[str]] = None,
+        labels: list[str] | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         score = roc_auc_score(

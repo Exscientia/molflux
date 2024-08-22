@@ -1,4 +1,6 @@
-from typing import Any, Dict, Iterable, List, Literal
+import warnings
+from collections.abc import Iterable
+from typing import Any, Literal
 
 import pydantic
 import yaml
@@ -6,20 +8,42 @@ from pydantic import BaseModel, Field
 
 from molflux.features.typing import PathLike
 
+_pydantic_v2 = tuple(map(int, pydantic.__version__.split("."))) >= (2, 0, 0)
+
 
 class Spec(BaseModel):
     name: str
-    config: Dict[str, Any] = Field(default_factory=dict)
-    presets: Dict[str, Any] = Field(default_factory=dict)
+    config: dict[str, Any] = Field(default_factory=dict)
+    presets: dict[str, Any] = Field(default_factory=dict)
+
+    def __init__(self, **data: Any) -> None:
+        field_aliases = {
+            field.alias if field.alias else field_name
+            for field_name, field in (
+                self.model_fields if _pydantic_v2 else self.__fields__
+            ).items()
+        }
+
+        if extra_fields := set(data).difference(field_aliases):
+            warnings.warn(
+                (
+                    "Additional fields not covered by the spec provided: "
+                    f"{*extra_fields,}, these will be ignored. Should these be "
+                    "provided in `presets`?"
+                ),
+                stacklevel=5,
+                category=UserWarning,
+            )
+        super().__init__(**data)
 
 
 class YamlConfig(BaseModel):
     version: str
     kind: Literal["representations"]
-    specs: List[Dict[str, Any]]
+    specs: list[dict[str, Any]]
 
 
-def dict_parser(dictionary: Dict[str, Any]) -> Spec:
+def dict_parser(dictionary: dict[str, Any]) -> Spec:
     """Parses a dictionary into a spec."""
     try:
         return Spec(**dictionary)

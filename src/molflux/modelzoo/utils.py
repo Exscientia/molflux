@@ -1,6 +1,7 @@
 import inspect
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
-from typing import Any, Callable, Iterator, List, Union
+from typing import Any
 
 import numpy as np
 
@@ -62,7 +63,7 @@ def validate_prediction_result_num_tasks(
 
 def pick_features(
     dataset: datasets.Dataset,
-    features: Union[str, Features],
+    features: str | Features,
 ) -> datasets.Dataset:
     """Selects multiple columns from a datasets.Dataset"""
 
@@ -92,7 +93,7 @@ def _disabled_huggingface_progress_bars() -> Iterator[None]:
 
 def get_concatenated_array(
     dataset: datasets.Dataset,
-    features: Union[str, Features],
+    features: str | Features,
 ) -> np.ndarray:
     """
     Concatenates columns of dataset into a feature vector, ordered by the specified
@@ -136,7 +137,7 @@ def get_concatenated_array(
     return np.column_stack(arrays)
 
 
-def format_wrapped_model_tag(tag: str, wrapped_tags: List[str]) -> str:
+def format_wrapped_model_tag(tag: str, wrapped_tags: list[str]) -> str:
     """Ensure more informative naming of model tags."""
     wrapped_models_tags = ":".join(wrapped_tags)
     return f"{tag}[{wrapped_models_tags}]"

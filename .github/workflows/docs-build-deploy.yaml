@@ -17,7 +17,7 @@ jobs:
           cache: 'pip'
       - name: Building docs
         run: |
-          pip install nox
+          pip install nox[uv]
           nox -s docs_build-3.11
 
       - uses: actions/upload-pages-artifact@v2

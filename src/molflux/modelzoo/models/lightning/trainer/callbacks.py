@@ -29,7 +29,11 @@ class ModelCheckpointApply(callbacks.ModelCheckpoint):
         del trainer
 
         if self.best_model_path is not None:
-            best_ckpt = torch.load(self.best_model_path, map_location="cpu")
+            best_ckpt = torch.load(
+                self.best_model_path,
+                map_location="cpu",
+                weights_only=True,
+            )
             pl_module.load_state_dict(best_ckpt["state_dict"])
             logger.warning(
                 f"Using best model from ckpt_path: {self.best_model_path}.\n",

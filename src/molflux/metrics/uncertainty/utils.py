@@ -14,7 +14,7 @@ def _estimate_standard_deviation(
     def diff(x: ArrayLike) -> ArrayLike:
         return x[1] - x[0]
 
-    prediction_intervals = list(zip(lower_bound, upper_bound))
+    prediction_intervals = list(zip(lower_bound, upper_bound, strict=False))
     sigma = [
         diff(interval) / diff(st.norm.interval(confidence))
         for interval in prediction_intervals

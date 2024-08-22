@@ -1,7 +1,8 @@
+from collections.abc import Iterable, Sized
 from os import PathLike as OSPathLike
-from typing import Iterable, Sized, Tuple, Union
+from typing import Union
 
 ArrayLike = Iterable
 PathLike = Union[str, OSPathLike]
 Splittable = Sized
-SplitIndices = Tuple[Iterable[int], Iterable[int], Iterable[int]]
+SplitIndices = tuple[Iterable[int], Iterable[int], Iterable[int]]

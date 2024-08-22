@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Optional, Tuple, Type, Union
+from collections.abc import Callable
 
 import numpy as np
 from numpy.random import RandomState
@@ -213,48 +213,48 @@ class Config:
 @dataclasses.dataclass(config=Config)
 class XGBRegressorConfig(ModelConfig):
     n_estimators: int = 100
-    max_depth: Optional[int] = None
-    max_leaves: Optional[int] = None
-    max_bin: Optional[int] = None
-    grow_policy: Optional[int] = None
-    learning_rate: Optional[float] = None
-    verbosity: Optional[int] = None
+    max_depth: int | None = None
+    max_leaves: int | None = None
+    max_bin: int | None = None
+    grow_policy: int | None = None
+    learning_rate: float | None = None
+    verbosity: int | None = None
     objective: _SklObjective = None
-    booster: Optional[str] = None
-    tree_method: Optional[str] = None
-    n_jobs: Optional[int] = None
-    gamma: Optional[float] = None
-    min_child_weight: Optional[float] = None
-    max_delta_step: Optional[float] = None
-    subsample: Optional[float] = None
-    sampling_method: Optional[str] = None
-    colsample_bytree: Optional[float] = None
-    colsample_bylevel: Optional[float] = None
-    colsample_bynode: Optional[float] = None
-    reg_alpha: Optional[float] = None
-    reg_lambda: Optional[float] = None
-    scale_pos_weight: Optional[float] = None
-    base_score: Optional[float] = None
-    random_state: Optional[Union[int, RandomState]] = None
-    missing: Optional[float] = None
-    num_parallel_tree: Optional[int] = None
-    monotone_constraints: Optional[Union[Dict[str, int], str]] = None
-    interaction_constraints: Optional[Union[str, List[Tuple[str]]]] = None
-    importance_type: Optional[str] = None
-    gpu_id: Optional[int] = None
-    validate_parameters: Optional[bool] = None
-    predictor: Optional[str] = None
+    booster: str | None = None
+    tree_method: str | None = None
+    n_jobs: int | None = None
+    gamma: float | None = None
+    min_child_weight: float | None = None
+    max_delta_step: float | None = None
+    subsample: float | None = None
+    sampling_method: str | None = None
+    colsample_bytree: float | None = None
+    colsample_bylevel: float | None = None
+    colsample_bynode: float | None = None
+    reg_alpha: float | None = None
+    reg_lambda: float | None = None
+    scale_pos_weight: float | None = None
+    base_score: float | None = None
+    random_state: int | RandomState | None = None
+    missing: float | None = None
+    num_parallel_tree: int | None = None
+    monotone_constraints: dict[str, int] | str | None = None
+    interaction_constraints: str | list[tuple[str]] | None = None
+    importance_type: str | None = None
+    gpu_id: int | None = None
+    validate_parameters: bool | None = None
+    predictor: str | None = None
     enable_categorical: bool = False
-    max_cat_to_onehot: Optional[int] = None
-    eval_metric: Optional[Union[str, List[str], Callable]] = None
-    early_stopping_rounds: Optional[int] = None
-    callbacks: Optional[List[TrainingCallback]] = None
-    kwargs: Optional[dict] = None
+    max_cat_to_onehot: int | None = None
+    eval_metric: str | list[str] | Callable | None = None
+    early_stopping_rounds: int | None = None
+    callbacks: list[TrainingCallback] | None = None
+    kwargs: dict | None = None
 
 
 class XGBoostRegressor(SKLearnModelBase[XGBRegressorConfig]):
     @property
-    def _config_builder(self) -> Type[XGBRegressorConfig]:
+    def _config_builder(self) -> type[XGBRegressorConfig]:
         return XGBRegressorConfig
 
     def _info(self) -> ModelInfo:

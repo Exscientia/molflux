@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Type, Union
+from typing import Literal
 
 from pydantic.v1 import dataclasses
 
@@ -182,19 +182,19 @@ class GradientBoostingClassifierConfig(ModelConfig):
     n_estimators: int = 100
     subsample: float = 1.0
     criterion: Criterion = "friedman_mse"
-    min_samples_split: Union[int, float] = 2
-    min_samples_leaf: Union[int, float] = 1
+    min_samples_split: int | float = 2
+    min_samples_leaf: int | float = 1
     min_weight_fraction_leaf: float = 0.0
-    max_depth: Optional[int] = 3
+    max_depth: int | None = 3
     min_impurity_decrease: float = 0.0
-    init: Optional[Init] = None
-    random_state: Optional[int] = None
-    max_features: Optional[Union[int, float, MaxFeatures]] = None
+    init: Init | None = None
+    random_state: int | None = None
+    max_features: int | float | MaxFeatures | None = None
     verbose: int = 0
-    max_leaf_nodes: Optional[int] = None
+    max_leaf_nodes: int | None = None
     warm_start: bool = False
     validation_fraction: float = 0.1
-    n_iter_no_change: Optional[int] = None
+    n_iter_no_change: int | None = None
     tol: float = 1e-4
     ccp_alpha: float = 0.0
 
@@ -208,7 +208,7 @@ class GradientBoostingClassifier(
     SKLearnModelBase[GradientBoostingClassifierConfig],
 ):
     @property
-    def _config_builder(self) -> Type[GradientBoostingClassifierConfig]:
+    def _config_builder(self) -> type[GradientBoostingClassifierConfig]:
         return GradientBoostingClassifierConfig
 
     def _info(self) -> ModelInfo:

@@ -1,5 +1,4 @@
 import json
-from typing import List
 
 import pytest
 from openeye import oechem
@@ -20,22 +19,22 @@ representation_name = "sd_feature"
 
 
 @pytest.fixture(scope="module")
-def fixture_molecules() -> List[oechem.OEMolBase]:
+def fixture_molecules() -> list[oechem.OEMolBase]:
     """Fixture to obtain three molecules."""
     smiles = ["c1ccccc1", "c1(CCCC)ccccc1", "CC"]
     mols = [oechem.OEGraphMol() for _ in range(len(smiles))]
-    for mol, smi in zip(mols, smiles):
+    for mol, smi in zip(mols, smiles, strict=False):
         oechem.OESmilesToMol(mol, smi)
     return mols
 
 
 @pytest.fixture(scope="module")
-def fixture_on_bits() -> List[List[int]]:
+def fixture_on_bits() -> list[list[int]]:
     return [[3, 6, 8, 2], [9, 5, 3, 1, 8, 7], [0, 4]]
 
 
 @pytest.fixture(scope="module")
-def fixture_dense_bits() -> List[List[int]]:
+def fixture_dense_bits() -> list[list[int]]:
     return [
         [0, 0, 1, 1, 0, 0, 1, 0, 1, 0],
         [0, 1, 0, 1, 0, 1, 0, 1, 1, 1],
@@ -45,16 +44,17 @@ def fixture_dense_bits() -> List[List[int]]:
 
 @pytest.fixture(scope="module")
 def fixture_molecules_sd_features(
-    fixture_molecules: List[oechem.OEMolBase],
-    fixture_on_bits: List[List[int]],
-    fixture_dense_bits: List[List[int]],
-) -> List[oechem.OEMolBase]:
+    fixture_molecules: list[oechem.OEMolBase],
+    fixture_on_bits: list[list[int]],
+    fixture_dense_bits: list[list[int]],
+) -> list[oechem.OEMolBase]:
     """Fixture to append SD tags for particular features onto the sampled molecules."""
     molecules_with_sd_tags = []
     for org_mol, on_bits, dense_bits in zip(
         fixture_molecules,
         fixture_on_bits,
         fixture_dense_bits,
+        strict=False,
     ):
         mol = org_mol.CreateCopy()
         # simulate newline separated 'on' bits.

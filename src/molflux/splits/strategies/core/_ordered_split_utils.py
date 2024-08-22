@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -9,17 +9,17 @@ from molflux.splits.utils import partition
 
 def validate_ordered_strategy_arguments(
     stratified_bool: bool,
-    y: Optional[ArrayLike],
-    groups: Optional[ArrayLike],
-    train_fraction: Union[float, List[float]],
-    gap_train_validation_fraction: Optional[Union[float, List[float]]],
-    validation_fraction: Union[float, List[float]],
-    gap_validation_test_fraction: Optional[Union[float, List[float]]],
-    test_fraction: Union[float, List[float]],
-    gap_test_end_fraction: Optional[Union[float, List[float]]],
-    stratify_targets_to_ignore: Optional[List],
-    min_test_size: Optional[Union[int, List[int]]],
-) -> Dict[str, Any]:
+    y: ArrayLike | None,
+    groups: ArrayLike | None,
+    train_fraction: float | list[float],
+    gap_train_validation_fraction: float | list[float] | None,
+    validation_fraction: float | list[float],
+    gap_validation_test_fraction: float | list[float] | None,
+    test_fraction: float | list[float],
+    gap_test_end_fraction: float | list[float] | None,
+    stratify_targets_to_ignore: list | None,
+    min_test_size: int | list[int] | None,
+) -> dict[str, Any]:
     """
     method to validate that all input data is correct.
         checks that groups exists, have > 2 groups, have same type, are comparable
@@ -66,15 +66,15 @@ def validate_ordered_strategy_arguments(
     )
 
     if isinstance(train_fraction, (int, float)):
-        train_fraction_list: List = [train_fraction]
+        train_fraction_list: list = [train_fraction]
     else:
         train_fraction_list = train_fraction
     if isinstance(validation_fraction, (int, float)):
-        validation_fraction_list: List = [validation_fraction]
+        validation_fraction_list: list = [validation_fraction]
     else:
         validation_fraction_list = validation_fraction
     if isinstance(test_fraction, (int, float)):
-        test_fraction_list: List = [test_fraction]
+        test_fraction_list: list = [test_fraction]
     else:
         test_fraction_list = test_fraction
 
@@ -94,48 +94,52 @@ def validate_ordered_strategy_arguments(
         )
 
     if gap_train_validation_fraction is None:
-        gap_train_validation_fraction_list: List = [
+        gap_train_validation_fraction_list: list = [
             0.0 for _ in range(len(train_fraction_list))
         ]
     else:
         if isinstance(gap_train_validation_fraction, float):
             gap_train_validation_fraction_list = [gap_train_validation_fraction]
         else:
-            assert isinstance(gap_train_validation_fraction, List)
+            assert isinstance(gap_train_validation_fraction, list)
             gap_train_validation_fraction_list = gap_train_validation_fraction
 
     if gap_validation_test_fraction is None:
-        gap_validation_test_fraction_list: List = [
+        gap_validation_test_fraction_list: list = [
             0.0 for _ in range(len(train_fraction_list))
         ]
     else:
         if isinstance(gap_validation_test_fraction, float):
             gap_validation_test_fraction_list = [gap_validation_test_fraction]
         else:
-            assert isinstance(gap_validation_test_fraction, List)
+            assert isinstance(gap_validation_test_fraction, list)
             gap_validation_test_fraction_list = gap_validation_test_fraction
 
     if gap_test_end_fraction is None:
-        gap_test_end_fraction_list: List = [
+        gap_test_end_fraction_list: list = [
             0.0 for _ in range(len(train_fraction_list))
         ]
     else:
         if isinstance(gap_test_end_fraction, float):
             gap_test_end_fraction_list = [gap_test_end_fraction]
         else:
-            assert isinstance(gap_test_end_fraction, List)
+            assert isinstance(gap_test_end_fraction, list)
             gap_test_end_fraction_list = gap_test_end_fraction
 
     if min_test_size is None:
-        min_test_size_list: List = [0 for _ in range(len(test_fraction_list))]
+        min_test_size_list: list = [0 for _ in range(len(test_fraction_list))]
     else:
         if isinstance(min_test_size, int):
             min_test_size_list = [min_test_size]
         else:
-            assert isinstance(min_test_size, List)
+            assert isinstance(min_test_size, list)
             min_test_size_list = min_test_size
 
-    for min_test, test_fraction in zip(min_test_size_list, test_fraction_list):
+    for min_test, test_fraction in zip(
+        min_test_size_list,
+        test_fraction_list,
+        strict=False,
+    ):
         if test_fraction == 0.0:
             assert min_test == 0, RuntimeError(
                 f"Cannot have non-zero min test size {min_test} when test fraction is {test_fraction}.",
@@ -156,6 +160,7 @@ def validate_ordered_strategy_arguments(
         gap_validation_test_fraction_list,
         test_fraction_list,
         gap_test_end_fraction_list,
+        strict=False,
     ):
         np.testing.assert_almost_equal(
             sum([tra_fr, g_tr_val_fr, val_fr, g_val_tes_fr, test_fr, g_tes_end_fr]),
@@ -177,7 +182,7 @@ def validate_ordered_strategy_arguments(
         if len(list(y)) != len(list(groups)):
             raise RuntimeError("Length of groups is not equal to length of targets")
 
-        for idx, (yy, group) in enumerate(zip(y, groups)):
+        for idx, (yy, group) in enumerate(zip(y, groups, strict=False)):
             if isinstance(yy, str):
                 yy_split = [x.strip() for x in yy.split("|")]
             else:
@@ -244,9 +249,9 @@ def validate_ordered_strategy_arguments(
 def make_sorted_groups_indices(
     groups_array: np.ndarray,
     index_array: np.ndarray,
-    targets_array: Optional[np.ndarray],
-    target: Optional[str],
-) -> Dict:
+    targets_array: np.ndarray | None,
+    target: str | None,
+) -> dict:
     """
     method to find sorted groups and indices with and without None groups
     """
@@ -291,7 +296,7 @@ def make_sorted_groups_indices(
         [indices_of_nones, sorted_indices_without_nones],
     )
 
-    sorted_groups_indices_dict: Dict = {
+    sorted_groups_indices_dict: dict = {
         "sorted_indices_without_nones": sorted_indices_without_nones,
         "sorted_indices_with_nones": sorted_indices_with_nones,
         "sorted_groups_without_nones": sorted_groups_without_nones,
@@ -311,7 +316,7 @@ def find_begin_end_indices(
     split_test_fraction: float,
     split_gap_test_end_fraction: float,
     undefined_groups_in_train: bool,
-) -> Dict:
+) -> dict:
     """method to find begin, end, indices of different sets"""
 
     if undefined_groups_in_train:
@@ -329,7 +334,7 @@ def find_begin_end_indices(
         split_test_fraction,
     )
 
-    cutoffs: Dict[str, int] = {
+    cutoffs: dict[str, int] = {
         "train_end": train_end,
         "validation_begin": validation_begin,
         "validation_end": validation_end,
@@ -353,7 +358,7 @@ def force_min_test_size(
     validation_end: int,
     test_begin: int,
     test_end: int,
-) -> Dict:
+) -> dict:
     """
     method to force test set to have min size. Shifts test begin and modifies
     validation and train such that train is used up first, then validation
@@ -375,7 +380,7 @@ def force_min_test_size(
         validation_begin = max(validation_begin - shift_indices, 0)
         train_end = max(train_end - shift_indices, 0)
 
-    bgn_end_dict: Dict = {
+    bgn_end_dict: dict = {
         "train_end": train_end,
         "validation_begin": validation_begin,
         "validation_end": validation_end,

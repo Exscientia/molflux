@@ -97,7 +97,7 @@ def test_from_dict_forwards_presets_to_representation_state():
 def test_dict_missing_required_fields_raises():
     """That cannot load a representation with a config missing required fields."""
     config = {"unknown_key": "value"}
-    with pytest.raises(SyntaxError):
+    with pytest.warns(UserWarning), pytest.raises(SyntaxError):
         load_from_dict(config)
 
 

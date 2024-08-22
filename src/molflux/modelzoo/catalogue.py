@@ -3,20 +3,20 @@ import functools
 import inspect
 import logging
 from collections import defaultdict
+from collections.abc import Callable
 from importlib.metadata import EntryPoint, entry_points
-from typing import Callable, Dict, List, Type
 
 from molflux.modelzoo.naming import camelcase_to_snakecase
 from molflux.modelzoo.protocols import Estimator
 
 logger = logging.getLogger(__name__)
 
-EstimatorT = Type[Estimator]
+EstimatorT = type[Estimator]
 
 NAMESPACE = "molflux.modelzoo.plugins."
 
 # This is where entrypoints will be registered {<name>: <Entrypoint>}
-MODELS_CATALOGUE: Dict[str, EntryPoint] = {}
+MODELS_CATALOGUE: dict[str, EntryPoint] = {}
 
 
 @functools.lru_cache
@@ -78,13 +78,13 @@ def get_model_cls(model_name: str) -> EstimatorT:
     return model_cls  # type: ignore[return-value]
 
 
-def list_models() -> Dict[str, List[str]]:
+def list_models() -> dict[str, list[str]]:
     """List all available models in the catalogue.
 
     The catalogue is returned as a view of model names keyed by kind.
     """
 
-    view: Dict[str, List[str]] = defaultdict(list)
+    view: dict[str, list[str]] = defaultdict(list)
 
     for model_name, model_entrypoint in MODELS_CATALOGUE.items():
         model_kind = model_entrypoint.group.split(".")[-1]

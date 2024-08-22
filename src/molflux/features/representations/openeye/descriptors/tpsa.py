@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from openeye.oemolprop import OEGet2dPSA
@@ -39,10 +39,10 @@ class TPSA(RepresentationBase):
         start: int = 0,
         stop: int = 140,
         num: int = 14,
-        atom_psa: Optional[float] = None,
+        atom_psa: float | None = None,
         s_and_p: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[float]]:
+    ) -> dict[str, list[float]]:
         """Calculates the Topological polar-surface area (TPSA) for each input
         molecule.
 

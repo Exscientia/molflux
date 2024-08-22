@@ -1,5 +1,5 @@
 from os import PathLike as OSPathLike
-from typing import Any, Dict, Literal, Union
+from typing import Any, Literal, Union
 
 import datasets
 
@@ -12,5 +12,6 @@ AllowedInferenceMethods = Literal[
 ]
 PathLike = Union[str, OSPathLike]
 Dataset = datasets.Dataset
-TasksScores = Dict[str, Dict[str, Any]]
-FoldScores = Dict[str, TasksScores]
+DatasetType = Union[datasets.Dataset, datasets.DatasetDict]
+TasksScores = dict[str, dict[str, Any]]
+FoldScores = dict[str, TasksScores]

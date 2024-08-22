@@ -2,7 +2,7 @@
 Wrappers for using splitting strategies to split datasets.Datasets.
 """
 
-from typing import Iterator, Optional
+from collections.abc import Iterator
 
 from datasets import Dataset, DatasetDict
 from molflux.datasets.interfaces import SplittingStrategy
@@ -11,8 +11,8 @@ from molflux.datasets.interfaces import SplittingStrategy
 def split_dataset(
     dataset: Dataset,
     strategy: SplittingStrategy,
-    target_column: Optional[str] = None,
-    groups_column: Optional[str] = None,
+    target_column: str | None = None,
+    groups_column: str | None = None,
 ) -> Iterator[DatasetDict]:
     """Generates dataset splits according to given strategy.
 

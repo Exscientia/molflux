@@ -1,7 +1,7 @@
 """R2  (coefficient of determination) regression score function."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
 from sklearn.metrics import r2_score
@@ -108,7 +108,7 @@ class R2(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         multioutput: str = "uniform_average",
         **kwargs: Any,
     ) -> MetricResult:

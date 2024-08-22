@@ -1,6 +1,7 @@
 """
 Tests for API features advertised as part of the Metric protocol.
 """
+
 from typing import Protocol
 
 from molflux.metrics.metric import Metric

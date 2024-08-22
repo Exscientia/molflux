@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye import oechem, oeshape
@@ -36,7 +36,7 @@ class Hermite(RepresentationBase):
         use_optimal_lambdas: bool = True,
         orient_by_moments_of_inertia: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[List[float]]]:
+    ) -> dict[str, list[list[float]]]:
         r"""Featurises the input molecules via a hermite polynomial expansion.
 
         Args:

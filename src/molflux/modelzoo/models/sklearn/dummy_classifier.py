@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, Type, Union
+from typing import Literal
 
 from pydantic.v1 import dataclasses
 
@@ -87,8 +87,8 @@ class Config:
 @dataclasses.dataclass(config=Config)
 class DummyClassifierConfig(ModelConfig):
     strategy: PredictionsStrategy = "prior"
-    random_state: Optional[int] = None
-    constant: Union[int, str, List[Union[int, str]], None] = None
+    random_state: int | None = None
+    constant: int | str | list[int | str] | None = None
 
 
 class DummyClassifier(
@@ -96,7 +96,7 @@ class DummyClassifier(
     SKLearnModelBase[DummyClassifierConfig],
 ):
     @property
-    def _config_builder(self) -> Type[DummyClassifierConfig]:
+    def _config_builder(self) -> type[DummyClassifierConfig]:
         return DummyClassifierConfig
 
     def _info(self) -> ModelInfo:

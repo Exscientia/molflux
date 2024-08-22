@@ -1,7 +1,7 @@
 import os
 from copy import copy
 from dataclasses import asdict
-from typing import Any, Dict, List, Optional, Type
+from typing import Any
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -75,15 +75,15 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class EnsembleClassifierConfig(ModelConfig):
-    base_estimators: Optional[List[Dict[str, Any]]] = None
-    meta_estimator: Optional[
-        Dict[str, Any]
-    ] = None  # config for a a modelzoo classification model
+    base_estimators: list[dict[str, Any]] | None = None
+    meta_estimator: dict[str, Any] | None = (
+        None  # config for a a modelzoo classification model
+    )
     n_folds: int = 2
     keep_original: bool = False
     use_proba: bool = False
     shuffle_data: bool = False
-    random_state: Optional[int] = None
+    random_state: int | None = None
 
 
 class EnsembleClassifier(ClassificationMixin, ModelBase[EnsembleClassifierConfig]):
@@ -93,7 +93,7 @@ class EnsembleClassifier(ClassificationMixin, ModelBase[EnsembleClassifierConfig
     See also the `combo` library eg. https://github.com/yzhao062/combo/blob/master/combo/models/classifier_stacking.py
     """
 
-    def __init__(self, tag: Optional[str] = None, **config_kwargs: Any) -> None:
+    def __init__(self, tag: str | None = None, **config_kwargs: Any) -> None:
         super().__init__(tag=tag, **config_kwargs)
 
         config = self.config
@@ -149,11 +149,11 @@ class EnsembleClassifier(ClassificationMixin, ModelBase[EnsembleClassifierConfig
         return EnsembleClassifierConfig()
 
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[EnsembleClassifierConfig]:
+    def _config_builder(self) -> type[EnsembleClassifierConfig]:
         return EnsembleClassifierConfig
 
     def _info(self) -> ModelInfo:
@@ -283,6 +283,7 @@ class EnsembleClassifier(ClassificationMixin, ModelBase[EnsembleClassifierConfig
             zip(
                 display_names,
                 original_prediction_results.values(),
+                strict=False,
             ),
         )
 
@@ -300,7 +301,8 @@ class EnsembleClassifier(ClassificationMixin, ModelBase[EnsembleClassifierConfig
         classes = sklearn_classes if is_multitask else [sklearn_classes]
 
         return {
-            task: classes.tolist() for task, classes in zip(self.y_features, classes)
+            task: classes.tolist()
+            for task, classes in zip(self.y_features, classes, strict=False)
         }
 
     def _predict_proba(self, data: Dataset, **kwargs: Any) -> PredictionResult:
@@ -326,6 +328,7 @@ class EnsembleClassifier(ClassificationMixin, ModelBase[EnsembleClassifierConfig
             zip(
                 display_names,
                 original_prediction_results.values(),
+                strict=False,
             ),
         )
 

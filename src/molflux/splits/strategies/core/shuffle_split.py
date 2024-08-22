@@ -1,4 +1,5 @@
-from typing import Any, Iterator, Optional
+from collections.abc import Iterator
+from typing import Any
 
 import numpy as np
 from sklearn.utils import check_random_state
@@ -22,14 +23,14 @@ class ShuffleSplit(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         *,
         n_splits: int = 1,
         train_fraction: float = 0.8,
         validation_fraction: float = 0.1,
         test_fraction: float = 0.1,
-        seed: Optional[int] = None,
+        seed: int | None = None,
         **kwargs: Any,
     ) -> Iterator[SplitIndices]:
         """

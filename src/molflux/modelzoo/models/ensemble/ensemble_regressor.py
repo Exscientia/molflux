@@ -1,7 +1,6 @@
 import os
 from copy import copy
-from dataclasses import asdict
-from typing import Any, Dict, List, Optional, Type
+from typing import Any
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -11,11 +10,24 @@ from molflux.modelzoo import load_from_store, save_to_store
 from molflux.modelzoo.errors import NotTrainedError
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.load import load_from_dict
-from molflux.modelzoo.model import ModelBase, ModelConfig
+from molflux.modelzoo.model import (
+    ModelBase,
+    ModelConfig,
+    PredictionIntervalMixin,
+    SamplingMixin,
+    StandardDeviationMixin,
+)
+from molflux.modelzoo.models.core.average_features_regressor import (
+    AverageFeaturesRegressor,
+)
 from molflux.modelzoo.models.ensemble._combo.utils import (
     check_parameter,
     get_split_indices,
     list_diff,
+)
+from molflux.modelzoo.protocols import (
+    supports_prediction_interval,
+    supports_std,
 )
 from molflux.modelzoo.typing import PredictionResult
 from molflux.modelzoo.utils import format_wrapped_model_tag, pick_features
@@ -48,8 +60,12 @@ base_estimators : list
     A list of modelzoo config dicts to define the models used for training
     the base estimators. An error is raised if the base estimators are not
     provided.
-meta_estimator : dict, modelzoo model config, optional (default= linear regression)
+meta_estimator : dict, modelzoo model config, optional (default=None)
     The modelzoo model config for a meta regressor to make the final prediction.
+    In the default case, the meta_estimator used depends on ``keep_original``.
+    Either a linear regressor is used when the original features are kept, or
+    when ``keep_original=False`` then the predictions from the base estimators
+    are averaged via the ``average_features_regressor``.
 n_folds : int, optional (default=2)
     The number of splits of the training sample.
 keep_original : bool, optional (default=False)
@@ -66,29 +82,31 @@ random_state : int, RandomState or None, optional (default=None)
 
 class Config:
     arbitrary_types_allowed = True
-    extra = "forbid"
 
 
 @dataclasses.dataclass(config=Config)
 class EnsembleRegressorConfig(ModelConfig):
-    base_estimators: Optional[List[Dict[str, Any]]] = None
-    meta_estimator: Optional[
-        Dict[str, Any]
-    ] = None  # config for modelzoo regression model
+    base_estimators: list[dict[str, Any]] | None = None
+    meta_estimator: dict[str, Any] | None = None  # config for modelzoo regression model
     n_folds: int = 2
     keep_original: bool = False
     shuffle_data: bool = False
-    random_state: Optional[int] = None
+    random_state: int | None = None
 
 
-class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
+class EnsembleRegressor(
+    PredictionIntervalMixin,
+    StandardDeviationMixin,
+    SamplingMixin,
+    ModelBase[EnsembleRegressorConfig],
+):
     """
     Meta ensembling, also known as stacking
     See https://datasciblog.github.io/2016/12/27/a-kagglers-guide-to-model-stacking-in-practice/ for more information.
     See also the `combo` library eg. https://github.com/yzhao062/combo/blob/master/combo/models/classifier_stacking.py
     """
 
-    def __init__(self, tag: Optional[str] = None, **config_kwargs: Any) -> None:
+    def __init__(self, tag: str | None = None, **config_kwargs: Any) -> None:
         super().__init__(tag=tag, **config_kwargs)
 
         config = self.config
@@ -115,6 +133,9 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
         )
         self.n_folds = config["n_folds"]
 
+        self.all_models_support_std = all(
+            supports_std(model) for model in self.base_estimators
+        )
         if config["meta_estimator"] is not None:
             self.meta_estimator = load_from_dict(config["meta_estimator"])
         elif config["keep_original"]:
@@ -127,9 +148,17 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
             )
         elif not config["keep_original"]:
             meta_estimator_colnames = [reg.tag for reg in self.base_estimators]
-            self.meta_estimator = LinearRegressor(
+            meta_estimator_std_colnames = [
+                f"{reg.tag}::std" for reg in self.base_estimators
+            ]
+            # If all base estimators provide uncertainty, use this via a Gaussian mixture.
+            # O/W fall back to using std of the estimates themselves
+            self.meta_estimator = AverageFeaturesRegressor(
                 x_features=meta_estimator_colnames,
                 y_features=self.y_features,
+                x_std_features=meta_estimator_std_colnames
+                if self.all_models_support_std
+                else None,
             )
 
         # set flags
@@ -137,15 +166,11 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
         self.shuffle_data = config["shuffle_data"]
         self.random_state = config["random_state"]
 
-    @property
-    def config(self) -> Dict[str, Any]:
-        return asdict(self.model_config)
-
     def _config(self) -> EnsembleRegressorConfig:
         return EnsembleRegressorConfig()
 
     @property
-    def _config_builder(self) -> Type[EnsembleRegressorConfig]:
+    def _config_builder(self) -> type[EnsembleRegressorConfig]:
         return EnsembleRegressorConfig
 
     def _info(self) -> ModelInfo:
@@ -162,7 +187,9 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
         n_samples = train_data.shape[0]
 
         # initialize matrix for storing newly generated features
-        new_features = np.zeros([n_samples, self.n_base_estimators_])
+        new_features = np.zeros(
+            [n_samples, (1 + self.all_models_support_std) * self.n_base_estimators_],
+        )
 
         # build CV datasets
         index_lists = get_split_indices(
@@ -188,7 +215,15 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
 
                 # generate the new features on the pseudo test set
                 reg_tag_name = f"{reg.tag}::{reg.y_features[0]}"
-                new_features[test_idx, i] = reg.predict(test_fold)[reg_tag_name]
+                if self.all_models_support_std:
+                    assert supports_std(reg)
+                    preds, stds = reg.predict_with_std(test_fold)
+                    (
+                        new_features[test_idx, i],
+                        new_features[test_idx, i + self.n_base_estimators_],
+                    ) = (preds[reg_tag_name], stds[f"{reg_tag_name}::std"])
+                else:
+                    new_features[test_idx, i] = reg.predict(test_fold)[reg_tag_name]
 
         # build the new dataset for training
         train_comb = copy(train_data)
@@ -198,9 +233,17 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
                 colname,
                 new_features[:, i_col],
             ).flatten_indices()
+            if self.all_models_support_std:
+                train_comb = train_comb.add_column(
+                    f"{colname}::std",
+                    new_features[:, self.n_base_estimators_ + i_col],
+                ).flatten_indices()
+
         if self.keep_original:
             meta_estimator_colnames += self.x_features
-        assert self.meta_estimator.x_features == meta_estimator_colnames
+        assert set(meta_estimator_colnames).issubset(
+            set(self.meta_estimator.x_features),
+        )
         self.meta_estimator.train(train_data=train_comb)
 
         # train all base classifiers on the full train dataset
@@ -210,12 +253,14 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
 
         return
 
-    def _process_data(self, dataset: Dataset) -> Any:
+    def _process_data(self, dataset: Dataset, with_std: bool = False) -> Any:
         """Internal class for `predict`
         Parameters
         ----------
         dataset: Dataset (n_samples, n_features)
             The input samples.
+        with_std: bool
+            Use predict_with_std or just predict.
         Returns
         -------
         data_new_comb : Dataset
@@ -224,14 +269,22 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
         n_samples = dataset.shape[0]
 
         # initialize matrix for storing newly generated features
-        new_features = np.zeros([n_samples, self.n_base_estimators_])
+        new_features = np.zeros([n_samples, (1 + with_std) * self.n_base_estimators_])
 
         # build the new features for unknown samples
         # iterate over all base classifiers
         for i, reg in enumerate(self.base_estimators):
             # generate the new features on the test set
             reg_tag_name = f"{reg.tag}::{reg.y_features[0]}"
-            new_features[:, i] = reg.predict(dataset)[reg_tag_name]
+            if with_std:
+                assert supports_std(reg)
+                preds, stds = reg.predict_with_std(dataset)
+                new_features[:, i], new_features[:, i + self.n_base_estimators_] = (
+                    preds[reg_tag_name],
+                    stds[f"{reg_tag_name}::std"],
+                )
+            else:
+                new_features[:, i] = reg.predict(dataset)[reg_tag_name]
 
         # build the new dataset for unknown samples
         new_colnames = [reg.tag for reg in self.base_estimators]
@@ -241,6 +294,11 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
                 colname,
                 new_features[:, i_col],
             ).flatten_indices()
+            if with_std:
+                data_new_comb = data_new_comb.add_column(
+                    f"{colname}::std",
+                    new_features[:, self.n_base_estimators_ + i_col],
+                ).flatten_indices()
 
         return data_new_comb
 
@@ -267,8 +325,124 @@ class EnsembleRegressor(ModelBase[EnsembleRegressorConfig]):
             zip(
                 display_names,
                 original_prediction_results.values(),
+                strict=False,
             ),
         )
+
+    def _predict_with_std(
+        self,
+        data: Dataset,
+        **kwargs: Any,
+    ) -> tuple[PredictionResult, PredictionResult]:
+        """
+        Make regression and std predictions for the provided data.
+        """
+        assert supports_std(
+            self.meta_estimator,
+        ), "meta_estimator should support uncertainty via prediction with standard deviation"
+
+        (
+            prediction_display_names,
+            prediction_std_display_names,
+        ) = self._predict_with_std_display_names
+
+        if not len(data):
+            return {display_name: [] for display_name in prediction_display_names}, {
+                display_name: [] for display_name in prediction_std_display_names
+            }
+
+        x_data = pick_features(data, self.x_features)
+        X_new_comb = self._process_data(x_data, with_std=self.all_models_support_std)
+        (
+            original_prediction_results,
+            original_prediction_stds,
+        ) = self.meta_estimator.predict_with_std(X_new_comb)
+
+        return dict(
+            zip(
+                prediction_display_names,
+                original_prediction_results.values(),
+                strict=False,
+            ),
+        ), dict(
+            zip(
+                prediction_std_display_names,
+                original_prediction_stds.values(),
+                strict=False,
+            ),
+        )
+
+    def _predict_with_prediction_interval(
+        self,
+        data: Dataset,
+        confidence: float,
+        **kwargs: Any,
+    ) -> tuple[PredictionResult, PredictionResult]:
+        assert supports_prediction_interval(
+            self.meta_estimator,
+        ), "meta_estimator should support uncertainty via prediction with prediction interval"
+
+        (
+            prediction_display_names,
+            prediction_interval_display_names,
+        ) = self._predict_with_prediction_interval_display_names
+
+        if not len(data):
+            return {display_name: [] for display_name in prediction_display_names}, {
+                display_name: [] for display_name in prediction_interval_display_names
+            }
+
+        x_data = pick_features(data, self.x_features)
+        X_new_comb = self._process_data(x_data, with_std=self.all_models_support_std)
+        (
+            original_prediction_results,
+            original_prediction_intervals,
+        ) = self.meta_estimator.predict_with_prediction_interval(
+            X_new_comb,
+            confidence=confidence,
+        )
+        return dict(
+            zip(
+                prediction_display_names,
+                original_prediction_results.values(),
+                strict=False,
+            ),
+        ), dict(
+            zip(
+                prediction_interval_display_names,
+                original_prediction_intervals.values(),
+                strict=False,
+            ),
+        )
+
+    def _sample(
+        self,
+        data: Dataset,
+        n_samples: int,
+        **kwargs: Any,
+    ) -> PredictionResult:
+        assert supports_std(
+            self.meta_estimator,
+        ), "meta_estimator should support uncertainty via predict with std"
+
+        display_names = self._sample_display_names
+
+        if not len(data):
+            return {display_name: [] for display_name in display_names}
+
+        prediction_mean_results, prediction_std_results = self._predict_with_std(data)
+
+        prediction_results: PredictionResult = {}
+        for display_name, means, stds in zip(
+            display_names,
+            prediction_mean_results.values(),
+            prediction_std_results.values(),
+            strict=False,
+        ):
+            samples = np.random.normal(means, stds, (n_samples, len(means))).T
+            prediction_results[display_name] = samples.tolist()
+
+        return prediction_results
 
     def as_dir(self, directory: str) -> None:
         """

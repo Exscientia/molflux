@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional, Tuple, Type
+from typing import Any
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -67,7 +67,7 @@ class SparseLinearRegressorConfig(ModelConfig):
     num_chains: int = 4
     num_warmup: int = 1000
     num_samples: int = 1000
-    random_seed: Optional[int] = None
+    random_seed: int | None = None
 
     def __post_init_post_parse__(self) -> None:
         if self.y_features and len(self.y_features) != 1:
@@ -84,7 +84,7 @@ class SparseLinearRegressor(
     ModelBase[SparseLinearRegressorConfig],
 ):
     @property
-    def _config_builder(self) -> Type[SparseLinearRegressorConfig]:
+    def _config_builder(self) -> type[SparseLinearRegressorConfig]:
         return SparseLinearRegressorConfig
 
     def _info(self) -> ModelInfo:
@@ -136,7 +136,7 @@ class SparseLinearRegressor(
         self,
         data: datasets.Dataset,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         (
             prediction_display_names,
             prediction_std_display_names,
@@ -166,7 +166,7 @@ class SparseLinearRegressor(
         data: datasets.Dataset,
         confidence: float,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         (
             prediction_display_names,
             prediction_interval_display_names,
@@ -192,7 +192,9 @@ class SparseLinearRegressor(
         return {
             display_name: ypred.tolist() for display_name in prediction_display_names
         }, {
-            display_name: list(zip(lower_bound.tolist(), upper_bound.tolist()))
+            display_name: list(
+                zip(lower_bound.tolist(), upper_bound.tolist(), strict=False),
+            )
             for display_name in prediction_interval_display_names
         }
 
@@ -214,6 +216,7 @@ class SparseLinearRegressor(
             display_names,
             prediction_mean_results.values(),
             prediction_std_results.values(),
+            strict=False,
         ):
             samples = np.random.normal(means, stds, (n_samples, len(means))).T
             prediction_results[display_name] = samples.tolist()

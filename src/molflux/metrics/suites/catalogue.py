@@ -1,8 +1,7 @@
 import difflib
 from pathlib import Path
-from typing import Dict, List
 
-SUITES_CATALOGUE: Dict[str, Path] = {}
+SUITES_CATALOGUE: dict[str, Path] = {}
 
 
 def get_suite_path(suite_name: str) -> Path:
@@ -22,7 +21,7 @@ def get_suite_path(suite_name: str) -> Path:
     return suite_path
 
 
-def list_suites() -> List[str]:
+def list_suites() -> list[str]:
     """List all available suites."""
     suite_names = sorted(SUITES_CATALOGUE.keys())
     return suite_names

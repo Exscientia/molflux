@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, Type, Union
+from typing import Literal
 
 import numpy.random
 from pydantic.v1 import dataclasses
@@ -109,19 +109,19 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class RidgeRegressorConfig(ModelConfig):
-    alpha: Union[float, List[float]] = 1.0
+    alpha: float | list[float] = 1.0
     fit_intercept: bool = True
     copy_X: bool = True
-    max_iter: Optional[int] = None
+    max_iter: int | None = None
     tol: float = 1e-3
     solver: RidgeRegressorSolver = "auto"
     positive: bool = False
-    random_state: Union[None, int, numpy.random.RandomState] = None
+    random_state: None | int | numpy.random.RandomState = None
 
 
 class RidgeRegressor(SKLearnModelBase[RidgeRegressorConfig]):
     @property
-    def _config_builder(self) -> Type[RidgeRegressorConfig]:
+    def _config_builder(self) -> type[RidgeRegressorConfig]:
         return RidgeRegressorConfig
 
     def _info(self) -> ModelInfo:

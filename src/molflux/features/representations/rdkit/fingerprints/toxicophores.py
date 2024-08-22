@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
@@ -74,7 +74,7 @@ class Toxicophores(RepresentationBase):
         self,
         *columns: MolArray,
         **kwargs: Any,
-    ) -> Dict[str, List[List[Any]]]:
+    ) -> dict[str, list[list[Any]]]:
         """
         Calculates toxicophore substructure matches.
 
@@ -94,7 +94,7 @@ class Toxicophores(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        match_list: List[List] = []
+        match_list: list[list] = []
 
         for sample in samples:
             with featurisation_error_harness(sample):

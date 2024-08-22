@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye.oechem import OECalculateMolecularWeight
@@ -35,7 +35,7 @@ class MolecularWeight(RepresentationBase):
         num: int = 14,
         isotopic: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[float]]:
+    ) -> dict[str, list[float]]:
         """Calculates the molecular weight of each input molecule.
 
         By default, all atoms are assumed their average atomic weight.
