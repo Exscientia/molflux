@@ -1,14 +1,14 @@
-"""Expected calibration error """
+"""Expected calibration error"""
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import evaluate
 import numpy as np
 from scipy.stats import norm
 
 import datasets
-from molflux.metrics.bases import PredictionIntervalMetric
+from molflux.metrics.bases import UncertaintyMetric
 from molflux.metrics.typing import ArrayLike, MetricResult
 from molflux.metrics.uncertainty.utils import _estimate_standard_deviation
 
@@ -57,7 +57,7 @@ Twenty-Ninth AAAI Conference on Artificial Intelligence. 2015.
 
 
 @evaluate.utils.file_utils.add_start_docstrings(_DESCRIPTION, _KWARGS_DESCRIPTION)
-class ExpectedCalibrationError(PredictionIntervalMetric):
+class ExpectedCalibrationError(UncertaintyMetric):
     def _info(self) -> evaluate.MetricInfo:
         return evaluate.MetricInfo(
             description=_DESCRIPTION,
@@ -77,8 +77,8 @@ class ExpectedCalibrationError(PredictionIntervalMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        standard_deviations: Optional[ArrayLike] = None,
-        prediction_intervals: Optional[ArrayLike] = None,
+        standard_deviations: ArrayLike | None = None,
+        prediction_intervals: ArrayLike | None = None,
         confidence: float = 0.9,
         num_thresholds: int = 100,
         **kwargs: Any,
@@ -88,7 +88,7 @@ class ExpectedCalibrationError(PredictionIntervalMetric):
                 raise ValueError(
                     "Please provide either standard deviation, or prediction intervals",
                 )
-            lower_bound, upper_bound = zip(*prediction_intervals)
+            lower_bound, upper_bound = zip(*prediction_intervals, strict=False)
             standard_deviations = _estimate_standard_deviation(
                 lower_bound,
                 upper_bound,
@@ -101,6 +101,8 @@ class ExpectedCalibrationError(PredictionIntervalMetric):
         rho_s = [s / num_thresholds for s in range(num_thresholds)]
         # empirical frequency of predicted values falling in the rho_s quantile
         p_s = [np.mean(pred_cdf < rho) for rho in rho_s]
-        squared_differences = [(rho - p) ** 2 for rho, p in zip(rho_s, p_s)]
+        squared_differences = [
+            (rho - p) ** 2 for rho, p in zip(rho_s, p_s, strict=False)
+        ]
         score = np.mean(squared_differences)
         return {self.tag: score}

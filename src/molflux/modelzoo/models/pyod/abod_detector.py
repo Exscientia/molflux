@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Any, Dict, Literal, Type
+from typing import TYPE_CHECKING, Any, Literal
 
 from pydantic.v1 import dataclasses
 
@@ -74,11 +74,11 @@ class ABODDetectorConfig(PyODModelConfig):
 
 class ABODDetector(PyODClassificationMixin, PyODModelBase[ABODDetectorConfig]):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[ABODDetectorConfig]:
+    def _config_builder(self) -> type[ABODDetectorConfig]:
         return ABODDetectorConfig
 
     def _info(self) -> ModelInfo:

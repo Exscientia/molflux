@@ -1,6 +1,6 @@
 import logging
 from dataclasses import asdict, field
-from typing import Any, Dict, List, Literal, Optional, TypeVar, Union
+from typing import Any, Literal, TypeVar
 
 from pydantic.v1 import dataclasses, validator
 
@@ -55,12 +55,8 @@ class ConfigDict:
     smart_union = True
 
 
-def _dict_is_single_logger_config(logger_dict: Dict[str, Any]) -> bool:
-    return (
-        ("name" in logger_dict)
-        and ("config" in logger_dict)
-        and (isinstance(logger_dict["name"], str))
-    )
+def _dict_is_single_logger_config(logger_dict: dict[str, Any]) -> bool:
+    return ("name" in logger_dict) and (isinstance(logger_dict["name"], str))
 
 
 @dataclasses.dataclass(config=ConfigDict)
@@ -73,49 +69,45 @@ class TrainerConfig:
     accelerator: str = "auto"
     accumulate_grad_batches: int = 1
     barebones: bool = False
-    benchmark: Optional[bool] = None
-    callbacks: Union[List[Dict[str, Any]], Dict[str, Dict[str, Any]], None] = None
-    check_val_every_n_epoch: Optional[int] = 1
-    default_root_dir: Optional[str] = "training"
+    benchmark: bool | None = None
+    callbacks: list[dict[str, Any]] | dict[str, dict[str, Any]] | None = None
+    check_val_every_n_epoch: int | None = 1
+    default_root_dir: str | None = "training"
     detect_anomaly: bool = False
-    deterministic: Union[bool, Literal["warn"], None] = None
-    devices: Union[List[int], str, int] = "auto"
+    deterministic: bool | Literal["warn"] | None = None
+    devices: list[int] | str | int = "auto"
     enable_checkpointing: bool = False  # NOTE vanilla PL default is True
     enable_model_summary: bool = True
     enable_progress_bar: bool = True
-    fast_dev_run: Union[int, bool] = False
-    gradient_clip_algorithm: Optional[str] = None
-    gradient_clip_val: Optional[Union[int, float]] = None
+    fast_dev_run: int | bool = False
+    gradient_clip_algorithm: str | None = None
+    gradient_clip_val: int | float | None = None
     inference_mode: bool = True
-    limit_predict_batches: Union[int, float, None] = None
-    limit_test_batches: Union[int, float, None] = None
-    limit_train_batches: Union[int, float, None] = None
-    limit_val_batches: Union[int, float, None] = None
+    limit_predict_batches: int | float | None = None
+    limit_test_batches: int | float | None = None
+    limit_train_batches: int | float | None = None
+    limit_val_batches: int | float | None = None
     log_every_n_steps: int = 50
-    logger: Union[
-        Dict[str, Any],
-        List[Dict[str, Any]],
-        Dict[str, Dict[str, Any]],
-        bool,
-        None,
-    ] = True
-    max_epochs: Optional[int] = 1
+    logger: (
+        dict[str, Any] | list[dict[str, Any]] | dict[str, dict[str, Any]] | bool | None
+    ) = True
+    max_epochs: int | None = 1
     max_steps: int = -1
-    max_time: Union[str, Dict[str, int], None] = None
-    min_epochs: Optional[int] = None
-    min_steps: Optional[int] = None
+    max_time: str | dict[str, int] | None = None
+    min_epochs: int | None = None
+    min_steps: int | None = None
     num_nodes: int = 1
-    num_sanity_val_steps: Optional[int] = None
-    overfit_batches: Union[int, float] = 0.0
-    precision: Union[int, str] = 32
-    profiler: Optional[Dict[str, Any]] = None
+    num_sanity_val_steps: int | None = None
+    overfit_batches: int | float = 0.0
+    precision: int | str = 32
+    profiler: dict[str, Any] | None = None
     reload_dataloaders_every_n_epochs: int = 0
-    strategy: Union[str, Dict[str, Any]] = "auto"
+    strategy: str | dict[str, Any] = "auto"
     sync_batchnorm: bool = False
     use_distributed_sampler: bool = True
-    val_check_interval: Union[int, float, None] = None
+    val_check_interval: int | float | None = None
 
-    def pass_to_trainer(self) -> Dict[str, Any]:
+    def pass_to_trainer(self) -> dict[str, Any]:
         out = asdict(self)
         out["callbacks"] = self.convert_callbacks(out["callbacks"])
         out["logger"] = self.convert_logger(out["logger"])
@@ -126,8 +118,8 @@ class TrainerConfig:
 
     def convert_callbacks(
         self,
-        callbacks: Union[List[Dict[str, Any]], Dict[str, Dict[str, Any]], None],
-    ) -> Optional[List[pl_callbacks.Callback]]:
+        callbacks: list[dict[str, Any]] | dict[str, dict[str, Any]] | None,
+    ) -> list[pl_callbacks.Callback] | None:
         if callbacks is None:
             return callbacks
 
@@ -141,14 +133,12 @@ class TrainerConfig:
 
     def convert_logger(
         self,
-        logger: Union[
-            Dict[str, Any],
-            List[Dict[str, Any]],
-            Dict[str, Dict[str, Any]],
-            bool,
-            None,
-        ],
-    ) -> Union[List[pl_loggers.Logger], bool, None]:
+        logger: dict[str, Any]
+        | list[dict[str, Any]]
+        | dict[str, dict[str, Any]]
+        | bool
+        | None,
+    ) -> list[pl_loggers.Logger] | bool | None:
         if logger is None or isinstance(logger, bool):
             return logger
 
@@ -165,8 +155,8 @@ class TrainerConfig:
 
     def convert_profiler(
         self,
-        profiler: Optional[Dict[str, Any]],
-    ) -> Optional[pl_profilers.Profiler]:
+        profiler: dict[str, Any] | None,
+    ) -> pl_profilers.Profiler | None:
         if profiler is None:
             return profiler
 
@@ -174,8 +164,8 @@ class TrainerConfig:
 
     def convert_strategy(
         self,
-        strategy: Union[Dict[str, Any], str],
-    ) -> Union[pl_strategies.Strategy, str]:
+        strategy: dict[str, Any] | str,
+    ) -> pl_strategies.Strategy | str:
         if isinstance(strategy, str):
             return strategy
 
@@ -185,13 +175,13 @@ class TrainerConfig:
 @dataclasses.dataclass(config=ConfigDict)
 class OptimizerConfig:
     name: str = "Adam"
-    config: Dict[str, Any] = field(default_factory=lambda: {"lr": 1e-4})
+    config: dict[str, Any] = field(default_factory=lambda: {"lr": 1e-4})
 
 
 @dataclasses.dataclass(config=ConfigDict)
 class SchedulerConfig:
     name: str = "CosineAnnealingLR"
-    config: Dict[str, Any] = field(default_factory=lambda: {"T_max": "num_steps"})
+    config: dict[str, Any] = field(default_factory=lambda: {"T_max": "num_steps"})
     interval: Literal["epoch", "step"] = "step"
     frequency: int = 1
     monitor: str = "val_loss"
@@ -201,7 +191,7 @@ class SchedulerConfig:
         self,
         optimizer: Optimizer,
         trainer: Trainer,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         # NOTE Enables config-driven decay of learning rate to final step
         if self.config.get("T_max", None) == "num_steps":
             self.config["T_max"] = trainer.estimated_stepping_batches
@@ -232,17 +222,17 @@ class SchedulerConfig:
 
 @dataclasses.dataclass(config=ConfigDict)
 class TransferLearningStage:
-    freeze_modules: Optional[List[str]] = None
-    trainer: Optional[Dict[str, Any]] = None
-    datamodule: Optional[Dict[str, Any]] = None
-    optimizer: Optional[Dict[str, Any]] = None
-    scheduler: Optional[Dict[str, Any]] = None
+    freeze_modules: list[str] | None = None
+    trainer: dict[str, Any] | None = None
+    datamodule: dict[str, Any] | None = None
+    optimizer: dict[str, Any] | None = None
+    scheduler: dict[str, Any] | None = None
 
     @validator("trainer")
     def must_fit_into_trainer(
         cls,
-        trainer: Optional[Dict[str, Any]],
-    ) -> Optional[Dict[str, Any]]:
+        trainer: dict[str, Any] | None,
+    ) -> dict[str, Any] | None:
         if trainer is not None:
             TrainerConfig(**trainer)
         return trainer
@@ -250,8 +240,8 @@ class TransferLearningStage:
     @validator("datamodule")
     def must_fit_into_datamodule(
         cls,
-        datamodule: Optional[Dict[str, Any]],
-    ) -> Optional[Dict[str, Any]]:
+        datamodule: dict[str, Any] | None,
+    ) -> dict[str, Any] | None:
         if datamodule is not None:
             DataModuleConfig(**datamodule)
         return datamodule
@@ -259,8 +249,8 @@ class TransferLearningStage:
     @validator("optimizer")
     def must_fit_into_optimizer(
         cls,
-        optimizer: Optional[Dict[str, Any]],
-    ) -> Optional[Dict[str, Any]]:
+        optimizer: dict[str, Any] | None,
+    ) -> dict[str, Any] | None:
         if optimizer is not None:
             OptimizerConfig(**optimizer)
         return optimizer
@@ -268,8 +258,8 @@ class TransferLearningStage:
     @validator("scheduler")
     def must_fit_into_scheduler(
         cls,
-        scheduler: Optional[Dict[str, Any]],
-    ) -> Optional[Dict[str, Any]]:
+        scheduler: dict[str, Any] | None,
+    ) -> dict[str, Any] | None:
         if scheduler is not None:
             SchedulerConfig(**scheduler)
         return scheduler
@@ -277,12 +267,12 @@ class TransferLearningStage:
 
 @dataclasses.dataclass(config=ConfigDict)
 class TransferLearningConfigBase:
-    stages: List[TransferLearningStage]
-    pre_trained_model_path: Optional[str] = None
-    repo_url: Optional[str] = None
-    rev: Optional[str] = None
+    stages: list[TransferLearningStage]
+    pre_trained_model_path: str | None = None
+    repo_url: str | None = None
+    rev: str | None = None
     model_path_in_repo: str = "model"
-    modules_to_match: Optional[Dict[str, str]] = None
+    modules_to_match: dict[str, str] | None = None
 
     def __post_init__(self) -> None:
         if (self.pre_trained_model_path is not None) ^ (
@@ -306,7 +296,7 @@ class SplitConfig:
     """batch_size: The batch size to use for this data split, optionally as a
     dictionary assigning different batch sizes to different datasets."""
 
-    batch_size: Union[int, Dict[str, int]] = 1
+    batch_size: int | dict[str, int] = 1
 
 
 @dataclasses.dataclass(config=ConfigDict)
@@ -335,7 +325,7 @@ class DataModuleConfig:
     validation: EvalSplitConfig = field(default_factory=EvalSplitConfig)
     test: EvalSplitConfig = field(default_factory=EvalSplitConfig)
     predict: SplitConfig = field(default_factory=SplitConfig)
-    num_workers: Union[int, Literal["all"]] = 0
+    num_workers: int | Literal["all"] = 0
 
 
 @dataclasses.dataclass(config=ConfigDict)
@@ -344,7 +334,7 @@ class CompileConfig:
     dynamic: bool = False
     fullgraph: bool = False
     backend: str = "inductor"
-    backend_kwargs: Dict[str, Any] = field(default_factory=dict)
+    backend_kwargs: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclasses.dataclass(config=ConfigDict)
@@ -352,17 +342,17 @@ class LightningConfig(ModelConfig):
     datamodule: DataModuleConfig = field(default_factory=DataModuleConfig)
     trainer: TrainerConfig = field(default_factory=TrainerConfig)
     optimizer: OptimizerConfig = field(default_factory=OptimizerConfig)
-    scheduler: Optional[SchedulerConfig] = None
-    transfer_learning: Optional[TransferLearningConfigBase] = None
-    compile: Union[CompileConfig, bool] = False
+    scheduler: SchedulerConfig | None = None
+    transfer_learning: TransferLearningConfigBase | None = None
+    compile: CompileConfig | bool = False
     # NOTE This setting affects a global variable!
-    float32_matmul_precision: Optional[Literal["highest", "high", "medium"]] = None
+    float32_matmul_precision: Literal["highest", "high", "medium"] | None = None
 
     @validator("compile", pre=True)
     def compile_true_to_compile_config_with_default_mode(
         cls,
-        compile: Union[Dict[str, Any], bool],
-    ) -> Union[Dict[str, Any], bool]:
+        compile: dict[str, Any] | bool,
+    ) -> dict[str, Any] | bool:
         if compile is True:
             return {"mode": "default"}
         return compile

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem import rdFingerprintGenerator
@@ -58,11 +58,11 @@ class AtomPair(RepresentationBase):
         include_chirality: bool = False,
         use_2d: bool = True,
         count_simulation: bool = True,
-        count_bounds: Optional[object] = None,
+        count_bounds: object | None = None,
         fp_size: int = 2048,
-        atom_invariants_generator: Optional[object] = None,
+        atom_invariants_generator: object | None = None,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """
         Generates a folded atom-pair fingerprint for each input molecule from a fingerprint generator.
 
@@ -110,7 +110,7 @@ class AtomPair(RepresentationBase):
             atomInvariantsGenerator=atom_invariants_generator,
         )
 
-        atom_pairs_fp_list: List[Fingerprint] = []
+        atom_pairs_fp_list: list[Fingerprint] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smiles = to_smiles(sample)

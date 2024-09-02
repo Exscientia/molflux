@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Dict, Iterator, Optional, Protocol, runtime_checkable
+from collections.abc import Iterator
+from typing import Any, Protocol, runtime_checkable
 
 from molflux.metrics.errors import DuplicateKeyError
 from molflux.metrics.typing import ArrayLike, MetricResult
@@ -18,7 +19,7 @@ class Metric(Protocol):
         """The number of examples loaded in the metric's cache."""
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         """Dictionary containing all the metadata."""
 
     @property
@@ -30,14 +31,14 @@ class Metric(Protocol):
         """The tag name."""
 
     @property
-    def state(self) -> Dict[str, Any]:
+    def state(self) -> dict[str, Any]:
         """The internal state."""
 
     def add_batch(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
         **kwargs: Any,
     ) -> None:
         """Add a batch of predictions and references for the metric's stack."""
@@ -45,8 +46,8 @@ class Metric(Protocol):
     def compute(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         """Computes the metric."""
@@ -62,7 +63,7 @@ class Metrics:
     """A collection of Metrics."""
 
     def __init__(self) -> None:
-        self._stack: Dict[str, Metric] = {}
+        self._stack: dict[str, Metric] = {}
 
     def __contains__(self, item: str) -> bool:
         return item in self._stack
@@ -96,8 +97,8 @@ class Metrics:
     def add_batch(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
         **kwargs: Any,
     ) -> None:
         for metric in self._stack.values():
@@ -109,8 +110,8 @@ class Metrics:
     def compute(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         results = (

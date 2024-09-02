@@ -94,7 +94,7 @@ def test_model_checkpoint_apply_callback(
         if "epoch=" in str(p):
             best_ckpt_path = str(p)
 
-    best_ckpt = torch.load(best_ckpt_path)
+    best_ckpt = torch.load(best_ckpt_path, weights_only=True)
 
     # assert that state dicts match
     for k, v in model.module.state_dict().items():

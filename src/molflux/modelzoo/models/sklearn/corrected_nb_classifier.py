@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, Type
+from collections.abc import Iterable
 
 from pydantic.v1 import dataclasses
 
@@ -50,7 +50,7 @@ class Config:
 class CorrectedNBConfig(ModelConfig):
     alpha: float = 1
     fit_prior: bool = True
-    class_prior: Optional[Iterable] = None
+    class_prior: Iterable | None = None
 
 
 class CorrectedNBClassifier(
@@ -58,7 +58,7 @@ class CorrectedNBClassifier(
     SKLearnModelBase[CorrectedNBConfig],
 ):
     @property
-    def _config_builder(self) -> Type[CorrectedNBConfig]:
+    def _config_builder(self) -> type[CorrectedNBConfig]:
         return CorrectedNBConfig
 
     def _info(self) -> ModelInfo:

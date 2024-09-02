@@ -1,4 +1,5 @@
-from typing import Any, Iterable, Iterator, Optional
+from collections.abc import Iterable, Iterator
+from typing import Any
 
 import sklearn.model_selection
 
@@ -25,11 +26,11 @@ class KFold(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         n_splits: int = 2,
         shuffle: bool = False,
-        seed: Optional[int] = None,
+        seed: int | None = None,
         **kwargs: Any,
     ) -> Iterator[SplitIndices]:
         """

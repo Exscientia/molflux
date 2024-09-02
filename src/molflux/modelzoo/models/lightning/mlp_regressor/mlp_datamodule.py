@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import torch
 from torch.utils.data import Dataset
@@ -12,8 +12,8 @@ class MLPDataset(Dataset):
     def __init__(
         self,
         dataset: datasets.Dataset,
-        x_features: List[str],
-        y_features: List[str],
+        x_features: list[str],
+        y_features: list[str],
         with_y_features: bool,
     ) -> None:
         self.dataset = dataset
@@ -30,10 +30,10 @@ class MLPDataset(Dataset):
     def __len__(self) -> int:
         return len(self.dataset)
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         datapoint = self.dataset[idx]
 
-        x_list: List[torch.Tensor] = []
+        x_list: list[torch.Tensor] = []
         for x_col in self.x_features:
             x_feat = datapoint[x_col]
 
@@ -49,7 +49,7 @@ class MLPDataset(Dataset):
         x = torch.cat(x_list, dim=0)
 
         if self.with_y_features:
-            y_list: List[torch.Tensor] = []
+            y_list: list[torch.Tensor] = []
             for y_col in self.y_features:
                 y_feat = datapoint[y_col]
 
@@ -76,7 +76,7 @@ class MLPDataModule(LightningDataModule):
         self,
         data: datasets.Dataset,
         split: str,
-        name: Optional[str] = None,
+        name: str | None = None,
         **kwargs: Any,
     ) -> Dataset:
         del name, kwargs

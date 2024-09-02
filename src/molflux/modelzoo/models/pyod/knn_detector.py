@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from dataclasses import asdict
-from typing import Any, Callable, Dict, Literal, Optional, Type, Union
+from typing import Any, Literal
 
 from pydantic.v1 import dataclasses
 
@@ -117,19 +118,19 @@ class KNNDetectorConfig(PyODModelConfig):
     method: Method = "largest"
     radius: float = 1.0
     leaf_size: int = 30
-    metric: Union[str, Callable] = "minkowski"
+    metric: str | Callable = "minkowski"
     p: int = 2
-    metric_params: Optional[Dict] = None
+    metric_params: dict | None = None
     n_jobs: int = 1
 
 
 class KNNDetector(PyODClassificationMixin, PyODModelBase[KNNDetectorConfig]):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[KNNDetectorConfig]:
+    def _config_builder(self) -> type[KNNDetectorConfig]:
         return KNNDetectorConfig
 
     def _info(self) -> ModelInfo:

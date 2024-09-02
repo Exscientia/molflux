@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem.AllChem import GetMorganFingerprintAsBitVect
@@ -52,15 +52,15 @@ class Morgan(RepresentationBase):
         *columns: MolArray,
         radius: int = 3,
         n_bits: int = 2048,
-        invariants: Optional[List[int]] = None,
-        from_atoms: Optional[List[int]] = None,
+        invariants: list[int] | None = None,
+        from_atoms: list[int] | None = None,
         use_chirality: bool = False,
         use_bond_types: bool = True,
         use_features: bool = False,
-        bit_info: Optional[Dict] = None,
+        bit_info: dict | None = None,
         include_redundant_environments: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Generates Morgan fingerprints for each input molecule.
 
         Args:
@@ -93,7 +93,7 @@ class Morgan(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        morgan_fp_list: List[List] = []
+        morgan_fp_list: list[list] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

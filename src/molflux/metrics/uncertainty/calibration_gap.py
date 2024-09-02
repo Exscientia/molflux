@@ -1,14 +1,14 @@
 """Calibration gap."""
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import evaluate
 import numpy as np
 from scipy.stats import norm
 
 import datasets
-from molflux.metrics.bases import PredictionIntervalMetric
+from molflux.metrics.bases import UncertaintyMetric
 from molflux.metrics.typing import ArrayLike, MetricResult
 from molflux.metrics.uncertainty.utils import _estimate_standard_deviation
 
@@ -60,7 +60,7 @@ _CITATION = """
 
 
 @evaluate.utils.file_utils.add_start_docstrings(_DESCRIPTION, _KWARGS_DESCRIPTION)
-class CalibrationGap(PredictionIntervalMetric):
+class CalibrationGap(UncertaintyMetric):
     def _info(self) -> evaluate.MetricInfo:
         return evaluate.MetricInfo(
             description=_DESCRIPTION,
@@ -79,8 +79,8 @@ class CalibrationGap(PredictionIntervalMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        standard_deviations: Optional[ArrayLike] = None,
-        prediction_intervals: Optional[ArrayLike] = None,
+        standard_deviations: ArrayLike | None = None,
+        prediction_intervals: ArrayLike | None = None,
         confidence: float = 0.9,
         num_thresholds: int = 100,
         **kwargs: Any,
@@ -90,7 +90,7 @@ class CalibrationGap(PredictionIntervalMetric):
                 raise ValueError(
                     "Please provide either standard deviation, or prediction intervals",
                 )
-            lower_bound, upper_bound = zip(*prediction_intervals)
+            lower_bound, upper_bound = zip(*prediction_intervals, strict=False)
             standard_deviations = _estimate_standard_deviation(
                 lower_bound,
                 upper_bound,

@@ -1,8 +1,8 @@
-from typing import Dict, Literal
+from typing import Literal
 
 import datasets
 
-URL_DICT: Dict[str, Dict[str, str]] = {
+URL_DICT: dict[str, dict[str, str]] = {
     "wB97X/631Gd": {
         "url": "https://zenodo.org/records/10108942/files/ANI-2x-wB97X-631Gd.tar.gz",
         "path": "final_h5/ANI-2x-wB97X-631Gd.h5",

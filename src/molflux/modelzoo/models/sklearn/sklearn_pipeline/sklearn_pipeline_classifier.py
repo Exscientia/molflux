@@ -1,5 +1,5 @@
 from dataclasses import field
-from typing import Any, Optional, Type
+from typing import Any
 
 from pydantic.v1 import dataclasses
 
@@ -94,7 +94,7 @@ class SklearnPipelineClassifier(
     SKLearnClassificationMixin,
     SKLearnModelBase[SklearnPipelineClassifierConfig],
 ):
-    def __init__(self, tag: Optional[str] = None, **config_kwargs: Any) -> None:
+    def __init__(self, tag: str | None = None, **config_kwargs: Any) -> None:
         super().__init__(tag=tag, **config_kwargs)
         if tag is None:
             self.info.tag = format_wrapped_model_tag(
@@ -103,7 +103,7 @@ class SklearnPipelineClassifier(
             )
 
     @property
-    def _config_builder(self) -> Type[SklearnPipelineClassifierConfig]:
+    def _config_builder(self) -> type[SklearnPipelineClassifierConfig]:
         return SklearnPipelineClassifierConfig
 
     def _info(self) -> ModelInfo:

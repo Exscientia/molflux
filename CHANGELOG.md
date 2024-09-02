@@ -9,6 +9,39 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ---------------------------------------------------------
+## [0.6.0] - 2024-08-23
+
+## Removed
+
+- removed support for python 3.8 and 3.9
+
+## Changed
+
+- Enables `uv` and increases the use of `ruff` throughout the codebase.
+- Added `standard_deviations` input argument for all uncertainty metrics except `uncertainty_based_rejection`
+- Removed the `uncertainty_based_rejection` metric from the `uncertainty` suite
+- The typing of `featurise_dataset` now confirms that it can act on `DatasetDict` too.
+- Load backend representations from featurisation metadata using stricter unpacking in order to not trigger `UserWarning`s
+
+## Added
+
+- updated to use `uv`.
+- Warning if `load_from_dict` is passed a dictionary with arbitrary keys outside of the expected specification that are ignored when loading a representation.
+- Added `map_light` features, which are a combination of Morgan, Avalon, Reduced Graph and handcrafted descriptors from `rdkit`.
+
+- Added uncertainty support (`predict_with_std`, `predict_with_prediction_interval`, and `sample`) for the `ensemble_regressor` model.
+- Added an `average_features_regressor` model that predicts based on the average of the input model features
+- Added `GammaConformityScore` and `ResidualNormalisedScore` to `mapie_regressor`. These should allow for more adaptive prediction intervals
+
+- Added `out_of_sample_r2`regression  metric
+
+## Fixed
+
+- Lightning logger config sometimes required an explicit `config` field to be recognised as a logger config; this is no longer the case.
+
+## Security
+
+- Load torch models with `weights_only` parameter set to `True` to address potential security concerns
 
 ## [0.5.0] - 2024-07-11
 

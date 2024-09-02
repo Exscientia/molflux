@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye import oegraphsim
@@ -39,7 +39,7 @@ class Tree(RepresentationBase):
         atom_type: int = oegraphsim.OEFPAtomType_DefaultAtom,
         bond_type: int = oegraphsim.OEFPBondType_DefaultBond,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Generates a tree fingerprint for each input molecule.
 
         Args:
@@ -79,7 +79,7 @@ class Tree(RepresentationBase):
         if not ((diameter % 2 == 0) and diameter >= 0):
             raise RuntimeError(f"diameter: {diameter} must be even and >= 0")
 
-        tree_fp_list: List[Fingerprint] = []
+        tree_fp_list: list[Fingerprint] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 # patch openeye support for fingerprints of empty SMILES

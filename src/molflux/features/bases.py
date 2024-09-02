@@ -7,7 +7,8 @@ import logging
 import time
 import types
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Iterable, Optional
+from collections.abc import Iterable
+from typing import Any
 
 from molflux import __version__
 from molflux.features.info import RepresentationInfo
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 class RepresentationBase(ABC):
     """The abstract base class for all concrete representations."""
 
-    def __init__(self, *, tag: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tag: str | None = None, **kwargs: Any) -> None:
         """Initialises the representation."""
 
         # build info
@@ -39,13 +40,15 @@ class RepresentationBase(ABC):
         # Update 'featurise' docstring with detailed kwargs description from .info()
         # need to copy method to avoid changing the docstring of every instance
         self.featurise = types.MethodType(copyfunc(self.featurise), self)  # type: ignore[method-assign]
-        self.featurise.__func__.__doc__ += self._representation_info.featurise_description  # type: ignore[attr-defined]
+        self.featurise.__func__.__doc__ += (  # type: ignore[attr-defined,operator,unused-ignore]
+            self._representation_info.featurise_description
+        )
 
         # The featurisation signature
         self._signature = inspect.signature(self._featurise)
 
         # Initialise a default state
-        self._default_state: Dict[str, Any] = {
+        self._default_state: dict[str, Any] = {
             parameter.name: parameter.default
             for parameter in self._signature.parameters.values()
             # Positional included in case someone misses `, *, ` in their representation signature.
@@ -56,7 +59,7 @@ class RepresentationBase(ABC):
             # Empty parameters not included (i.e. `samples`, `kwargs`).
             and (parameter.default is not parameter.empty)
         }
-        self._state: Dict[str, Any] = self._default_state
+        self._state: dict[str, Any] = self._default_state
 
     def __str__(self) -> str:
         return (
@@ -78,7 +81,7 @@ class RepresentationBase(ABC):
         """
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         return self._representation_info.to_dict()
 
     @property
@@ -86,7 +89,7 @@ class RepresentationBase(ABC):
         return self._representation_info.name
 
     @property
-    def state(self) -> Dict[str, Any]:
+    def state(self) -> dict[str, Any]:
         return self._state
 
     @property
@@ -117,7 +120,7 @@ class RepresentationBase(ABC):
             for column in columns
         )
 
-        logging_context: Dict[str, Any] = {"molflux_representation_tag": self.tag}
+        logging_context: dict[str, Any] = {"molflux_representation_tag": self.tag}
         logger.info(
             f"Attempting to featurise samples... {logging_context}",
             extra=logging_context,

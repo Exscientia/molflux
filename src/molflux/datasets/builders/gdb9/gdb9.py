@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import Any, ClassVar, List, Literal, Optional
+from typing import Any, ClassVar, Literal
 
 import pandas as pd
 
@@ -25,7 +25,7 @@ class GDB9(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIG_CLASS = GDB9Config
     config: GDB9Config
 
-    BUILDER_CONFIGS: ClassVar[List[datasets.BuilderConfig]] = [
+    BUILDER_CONFIGS: ClassVar[list[datasets.BuilderConfig]] = [
         GDB9Config(
             name="openeye",
             backend="openeye",
@@ -70,7 +70,7 @@ class GDB9(datasets.GeneratorBasedBuilder):
     def _split_generators(
         self,
         dl_manager: datasets.DownloadManager,
-    ) -> List[datasets.SplitGenerator]:
+    ) -> list[datasets.SplitGenerator]:
         archive_path = dl_manager.download_and_extract(_BASE_URL)
 
         mols_file = os.path.join(archive_path, "gdb9.sdf")
@@ -96,8 +96,8 @@ class GDB9(datasets.GeneratorBasedBuilder):
 
     def _generate_examples_openeye(
         self,
-        mols_filepath: Optional[str] = None,
-        properties_filepath: Optional[str] = None,
+        mols_filepath: str | None = None,
+        properties_filepath: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         try:
@@ -114,7 +114,7 @@ class GDB9(datasets.GeneratorBasedBuilder):
 
         df = pd.read_csv(properties_filepath)
 
-        for mol, (index, labels) in zip(mols_iterator, df.iterrows()):
+        for mol, (index, labels) in zip(mols_iterator, df.iterrows(), strict=False):
             example_dict = {
                 "mol_bytes": OEWriteMolToBytes(".oeb", mol),
                 **{k.lstrip(" "): v for k, v in labels.to_dict().items()},
@@ -123,8 +123,8 @@ class GDB9(datasets.GeneratorBasedBuilder):
 
     def _generate_examples_rdkit(
         self,
-        mols_filepath: Optional[str] = None,
-        properties_filepath: Optional[str] = None,
+        mols_filepath: str | None = None,
+        properties_filepath: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         try:
@@ -142,7 +142,7 @@ class GDB9(datasets.GeneratorBasedBuilder):
 
         df = pd.read_csv(properties_filepath)
 
-        for mol, (index, labels) in zip(supplier, df.iterrows()):
+        for mol, (index, labels) in zip(supplier, df.iterrows(), strict=False):
             example_dict = {
                 "mol_bytes": mol.ToBinary(),
                 **{k.lstrip(" "): v for k, v in labels.to_dict().items()},

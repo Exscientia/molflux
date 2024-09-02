@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Iterator, List, Optional
+from collections.abc import Iterator
+from typing import Any
 
 import numpy as np
 from openeye import oechem, oemedchem
@@ -36,8 +37,8 @@ class Scaffold(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         train_fraction: float = 0.8,
         validation_fraction: float = 0.1,
         test_fraction: float = 0.1,
@@ -83,9 +84,9 @@ class Scaffold(SplittingStrategyBase):
             include_unsaturated_heterobonds=include_unsaturated_heterobonds,
         )
 
-        train_indices: List[int] = []
-        validation_indices: List[int] = []
-        test_indices: List[int] = []
+        train_indices: list[int] = []
+        validation_indices: list[int] = []
+        test_indices: list[int] = []
 
         for scaffold_set in scaffold_sets:
             if len(train_indices) + len(scaffold_set) > train_cutoff:
@@ -142,7 +143,7 @@ def generate_scaffolds(
     adjust_h_count: bool = True,
     r_group: bool = False,
     include_unsaturated_heterobonds: bool = True,
-) -> List[List[int]]:
+) -> list[list[int]]:
     """Returns all scaffolds from the SMILES string provided.
 
     Returns:

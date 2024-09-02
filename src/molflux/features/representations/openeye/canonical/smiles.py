@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from openeye import oechem
@@ -40,10 +40,10 @@ class CanonicalSmiles(RepresentationBase):
         remove_non_standard_stereo: bool = False,
         sd_title_tag: str = "",
         clear_sd_data: bool = False,
-        tautomer_options: Optional[Dict[str, Any]] = None,
-        tautomer_timeouts: Optional[List[float]] = None,
+        tautomer_options: dict[str, Any] | None = None,
+        tautomer_timeouts: list[float] | None = None,
         **kwargs: Any,
-    ) -> Dict[str, List[str]]:
+    ) -> dict[str, list[str]]:
         """Featurises the input molecules as canonical SMILES strings.
 
         Args:

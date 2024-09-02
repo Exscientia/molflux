@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye import oegraphsim
@@ -35,7 +35,7 @@ class Lingo(RepresentationBase):
         self,
         *columns: MolArray,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Generates lingo fingerprints for each input molecule.
 
         Args:
@@ -53,7 +53,7 @@ class Lingo(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        lingo_fp_list: List[Fingerprint] = []
+        lingo_fp_list: list[Fingerprint] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 # patch openeye support for fingerprints of empty SMILES

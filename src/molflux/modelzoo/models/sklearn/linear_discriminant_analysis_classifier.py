@@ -1,4 +1,5 @@
-from typing import Any, Iterable, Literal, Optional, Type, Union
+from collections.abc import Iterable
+from typing import Any, Literal
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -89,12 +90,12 @@ class Config:
 @dataclasses.dataclass(config=Config)
 class LinearDiscriminantAnalysisClassifierConfig(ModelConfig):
     solver: SolverT = "svd"
-    shrinkage: Union[None, int, Literal["auto"]] = None
-    priors: Optional[Iterable[float]] = None
-    n_components: Optional[int] = None
+    shrinkage: None | int | Literal["auto"] = None
+    priors: Iterable[float] | None = None
+    n_components: int | None = None
     store_covariance: bool = False
     tol: float = 1e-4
-    covariance_estimator: Optional[Any] = None
+    covariance_estimator: Any | None = None
 
 
 class LinearDiscriminantAnalysisClassifier(
@@ -102,7 +103,7 @@ class LinearDiscriminantAnalysisClassifier(
     SKLearnModelBase[LinearDiscriminantAnalysisClassifierConfig],
 ):
     @property
-    def _config_builder(self) -> Type[LinearDiscriminantAnalysisClassifierConfig]:
+    def _config_builder(self) -> type[LinearDiscriminantAnalysisClassifierConfig]:
         return LinearDiscriminantAnalysisClassifierConfig
 
     def _info(self) -> ModelInfo:

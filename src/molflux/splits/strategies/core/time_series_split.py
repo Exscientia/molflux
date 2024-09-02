@@ -1,4 +1,5 @@
-from typing import Any, Iterable, Iterator, Optional
+from collections.abc import Iterable, Iterator
+from typing import Any
 
 import sklearn.model_selection
 
@@ -32,13 +33,13 @@ class TimeSeriesSplit(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         *,
         n_splits: int = 2,
-        max_train_size: Optional[int] = None,
-        test_size: Optional[int] = None,
-        gap: Optional[int] = 0,
+        max_train_size: int | None = None,
+        test_size: int | None = None,
+        gap: int | None = 0,
         **kwargs: Any,
     ) -> Iterator[SplitIndices]:
         """

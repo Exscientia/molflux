@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Any, Dict, Literal, Optional, Type, Union
+from typing import Any, Literal
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -138,26 +138,26 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class PCADetectorConfig(PyODModelConfig):
-    n_components: Union[int, float, str, None] = None
-    n_selected_components: Optional[int] = None
+    n_components: int | float | str | None = None
+    n_selected_components: int | None = None
     contamination: float = 0.1
     inplace: bool = False
     whiten: bool = False
     svd_solver: SVDSolver = "auto"
     tol: float = 0
-    iterated_power: Union[int, Auto] = "auto"
-    random_state: Union[int, None, np.random.Generator] = None
+    iterated_power: int | Auto = "auto"
+    random_state: int | None | np.random.Generator = None
     weighted: bool = True
     standardisation: bool = True
 
 
 class PCADetector(PyODClassificationMixin, PyODModelBase[PCADetectorConfig]):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[PCADetectorConfig]:
+    def _config_builder(self) -> type[PCADetectorConfig]:
         return PCADetectorConfig
 
     def _info(self) -> ModelInfo:

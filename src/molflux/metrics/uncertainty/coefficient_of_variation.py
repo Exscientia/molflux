@@ -1,13 +1,14 @@
 """Uncertainty measure: Computes coefficient of variation."""
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import evaluate
 import numpy as np
+import scipy
 
 import datasets
-from molflux.metrics.bases import PredictionIntervalMetric
+from molflux.metrics.bases import UncertaintyMetric
 from molflux.metrics.typing import ArrayLike, MetricResult
 
 logger = logging.getLogger(__name__)
@@ -53,7 +54,7 @@ Examples:
 
 
 @evaluate.utils.file_utils.add_start_docstrings(_DESCRIPTION, _KWARGS_DESCRIPTION)
-class CoefficientOfVariation(PredictionIntervalMetric):
+class CoefficientOfVariation(UncertaintyMetric):
     def _info(self) -> evaluate.MetricInfo:
         return evaluate.MetricInfo(
             description=_DESCRIPTION,
@@ -72,24 +73,38 @@ class CoefficientOfVariation(PredictionIntervalMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        prediction_intervals: Optional[ArrayLike] = None,
+        standard_deviations: ArrayLike | None = None,
+        prediction_intervals: ArrayLike | None = None,
+        confidence: float = 0.9,
         **kwargs: Any,
     ) -> MetricResult:
-        if prediction_intervals is None:
+        if standard_deviations is not None and prediction_intervals is not None:
             raise ValueError(
-                "Please provide prediction intervals in the form of lower and upper bounds.",
+                "Both standard deviations and prediction intervals given. Please provide only one.",
             )
-        references = np.array(references)
-        lower_bound, upper_bound = zip(*prediction_intervals)
-        lower_bound = np.array(lower_bound)  # type: ignore[assignment]
-        upper_bound = np.array(upper_bound)  # type: ignore[assignment]
-        if (upper_bound < lower_bound).any():  # type: ignore[attr-defined]
+
+        if standard_deviations is not None:
+            lower_bound, upper_bound = scipy.stats.norm.interval(
+                confidence,
+                loc=predictions,
+                scale=standard_deviations,
+            )
+        elif prediction_intervals is not None:
+            lower_bound, upper_bound = zip(*prediction_intervals, strict=False)
+        else:
+            raise ValueError(
+                "Either standard_deviations or prediction_intervals must be supplied.",
+            )
+
+        lower_bound = np.array(lower_bound)
+        upper_bound = np.array(upper_bound)
+        if (upper_bound < lower_bound).any():
             raise ValueError("Please ensure upper bound is greater than lower bound.")
         # Definition in equation 10 of reference in _CITATION relates to standard deviation, sigma.
         # Making a Gaussian assumption, then sigma is related to the prediction interval width by rescaling by a factor of scipy.norm.ppf(1-alpha/2).
         # However, this rescaling factor is in both numerator and denominator of equation 10, so drops out.
         # We can therefore work with the prediction interval width directly, which should generalise better to interval predictions that don't rely on Gaussian assumptions
-        sigma = upper_bound - lower_bound  # type: ignore[operator]
+        sigma = upper_bound - lower_bound
         sigma_bar = np.mean(sigma)  # average prediction interval width
         if sigma_bar == 0:
             score = 0  # avoid division by zero in case of interval of width 0

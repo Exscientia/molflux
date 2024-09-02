@@ -1,6 +1,5 @@
 import functools
 from importlib.metadata import entry_points
-from typing import Dict, List
 
 import pytest
 
@@ -10,7 +9,7 @@ from molflux.modelzoo.load import load_model
 
 
 @functools.lru_cache
-def all_modelzoo_entrypoints() -> Dict[str, List[str]]:
+def all_modelzoo_entrypoints() -> dict[str, list[str]]:
     """Cached for performance reasons."""
     return {
         namespace: [entrypoint.name for entrypoint in entrypoints]

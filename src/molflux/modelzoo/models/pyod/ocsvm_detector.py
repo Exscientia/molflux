@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from dataclasses import asdict
-from typing import Any, Callable, Dict, Literal, Type, Union
+from typing import Any, Literal
 
 from pydantic.v1 import dataclasses
 
@@ -91,10 +92,10 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class OCSVMDetectorConfig(PyODModelConfig):
-    kernel: Union[Kernel, Callable] = "rbf"
+    kernel: Kernel | Callable = "rbf"
     nu: float = 0.5
     degree: int = 3
-    gamma: Union[float, Auto] = "auto"
+    gamma: float | Auto = "auto"
     coef0: float = 0
     tol: float = 1e-3
     shrinking: bool = True
@@ -106,11 +107,11 @@ class OCSVMDetectorConfig(PyODModelConfig):
 
 class OCSVMDetector(PyODClassificationMixin, PyODModelBase[OCSVMDetectorConfig]):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[OCSVMDetectorConfig]:
+    def _config_builder(self) -> type[OCSVMDetectorConfig]:
         return OCSVMDetectorConfig
 
     def _info(self) -> ModelInfo:

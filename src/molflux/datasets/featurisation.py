@@ -1,6 +1,6 @@
 import logging
 import warnings
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Union
 
 import pyarrow as pa
 from more_itertools import zip_broadcast
@@ -12,8 +12,8 @@ from molflux.datasets.typing import DatasetType, DisplayNames
 _DEFAULT_DISPLAY_NAMES_TEMPLATE = "{source_column}::{feature_name}"
 
 FreeformDisplayNames = Union[
-    Optional[str],
-    List[Union[Optional[str], List[Optional[str]]]],
+    str | None,
+    list[str | None | list[str | None]],
 ]
 
 
@@ -138,8 +138,8 @@ def _consolidate_map_outputs(dataset: DatasetType) -> DatasetType:
 
 def featurise_dataset(
     dataset: DatasetType,
-    column: Union[str, List[str]],
-    representations: Union[Representation, Representations],
+    column: str | list[str],
+    representations: Representation | Representations,
     display_names: FreeformDisplayNames = None,
     **map_kwargs: Any,
 ) -> DatasetType:
@@ -204,11 +204,11 @@ def featurise_dataset(
 
 
 def _featurise_batch(
-    example: Dict[str, Any],
-    columns: List[str],
+    example: dict[str, Any],
+    columns: list[str],
     representations: Representations,
     display_names: DisplayNames,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Featurises a batch's column according to the given representations.
 
     The primary objective of batch mapping is to speed up processing. Often
@@ -227,6 +227,7 @@ def _featurise_batch(
     for representation, representation_display_names in zip(
         representations,
         display_names,
+        strict=False,
     ):
         # this could be a multi-output feature
         representation_results = representation.featurise(*samples)
@@ -266,7 +267,7 @@ def _featurise_batch(
     return example
 
 
-def _template(target: Optional[str], default_template: str, **ctx: Any) -> str:
+def _template(target: str | None, default_template: str, **ctx: Any) -> str:
     """Templates a string with local context information.
 
     Args:

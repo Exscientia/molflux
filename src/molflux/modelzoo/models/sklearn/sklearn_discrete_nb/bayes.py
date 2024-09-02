@@ -1,5 +1,4 @@
 # type: ignore
-from typing import Optional
 
 import numpy as np
 from scipy.sparse import issparse
@@ -390,7 +389,7 @@ class PipelinePilotNB(CorrectedNB):
     normalised probability.
     """
 
-    def _update_feature_log_prob(self, alpha: Optional[float] = None) -> None:
+    def _update_feature_log_prob(self, alpha: float | None = None) -> None:
         """
         Updating the feature log probability to use a normalised, Laplacian
         corrected feature probability as used by PipelinePilot.

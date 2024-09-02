@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye.oemolprop import OEGetAromaticRingCount
@@ -39,7 +39,7 @@ class AromaticRingCount(RepresentationBase):
         stop: int = 7,
         num: int = 7,
         **kwargs: Any,
-    ) -> Dict[str, List[int]]:
+    ) -> dict[str, list[int]]:
         """Calculates the number of aromatic rings for each input molecule.
 
         Args:

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye.oechem import OENetCharge
@@ -36,7 +36,7 @@ class NetCharge(RepresentationBase):
         stop: int = 2,
         num: int = 4,
         **kwargs: Any,
-    ) -> Dict[str, List[int]]:
+    ) -> dict[str, list[int]]:
         """Calculates the net charge of each input molecule.
 
         Args:

@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from molflux.modelzoo.catalogue import get_model_cls
 from molflux.modelzoo.parsers import Spec, dict_parser, yaml_parser
@@ -27,7 +28,7 @@ def _load_from_spec(spec: Spec) -> Model:
     return model
 
 
-def load_from_dict(dictionary: Dict[str, Any]) -> Model:
+def load_from_dict(dictionary: dict[str, Any]) -> Model:
     """Loads a model from a config dict."""
 
     # Validate dictionary
@@ -36,7 +37,7 @@ def load_from_dict(dictionary: Dict[str, Any]) -> Model:
     return _load_from_spec(spec=spec)
 
 
-def load_from_dicts(dictionaries: Iterable[Dict[str, Any]]) -> Models:
+def load_from_dicts(dictionaries: Iterable[dict[str, Any]]) -> Models:
     """Loads models from an iterable of dicts."""
 
     models = (load_from_dict(dictionary) for dictionary in dictionaries)

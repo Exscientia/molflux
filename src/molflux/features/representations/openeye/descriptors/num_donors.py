@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from openeye.oemolprop import OEGetHBondDonorCount
@@ -39,7 +39,7 @@ class NumDonors(RepresentationBase):
         num: int = 5,
         set_neutral_ph: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[int]]:
+    ) -> dict[str, list[int]]:
         """Calculates the number of hydrogen-bond donors for each input molecule.
 
         Args:

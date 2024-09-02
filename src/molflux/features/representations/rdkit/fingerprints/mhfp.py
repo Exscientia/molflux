@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from mhfp.encoder import MHFPEncoder
@@ -47,7 +47,7 @@ class MHFP(RepresentationBase):
         kekulise: bool = True,
         sanitise: bool = True,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Featurises the input molecules as SECFP (SMILES Extended
         Connectifity Fingerprint) MinHash Fingerprint.
 

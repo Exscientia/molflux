@@ -113,7 +113,7 @@ def test_infers_ordered_classes(fixture_model):
     model.train(train_df)
     classes = model.classes[_Y_FEATURES[0]]
     assert len(classes) == 3
-    assert all(x == y for x, y in zip(classes, [10, 11, 13]))
+    assert all(x == y for x, y in zip(classes, [10, 11, 13], strict=False))
 
 
 @pytest.mark.parametrize(

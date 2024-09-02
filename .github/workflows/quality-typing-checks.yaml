@@ -17,18 +17,18 @@ jobs:
           cache: 'pip'
       - name: Linting check
         run: |
-          pip install nox
+          pip install nox[uv]
           nox -s linting_check-3.11
       - name: Formatting check
         run: |
-          pip install nox
+          pip install nox[uv]
           nox -s formatting_check-3.11
 
   typing-check:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.10", "3.11"]
 
     steps:
       - name: Checkout repo
@@ -40,5 +40,5 @@ jobs:
           cache: 'pip'
       - name: Typing check
         run: |
-          pip install nox
+          pip install nox[uv]
           nox -s typing_check-${{ matrix.python-version }}

@@ -2,8 +2,6 @@
 Wrappers for generating commonly used splitting strategies.
 """
 
-from typing import Optional
-
 from molflux.splits.load import load_splitting_strategy
 from molflux.splits.strategy import SplittingStrategy
 
@@ -13,7 +11,7 @@ def train_validation_test_split(
     train_fraction: float = 0.8,
     validation_fraction: float = 0.1,
     test_fraction: float = 0.1,
-    seed: Optional[int] = None,
+    seed: int | None = None,
     shuffle: bool = True,
     stratified: bool = False,
     grouped: bool = False,
@@ -45,7 +43,7 @@ def train_validation_test_split(
 def train_test_split(
     n_splits: int = 1,
     train_fraction: float = 0.8,
-    seed: Optional[int] = None,
+    seed: int | None = None,
     shuffle: bool = True,
     stratified: bool = False,
     grouped: bool = False,
@@ -65,7 +63,7 @@ def train_test_split(
 def k_fold_split(
     n_splits: int = 5,
     shuffle: bool = False,
-    seed: Optional[int] = None,
+    seed: int | None = None,
     stratified: bool = False,
     grouped: bool = False,
 ) -> SplittingStrategy:

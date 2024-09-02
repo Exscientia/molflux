@@ -329,7 +329,7 @@ class RdkitDescriptors_2d(RepresentationBase):
             f"{self.tag}::{name}": v
             for name, v in itertools.zip_longest(
                 calculator.descriptorNames,
-                map(list, zip(*descriptors_results_list)),
+                map(list, zip(*descriptors_results_list, strict=False)),
                 fillvalue=[],
             )
         }

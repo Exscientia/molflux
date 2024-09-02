@@ -1,6 +1,6 @@
+from collections.abc import Callable, Sized
 from decimal import Decimal
 from types import FunctionType
-from typing import Callable, Sized, Tuple
 
 
 def copyfunc(func: Callable) -> FunctionType:
@@ -20,7 +20,7 @@ def copyfunc(func: Callable) -> FunctionType:
     return result
 
 
-def partition(dataset: Sized, *fractions: float) -> Tuple[int, ...]:
+def partition(dataset: Sized, *fractions: float) -> tuple[int, ...]:
     """Returns the indices where to split the dataset to partition it according
     to the requested fractions.
 

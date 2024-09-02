@@ -37,8 +37,7 @@ def test_register_metric(monkeypatch):
     assert new_metric_name not in list_metrics()
 
     @register_metric(kind=new_metric_kind, name=new_metric_name)
-    class PytestMetric:
-        ...
+    class PytestMetric: ...
 
     new_catalogue = list_metrics()
     assert new_metric_kind in new_catalogue

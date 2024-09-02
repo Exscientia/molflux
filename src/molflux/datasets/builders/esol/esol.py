@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -31,7 +31,7 @@ class ESOL(datasets.GeneratorBasedBuilder):
     def _split_generators(
         self,
         dl_manager: datasets.DownloadManager,
-    ) -> List[datasets.SplitGenerator]:
+    ) -> list[datasets.SplitGenerator]:
         archive_path = dl_manager.download(_BASE_URL)
 
         return [
@@ -45,7 +45,7 @@ class ESOL(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(
         self,
-        csv_path: Optional[str] = None,
+        csv_path: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         df = pd.read_csv(csv_path)

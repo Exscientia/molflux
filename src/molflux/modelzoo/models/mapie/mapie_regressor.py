@@ -1,6 +1,6 @@
 import warnings
 from copy import copy
-from typing import Any, Dict, Final, Literal, Optional, Tuple, Type, Union
+from typing import Any, Final, Literal
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -28,7 +28,11 @@ from molflux.modelzoo.utils import (
 )
 
 try:
-    from mapie.conformity_scores import AbsoluteConformityScore
+    from mapie.conformity_scores import (
+        AbsoluteConformityScore,
+        GammaConformityScore,
+        ResidualNormalisedScore,
+    )
     from mapie.regression import MapieRegressor as MapieMapieRegressor
     from sklearn.base import RegressorMixin
     from sklearn.model_selection import BaseCrossValidator
@@ -140,11 +144,30 @@ verbose : int, optional
     Above ``50``, the output is sent to stdout.
 
     By default ``0``.
+
+conformity_score: Optional[Union[str, ConformityScore]]
+    ConformityScore instance.
+    It defines the link between the observed values, the predicted ones
+    and the conformity scores. For instance, the default ``None`` value
+    correspondonds to a conformity score which assumes
+    y_obs = y_pred + conformity_score.
+
+    - default is ``AbsoluteConformityScore`` conformity
+      score
+    - ConformityScore: any ``ConformityScore`` class
+    - Currently only enable AbsoluteConformityScore, GammaConformityScore,
+      or ResidualNormalisedScore
+    - with ResidualNormalisedScore, normalisation is by an sklearn model -
+      at the moment, don't allow to configure this - use default linear regressor
 """
 
 Method = Literal["naive", "base", "plus", "minmax"]
 AggFunction = Literal["mean", "median"]
-
+Score = Literal[
+    "AbsoluteConformityScore",
+    "GammaConformityScore",
+    "ResidualNormalisedScore",
+]
 
 _UNLINKED_FLAG: Final = "UNLINKED"
 
@@ -202,12 +225,13 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class MapieRegressorConfig(ModelConfig):
-    estimator: Union[Estimator, RegressorMixin, None, str, Dict] = None
+    estimator: Estimator | RegressorMixin | None | str | dict = None
     method: Method = "plus"
-    cv: Optional[Union[int, str, BaseCrossValidator]] = None
-    n_jobs: Optional[int] = None
-    agg_function: Optional[AggFunction] = "mean"
+    cv: int | str | BaseCrossValidator | None = None
+    n_jobs: int | None = None
+    agg_function: AggFunction | None = "mean"
     verbose: int = 0
+    conformity_score: Score | None = "AbsoluteConformityScore"
 
     def __post_init_post_parse__(self) -> None:
         if self.y_features and len(self.y_features) != 1:
@@ -230,7 +254,7 @@ class MapieRegressor(
     SamplingMixin,
     ModelBase[MapieRegressorConfig],
 ):
-    def __init__(self, tag: Optional[str] = None, **config_kwargs: Any) -> None:
+    def __init__(self, tag: str | None = None, **config_kwargs: Any) -> None:
         super().__init__(tag=tag, **config_kwargs)
         estimator = self.model_config.estimator
         if isinstance(estimator, Estimator):
@@ -246,11 +270,11 @@ class MapieRegressor(
             )
 
     @property
-    def _config_builder(self) -> Type[MapieRegressorConfig]:
+    def _config_builder(self) -> type[MapieRegressorConfig]:
         return MapieRegressorConfig
 
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         # handle unserializable config fields
         config = copy(self.model_config.__dict__)
         config["estimator"] = _UNLINKED_FLAG
@@ -266,7 +290,12 @@ class MapieRegressor(
         config = self.model_config
 
         # the conformity score is created on the fly
-        conformity_score = AbsoluteConformityScore()
+        if config.conformity_score == "GammaConformityScore":
+            conformity_score = GammaConformityScore()
+        elif config.conformity_score == "ResidualNormalisedScore":
+            conformity_score = ResidualNormalisedScore()
+        else:
+            conformity_score = AbsoluteConformityScore()
 
         # avoids automatic checks that sometimes produce errors depending on
         # the dataset and machine due to machine decimal errors
@@ -331,7 +360,7 @@ class MapieRegressor(
         data: datasets.Dataset,
         use_ensemble_predictions: bool = True,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         (
             _,
             prediction_interval_display_names,
@@ -351,6 +380,7 @@ class MapieRegressor(
         for interval_display_name, std_display_name in zip(
             prediction_interval_display_names,
             prediction_std_display_names,
+            strict=False,
         ):
             pred_std_output[std_display_name] = [
                 (ub - lb) / 2.0
@@ -382,6 +412,7 @@ class MapieRegressor(
             display_names,
             prediction_mean_results.values(),
             prediction_std_results.values(),
+            strict=False,
         ):
             samples = np.random.normal(means, stds, (n_samples, len(means))).T
             prediction_results[display_name] = samples.tolist()
@@ -394,7 +425,7 @@ class MapieRegressor(
         confidence: float,
         use_ensemble_predictions: bool = True,
         **kwargs: Any,
-    ) -> Tuple[PredictionResult, PredictionResult]:
+    ) -> tuple[PredictionResult, PredictionResult]:
         (
             prediction_display_names,
             prediction_interval_display_names,
@@ -432,6 +463,6 @@ class MapieRegressor(
             display_name: y_predict.tolist()
             for display_name in prediction_display_names
         }, {
-            display_name: list(zip(lower_bound, upper_bound))
+            display_name: list(zip(lower_bound, upper_bound, strict=False))
             for display_name in prediction_interval_display_names
         }

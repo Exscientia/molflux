@@ -66,16 +66,22 @@ def test_expected_result(fixture_test_strategy):
     indices = strategy.split(dataset=dataset, groups=groups)
 
     train_indices, validation_indices, _ = next(indices)
-    assert all(i == j for i, j in zip(train_indices, [0, 1, 2, 3, 4, 5, 6, 7]))
-    assert all(i == j for i, j in zip(validation_indices, [8, 9]))
+    assert all(
+        i == j for i, j in zip(train_indices, [0, 1, 2, 3, 4, 5, 6, 7], strict=False)
+    )
+    assert all(i == j for i, j in zip(validation_indices, [8, 9], strict=False))
 
     train_indices, validation_indices, _ = next(indices)
-    assert all(i == j for i, j in zip(train_indices, [3, 4, 5, 6, 7, 8, 9]))
-    assert all(i == j for i, j in zip(validation_indices, [0, 1, 2]))
+    assert all(
+        i == j for i, j in zip(train_indices, [3, 4, 5, 6, 7, 8, 9], strict=False)
+    )
+    assert all(i == j for i, j in zip(validation_indices, [0, 1, 2], strict=False))
 
     train_indices, validation_indices, _ = next(indices)
-    assert all(i == j for i, j in zip(train_indices, [0, 1, 2, 8, 9]))
-    assert all(i == j for i, j in zip(validation_indices, [3, 4, 5, 6, 7]))
+    assert all(i == j for i, j in zip(train_indices, [0, 1, 2, 8, 9], strict=False))
+    assert all(
+        i == j for i, j in zip(validation_indices, [3, 4, 5, 6, 7], strict=False)
+    )
 
 
 def test_does_not_produce_test_indices(fixture_sample_inputs, fixture_test_strategy):
@@ -145,10 +151,16 @@ def test_deterministic(fixture_sample_inputs, fixture_test_strategy):
     train_indices_b2, validation_indices_b2, _ = next(indices_b)
 
     # Check that we get the same results across folds
-    assert all(i == j for i, j in zip(train_indices_a1, train_indices_b1))
-    assert all(i == j for i, j in zip(validation_indices_a1, validation_indices_b1))
-    assert all(i == j for i, j in zip(train_indices_a2, train_indices_b2))
-    assert all(i == j for i, j in zip(validation_indices_a2, validation_indices_b2))
+    assert all(i == j for i, j in zip(train_indices_a1, train_indices_b1, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices_a1, validation_indices_b1, strict=False)
+    )
+    assert all(i == j for i, j in zip(train_indices_a2, train_indices_b2, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices_a2, validation_indices_b2, strict=False)
+    )
 
 
 def test_string_groups(fixture_test_strategy):
@@ -176,13 +188,19 @@ def test_string_groups(fixture_test_strategy):
     indices = strategy.split(dataset=dataset, groups=groups)
 
     train_indices, validation_indices, _ = next(indices)
-    assert all(i == j for i, j in zip(train_indices, [0, 1, 2, 3, 4, 5, 6, 7]))
-    assert all(i == j for i, j in zip(validation_indices, [8, 9]))
+    assert all(
+        i == j for i, j in zip(train_indices, [0, 1, 2, 3, 4, 5, 6, 7], strict=False)
+    )
+    assert all(i == j for i, j in zip(validation_indices, [8, 9], strict=False))
 
     train_indices, validation_indices, _ = next(indices)
-    assert all(i == j for i, j in zip(train_indices, [3, 4, 5, 6, 7, 8, 9]))
-    assert all(i == j for i, j in zip(validation_indices, [0, 1, 2]))
+    assert all(
+        i == j for i, j in zip(train_indices, [3, 4, 5, 6, 7, 8, 9], strict=False)
+    )
+    assert all(i == j for i, j in zip(validation_indices, [0, 1, 2], strict=False))
 
     train_indices, validation_indices, _ = next(indices)
-    assert all(i == j for i, j in zip(train_indices, [0, 1, 2, 8, 9]))
-    assert all(i == j for i, j in zip(validation_indices, [3, 4, 5, 6, 7]))
+    assert all(i == j for i, j in zip(train_indices, [0, 1, 2, 8, 9], strict=False))
+    assert all(
+        i == j for i, j in zip(validation_indices, [3, 4, 5, 6, 7], strict=False)
+    )

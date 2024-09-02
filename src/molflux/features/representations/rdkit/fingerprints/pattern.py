@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem.rdmolops import PatternFingerprint
@@ -61,11 +61,11 @@ class Pattern(RepresentationBase):
         self,
         *columns: MolArray,
         fp_size: int = 2048,
-        atom_counts: Optional[List[int]] = None,
-        set_only_bits: Optional[ExplicitBitVect] = None,
+        atom_counts: list[int] | None = None,
+        set_only_bits: ExplicitBitVect | None = None,
         tautomer_fingerprints: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Generates topological fingerprints for each input molecule using a
         series of pre-defined structural patterns.
 
@@ -94,7 +94,7 @@ class Pattern(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        pattern_fp_list: List[List] = []
+        pattern_fp_list: list[list] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

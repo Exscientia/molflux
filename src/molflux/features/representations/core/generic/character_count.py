@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
@@ -21,7 +21,7 @@ class CharacterCount(RepresentationBase):
         *columns: SmilesArray,
         without_hs: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[Any]]:
+    ) -> dict[str, list[Any]]:
         """Counts the charactes in each string sample.
 
         Args:

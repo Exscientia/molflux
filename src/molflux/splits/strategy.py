@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterator, Optional, Protocol, runtime_checkable
+from collections.abc import Iterator
+from typing import Any, Protocol, runtime_checkable
 
 from molflux.splits.typing import ArrayLike, SplitIndices, Splittable
 
@@ -13,7 +14,7 @@ class SplittingStrategy(Protocol):
         """Initialises the dataset"""
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         """Splitting strategy metadata."""
 
     @property
@@ -21,7 +22,7 @@ class SplittingStrategy(Protocol):
         """The canonical name of the splitting strategy."""
 
     @property
-    def state(self) -> Dict[str, Any]:
+    def state(self) -> dict[str, Any]:
         """The internal state config."""
 
     @property
@@ -31,8 +32,8 @@ class SplittingStrategy(Protocol):
     def split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         **kwargs: Any,
     ) -> Iterator[SplitIndices]:
         """

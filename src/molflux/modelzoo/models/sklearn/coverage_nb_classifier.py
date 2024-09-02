@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, Type
+from collections.abc import Iterable
 
 from pydantic.v1 import dataclasses
 
@@ -51,7 +51,7 @@ class Config:
 class CoverageNBConfig(ModelConfig):
     alpha: float = 1
     fit_prior: bool = True
-    class_prior: Optional[Iterable] = None
+    class_prior: Iterable | None = None
 
 
 class CoverageNBClassifier(
@@ -59,7 +59,7 @@ class CoverageNBClassifier(
     SKLearnModelBase[CoverageNBConfig],
 ):
     @property
-    def _config_builder(self) -> Type[CoverageNBConfig]:
+    def _config_builder(self) -> type[CoverageNBConfig]:
         return CoverageNBConfig
 
     def _info(self) -> ModelInfo:

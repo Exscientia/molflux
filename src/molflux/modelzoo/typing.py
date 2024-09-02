@@ -1,8 +1,6 @@
 from os import PathLike as OSPathLike
 from typing import (
     Any,
-    Dict,
-    List,
     Protocol,
     Union,
     runtime_checkable,
@@ -22,12 +20,15 @@ class SupportsDataframeInterchangeProtocol(Protocol):
         https://data-apis.org/dataframe-protocol/latest/API.html
     """
 
-    def __dataframe__(self, nan_as_null: bool = False, allow_copy: bool = True) -> Any:
-        ...
+    def __dataframe__(
+        self,
+        nan_as_null: bool = False,
+        allow_copy: bool = True,
+    ) -> Any: ...
 
 
 DataFrameLike = Union[SupportsDataframeInterchangeProtocol, datasets.Dataset]
-Classes = Dict[str, List[Any]]
-Features = List[str]
+Classes = dict[str, list[Any]]
+Features = list[str]
 PathLike = Union[str, OSPathLike]
-PredictionResult = Dict[str, List[Any]]
+PredictionResult = dict[str, list[Any]]

@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Type, Union
+from typing import Literal, Optional
 
 from numpy.random import RandomState
 from pydantic.v1 import dataclasses
@@ -119,7 +119,7 @@ l1_ratio : float, default=None
     combination of L1 and L2.
 """
 Penalty = Literal["l1", "l2", "elasticnet", "none"]
-ClassWeight = Optional[Union[dict, Literal["balanced"]]]
+ClassWeight = Optional[dict | Literal["balanced"]]
 Solver = Literal["newton-cg", "lbfgs", "liblinear", "sag", "saga"]
 MultiClass = Literal["auto", "ovr", "multinomial"]
 
@@ -138,12 +138,12 @@ class LogisticRegressorConfig(ModelConfig):
     fit_intercept: bool = True
     intercept_scaling: float = 1
     class_weight: ClassWeight = None
-    random_state: Optional[Union[int, RandomState]] = None
+    random_state: int | RandomState | None = None
     solver: Solver = "lbfgs"
     max_iter: int = 100
     verbose: int = 0
     warm_start: bool = False
-    l1_ratio: Optional[float] = None
+    l1_ratio: float | None = None
 
 
 class LogisticRegressor(
@@ -151,7 +151,7 @@ class LogisticRegressor(
     SKLearnModelBase[LogisticRegressorConfig],
 ):
     @property
-    def _config_builder(self) -> Type[LogisticRegressorConfig]:
+    def _config_builder(self) -> type[LogisticRegressorConfig]:
         return LogisticRegressorConfig
 
     def _info(self) -> ModelInfo:

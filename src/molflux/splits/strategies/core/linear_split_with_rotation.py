@@ -1,6 +1,7 @@
 from collections import deque
+from collections.abc import Iterator
 from math import ceil
-from typing import Any, Iterator, Optional
+from typing import Any
 
 import numpy as np
 
@@ -26,8 +27,8 @@ class LinearSplitWithRotation(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         *,
         n_splits: int = 1,
         train_fraction: float = 0.8,

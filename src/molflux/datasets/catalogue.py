@@ -2,9 +2,9 @@ import functools
 import inspect
 import logging
 from collections import defaultdict
+from collections.abc import Callable
 from importlib.metadata import EntryPoint, entry_points
 from types import ModuleType
-from typing import Callable, Dict, List
 
 import datasets.builder
 from molflux.datasets.naming import camelcase_to_snakecase
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 NAMESPACE = "molflux.datasets.plugins."
 
 # This is where entrypoints will be registered {<name>: <Entrypoint>}
-BUILDERS_CATALOGUE: Dict[str, EntryPoint] = {}
+BUILDERS_CATALOGUE: dict[str, EntryPoint] = {}
 
 
 @functools.lru_cache
@@ -73,13 +73,13 @@ def get_dataset_builder_path(name: str) -> str:
     return path
 
 
-def list_datasets() -> Dict[str, List[str]]:
+def list_datasets() -> dict[str, list[str]]:
     """List all available datasets in the catalogue.
 
     The catalogue is returned as a view of dataset names keyed by kind.
     """
 
-    view: Dict[str, List[str]] = defaultdict(list)
+    view: dict[str, list[str]] = defaultdict(list)
 
     for name, entrypoint in BUILDERS_CATALOGUE.items():
         kind = entrypoint.group.split(".")[-1]

@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Any, Dict, Literal, Type, Union
+from typing import Any, Literal
 
 from pydantic.v1 import dataclasses
 
@@ -61,7 +61,7 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class HBOSDetectorConfig(PyODModelConfig):
-    n_bins: Union[int, BinningMethod] = 10
+    n_bins: int | BinningMethod = 10
     alpha: float = 0.1
     tol: float = 0.5
     contamination: float = 0.1
@@ -69,11 +69,11 @@ class HBOSDetectorConfig(PyODModelConfig):
 
 class HBOSDetector(PyODClassificationMixin, PyODModelBase[HBOSDetectorConfig]):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[HBOSDetectorConfig]:
+    def _config_builder(self) -> type[HBOSDetectorConfig]:
         return HBOSDetectorConfig
 
     def _info(self) -> ModelInfo:

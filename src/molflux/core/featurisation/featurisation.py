@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict
+from typing import Any, TypeVar
 
 import molflux.datasets
 import molflux.features
@@ -9,16 +9,20 @@ from molflux.core.featurisation.metadata import (
     fetch_model_featurisation_metadata,
     parse_featurisation_metadata,
 )
-from molflux.core.typing import Dataset
+from molflux.core.typing import DatasetType
 
 logger = logging.getLogger(__name__)
 
 
+# Generic type; used to indicate functions are Dataset->Dataset, DatasetDict->DatasetDict
+DatasetT = TypeVar("DatasetT", bound=DatasetType)
+
+
 def replay_dataset_featurisation(
-    inputs: Dataset,
+    inputs: DatasetType,
     model_path: str,
     **map_kwargs: Any,
-) -> Dataset:
+) -> DatasetType:
     featurisation_metadata = fetch_model_featurisation_metadata(model_path=model_path)
     return featurise_dataset(
         inputs=inputs,
@@ -28,10 +32,10 @@ def replay_dataset_featurisation(
 
 
 def featurise_dataset(
-    inputs: Dataset,
-    featurisation_metadata: Dict[str, Any],
+    inputs: DatasetType,
+    featurisation_metadata: dict[str, Any],
     **map_kwargs: Any,
-) -> Dataset:
+) -> DatasetType:
     featurisation_metadata, version = parse_featurisation_metadata(
         featurisation_metadata,
     )
@@ -55,10 +59,10 @@ def featurise_dataset(
 
 
 def _featurise_dataset_v1(
-    dataset: Dataset,
-    featurisation_metadata: Dict[str, Any],
+    dataset: DatasetType,
+    featurisation_metadata: dict[str, Any],
     **map_kwargs: Any,
-) -> Dataset:
+) -> DatasetType:
     """Featurises a dataset from a V1 featurisation metadata schema."""
     featurisation_metadata_obj = FeaturisationMetadataV1(**featurisation_metadata)
     featurisation_config = featurisation_metadata_obj.config
@@ -75,7 +79,8 @@ def _featurise_dataset_v1(
         ]
 
         representation_configs_as_dicts = [
-            config.dict(by_alias=True) for config in representation_configs
+            {"name": config.name, "config": config.config, "presets": config.presets}
+            for config in representation_configs
         ]
 
         representations = molflux.features.load_from_dicts(
@@ -92,10 +97,10 @@ def _featurise_dataset_v1(
 
 
 def _featurise_dataset_v2(
-    dataset: Dataset,
-    featurisation_metadata: Dict[str, Any],
+    dataset: DatasetT,
+    featurisation_metadata: dict[str, Any],
     **map_kwargs: Any,
-) -> Dataset:
+) -> DatasetT:
     """Featurises a dataset from a V2 featurisation metadata schema."""
     featurisation_metadata_obj = FeaturisationMetadataV2(**featurisation_metadata)
     featurisation_config = featurisation_metadata_obj.config
@@ -112,7 +117,8 @@ def _featurise_dataset_v2(
         ]
 
         representation_configs_as_dicts = [
-            config.dict(by_alias=True) for config in representation_configs
+            {"name": config.name, "config": config.config, "presets": config.presets}
+            for config in representation_configs
         ]
 
         representations = molflux.features.load_from_dicts(

@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Iterator, List, Optional
+from collections.abc import Iterator
+from typing import Any
 
 try:
     import numpy as np
@@ -42,8 +43,8 @@ class Scaffold(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         train_fraction: float = 0.8,
         validation_fraction: float = 0.1,
         test_fraction: float = 0.1,
@@ -82,9 +83,9 @@ class Scaffold(SplittingStrategyBase):
 
         scaffold_sets = generate_scaffolds(y=y, include_chirality=include_chirality)
 
-        train_indices: List[int] = []
-        validation_indices: List[int] = []
-        test_indices: List[int] = []
+        train_indices: list[int] = []
+        validation_indices: list[int] = []
+        test_indices: list[int] = []
 
         for scaffold_set in scaffold_sets:
             if len(train_indices) + len(scaffold_set) > train_cutoff:
@@ -134,7 +135,7 @@ def _generate_scaffold(smiles: str, include_chirality: bool) -> str:
         return smiles
 
 
-def generate_scaffolds(y: ArrayLike, include_chirality: bool) -> List[List[int]]:
+def generate_scaffolds(y: ArrayLike, include_chirality: bool) -> list[list[int]]:
     """Returns all scaffolds from the SMILES string provided.
 
     Returns:

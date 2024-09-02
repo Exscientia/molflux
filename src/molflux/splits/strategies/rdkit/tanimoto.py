@@ -5,7 +5,8 @@ References:
 """
 
 import logging
-from typing import Any, Iterator, List, Optional, Tuple
+from collections.abc import Iterator
+from typing import Any
 
 import numpy as np
 
@@ -48,8 +49,8 @@ class Tanimoto(SplittingStrategyBase):
     def _split(
         self,
         dataset: Splittable,
-        y: Optional[ArrayLike] = None,
-        groups: Optional[ArrayLike] = None,
+        y: ArrayLike | None = None,
+        groups: ArrayLike | None = None,
         n_splits: int = 1,
         train_fraction: float = 0.8,
         validation_fraction: float = 0.1,
@@ -133,10 +134,10 @@ class Tanimoto(SplittingStrategyBase):
 
 
 def _split_fingerprints(
-    fps: List,
+    fps: list,
     size1: int,
     size2: int,
-) -> Tuple[List[int], List[int]]:
+) -> tuple[list[int], list[int]]:
     """Divides a list of fingerprints into two groups."""
 
     if len(fps) != size1 + size2:
@@ -147,7 +148,7 @@ def _split_fingerprints(
     # Begin by assigning the first molecule to the first group.
 
     fp_in_group = [[fps[0]], []]
-    indices_in_group: Tuple[List[int], List[int]] = ([0], [])
+    indices_in_group: tuple[list[int], list[int]] = ([0], [])
     remaining_fp = fps[1:]
     remaining_indices = list(range(1, len(fps)))
     max_similarity_to_group = [

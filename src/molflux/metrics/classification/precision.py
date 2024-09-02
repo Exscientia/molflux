@@ -1,7 +1,7 @@
 """Precision score."""
 
 import logging
-from typing import Any, List, Optional, Union
+from typing import Any
 
 import evaluate
 from sklearn.metrics import precision_score
@@ -138,11 +138,11 @@ class Precision(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
-        labels: Optional[List[str]] = None,
+        sample_weight: list[float] | None = None,
+        labels: list[str] | None = None,
         pos_label: int = 1,
-        average: Optional[str] = "binary",
-        zero_division: Union[int, str] = "warn",
+        average: str | None = "binary",
+        zero_division: int | str = "warn",
         **kwargs: Any,
     ) -> MetricResult:
         score = precision_score(

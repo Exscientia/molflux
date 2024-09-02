@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any
 
 from molflux.modelzoo.protocols import Model
 
@@ -8,7 +8,7 @@ from molflux.modelzoo.protocols import Model
 class ModelArtefact:
     name: str
     tag: str
-    config: Dict[str, Any]
+    config: dict[str, Any]
     model: Model
 
 

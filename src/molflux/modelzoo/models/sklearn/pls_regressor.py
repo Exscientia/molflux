@@ -1,5 +1,3 @@
-from typing import Type
-
 from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
@@ -60,7 +58,7 @@ class PLSRegressorConfig(ModelConfig):
 
 class PLSRegressor(SKLearnModelBase[PLSRegressorConfig]):
     @property
-    def _config_builder(self) -> Type[PLSRegressorConfig]:
+    def _config_builder(self) -> type[PLSRegressorConfig]:
         return PLSRegressorConfig
 
     def _info(self) -> ModelInfo:

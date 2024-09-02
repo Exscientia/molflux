@@ -1,7 +1,7 @@
 """Top-k accuracy classification score."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
 from sklearn.metrics import top_k_accuracy_score
@@ -96,8 +96,8 @@ class TopKAccuracy(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
-        labels: Optional[List[str]] = None,
+        sample_weight: list[float] | None = None,
+        labels: list[str] | None = None,
         k: int = 2,
         normalize: bool = True,
         **kwargs: Any,

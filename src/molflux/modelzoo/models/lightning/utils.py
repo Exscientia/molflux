@@ -1,6 +1,6 @@
 import tempfile
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import molflux.modelzoo as mz
 
@@ -26,10 +26,10 @@ def load_from_dvc(repo_url: str, rev: str, model_path_in_repo: str) -> Any:
 
 
 def load_from_dvc_or_disk(
-    path: Optional[str] = None,
-    repo_url: Optional[str] = None,
-    rev: Optional[str] = None,
-    model_path_in_repo: Optional[str] = None,
+    path: str | None = None,
+    repo_url: str | None = None,
+    rev: str | None = None,
+    model_path_in_repo: str | None = None,
 ) -> Any:
     if path is not None:
         model = mz.load_from_store(path)

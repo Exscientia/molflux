@@ -1,6 +1,5 @@
 import os
 import pathlib
-from typing import Type
 
 import _pytest.config
 import boto3
@@ -8,7 +7,7 @@ import fsspec
 import pytest
 from moto.server import ThreadedMotoServer
 
-PytestConfig = Type[_pytest.config.Config]
+PytestConfig = type[_pytest.config.Config]
 
 
 def path_to_file(pytestconfig: PytestConfig, *other: str) -> pathlib.Path:

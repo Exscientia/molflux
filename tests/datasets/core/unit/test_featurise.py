@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
@@ -31,7 +31,7 @@ class MockMultiRepresentation:
         self.name = name
         self.n = n
 
-    def featurise(self, *columns: Any, **kwargs: Any) -> Dict[str, Any]:
+    def featurise(self, *columns: Any, **kwargs: Any) -> dict[str, Any]:
         samples = columns[0]
         return {f"{self.name}{i}": samples for i in range(self.n)}
 
@@ -46,8 +46,8 @@ class MockMultiColumnRepresentation:
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def featurise(self, *columns: Any, **kwargs: Any) -> Dict[str, Any]:
-        concat_columns = [sum(samples) for samples in zip(*columns)]
+    def featurise(self, *columns: Any, **kwargs: Any) -> dict[str, Any]:
+        concat_columns = [sum(samples) for samples in zip(*columns, strict=False)]
         return {self.name: concat_columns}
 
 

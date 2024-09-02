@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, ClassVar, List, Literal, Optional
+from typing import Any, ClassVar, Literal
 
 import h5py
 
@@ -33,7 +33,7 @@ class ANI1X(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIG_CLASS = ANI1XConfig
     config: ANI1XConfig
 
-    BUILDER_CONFIGS: ClassVar[List[datasets.BuilderConfig]] = [
+    BUILDER_CONFIGS: ClassVar[list[datasets.BuilderConfig]] = [
         ANI1XConfig(
             name="openeye",
             backend="openeye",
@@ -122,7 +122,7 @@ class ANI1X(datasets.GeneratorBasedBuilder):
     def _split_generators(
         self,
         dl_manager: datasets.DownloadManager,
-    ) -> List[datasets.SplitGenerator]:
+    ) -> list[datasets.SplitGenerator]:
         archive_path = dl_manager.download_and_extract(_BASE_URL)
 
         return [
@@ -144,7 +144,7 @@ class ANI1X(datasets.GeneratorBasedBuilder):
 
     def _generate_examples_openeye(
         self,
-        h5_file_path: Optional[str] = None,
+        h5_file_path: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         try:
@@ -195,8 +195,8 @@ class ANI1X(datasets.GeneratorBasedBuilder):
 
             # find list of example dicts (swap dict of lists to list of dicts)
             chemical_formula_examples_list = [
-                dict(zip(chemical_formula_dict, t))
-                for t in zip(*chemical_formula_dict.values())
+                dict(zip(chemical_formula_dict, t, strict=False))
+                for t in zip(*chemical_formula_dict.values(), strict=False)
             ]
 
             # yield the examples for the conformers
@@ -209,7 +209,7 @@ class ANI1X(datasets.GeneratorBasedBuilder):
 
     def _generate_examples_rdkit(
         self,
-        h5_file_path: Optional[str] = None,
+        h5_file_path: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         try:
@@ -265,8 +265,8 @@ class ANI1X(datasets.GeneratorBasedBuilder):
 
             # find list of example dicts (swap dict of lists to list of dicts)
             chemical_formula_examples_list = [
-                dict(zip(chemical_formula_dict, t))
-                for t in zip(*chemical_formula_dict.values())
+                dict(zip(chemical_formula_dict, t, strict=False))
+                for t in zip(*chemical_formula_dict.values(), strict=False)
             ]
 
             # yield the examples for the conformers

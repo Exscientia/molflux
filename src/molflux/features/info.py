@@ -1,7 +1,7 @@
 import json
 import os
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, Optional
+from typing import Any
 
 from molflux.features import config
 
@@ -20,14 +20,14 @@ class RepresentationInfo:
     description: str
 
     # Optional
-    version: Optional[str] = None
+    version: str | None = None
 
     # set later by the builder / initialiser
     name: str = field(default_factory=str)
     tag: str = field(default_factory=str)
     featurise_description: str = field(default_factory=str)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     def write_to_directory(self, directory: str) -> None:

@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional, Type, Union
+from typing import Any, Literal, Optional, Union
 
 from numpy.random import RandomState
 from pydantic.v1 import dataclasses
@@ -100,7 +100,7 @@ random_state : int, RandomState instance or None, default=None
 
 Kernel = Literal["linear", "poly", "rbf", "sigmoid", "precomputed"]
 Gamma = Union[Literal["scale", "auto"], float]
-ClassWeight = Optional[Union[dict, Literal["balanced"]]]
+ClassWeight = Optional[dict | Literal["balanced"]]
 DecisionFunctionShape = Literal["ovo", "ovr"]
 
 
@@ -125,7 +125,7 @@ class SupportVectorClassifierConfig(ModelConfig):
     max_iter: int = -1
     decision_function_shape: DecisionFunctionShape = "ovr"
     break_ties: bool = False
-    random_state: Optional[Union[int, RandomState]] = None
+    random_state: int | RandomState | None = None
 
 
 class SupportVectorClassifier(
@@ -133,7 +133,7 @@ class SupportVectorClassifier(
     SKLearnModelBase[SupportVectorClassifierConfig],
 ):
     @property
-    def _config_builder(self) -> Type[SupportVectorClassifierConfig]:
+    def _config_builder(self) -> type[SupportVectorClassifierConfig]:
         return SupportVectorClassifierConfig
 
     def _info(self) -> ModelInfo:

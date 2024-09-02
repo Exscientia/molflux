@@ -1,5 +1,3 @@
-from typing import Optional, Type
-
 from pydantic.v1 import dataclasses
 
 from molflux.modelzoo.info import ModelInfo
@@ -53,13 +51,13 @@ class Config:
 class LinearRegressionConfig(ModelConfig):
     fit_intercept: bool = True
     copy_X: bool = True
-    n_jobs: Optional[int] = None
+    n_jobs: int | None = None
     positive: bool = False
 
 
 class LinearRegressor(SKLearnModelBase[LinearRegressionConfig]):
     @property
-    def _config_builder(self) -> Type[LinearRegressionConfig]:
+    def _config_builder(self) -> type[LinearRegressionConfig]:
         return LinearRegressionConfig
 
     def _info(self) -> ModelInfo:

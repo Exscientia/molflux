@@ -1,5 +1,5 @@
 from dataclasses import field
-from typing import List, Literal, Type, Union
+from typing import Literal
 
 from numpy.random import RandomState
 from pydantic.v1 import dataclasses
@@ -164,7 +164,7 @@ class Config:
 
 @dataclasses.dataclass(config=Config)
 class MLPClassifierConfig(ModelConfig):
-    hidden_layer_sizes: List[int] = field(
+    hidden_layer_sizes: list[int] = field(
         default_factory=lambda: [
             100,
         ],
@@ -172,13 +172,13 @@ class MLPClassifierConfig(ModelConfig):
     activation: ActivationT = "relu"
     solver: SolverT = "adam"
     alpha: float = 0.0001
-    batch_size: Union[int, Literal["auto"]] = "auto"
+    batch_size: int | Literal["auto"] = "auto"
     learning_rate: LearningRateT = "constant"
     learning_rate_init: float = 0.001
     power_t: float = 0.5
     max_iter: int = 200
     shuffle: bool = True
-    random_state: Union[None, int, RandomState] = None
+    random_state: None | int | RandomState = None
     tol: float = 1e-4
     verbose: bool = False
     warm_start: bool = False
@@ -195,7 +195,7 @@ class MLPClassifierConfig(ModelConfig):
 
 class MLPClassifier(SKLearnClassificationMixin, SKLearnModelBase[MLPClassifierConfig]):
     @property
-    def _config_builder(self) -> Type[MLPClassifierConfig]:
+    def _config_builder(self) -> type[MLPClassifierConfig]:
         return MLPClassifierConfig
 
     def _info(self) -> ModelInfo:

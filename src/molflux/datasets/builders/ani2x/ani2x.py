@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, ClassVar, List, Literal, Optional
+from typing import Any, ClassVar, Literal
 
 import h5py
 
@@ -33,7 +33,7 @@ class ANI2X(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIG_CLASS = ANI2XConfig
     config: ANI2XConfig
 
-    BUILDER_CONFIGS: ClassVar[List[datasets.BuilderConfig]] = [
+    BUILDER_CONFIGS: ClassVar[list[datasets.BuilderConfig]] = [
         ANI2XConfig(
             name="rdkit",
             backend="rdkit",
@@ -56,7 +56,7 @@ class ANI2X(datasets.GeneratorBasedBuilder):
     def _split_generators(
         self,
         dl_manager: datasets.DownloadManager,
-    ) -> List[datasets.SplitGenerator]:
+    ) -> list[datasets.SplitGenerator]:
         archive_path = dl_manager.download_and_extract(
             URL_DICT[self.config.level_of_theory]["url"],
         )
@@ -83,7 +83,7 @@ class ANI2X(datasets.GeneratorBasedBuilder):
 
     def _generate_examples_openeye(
         self,
-        h5_file_path: Optional[str] = None,
+        h5_file_path: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         try:
@@ -104,7 +104,8 @@ class ANI2X(datasets.GeneratorBasedBuilder):
         index = 0
         for _num_atoms, properties in h5_file.items():
             properties_list = [
-                dict(zip(properties, t)) for t in zip(*properties.values())
+                dict(zip(properties, t, strict=False))
+                for t in zip(*properties.values(), strict=False)
             ]
 
             for prop in properties_list:
@@ -127,7 +128,7 @@ class ANI2X(datasets.GeneratorBasedBuilder):
 
     def _generate_examples_rdkit(
         self,
-        h5_file_path: Optional[str] = None,
+        h5_file_path: str | None = None,
         **kwargs: Any,
     ) -> ExamplesGenerator:
         try:
@@ -149,7 +150,8 @@ class ANI2X(datasets.GeneratorBasedBuilder):
         index = 0
         for _num_atoms, properties in h5_file.items():
             properties_list = [
-                dict(zip(properties, t)) for t in zip(*properties.values())
+                dict(zip(properties, t, strict=False))
+                for t in zip(*properties.values(), strict=False)
             ]
 
             for prop in properties_list:

@@ -2,7 +2,7 @@ import json
 import os
 import pathlib
 import warnings
-from typing import Any, Dict, List, Literal, Optional, Union, cast, get_args
+from typing import Any, Literal, cast, get_args
 
 import fsspec
 
@@ -51,7 +51,7 @@ def _resolve_data_files_file_format(data_files: HFDataFiles) -> SupportedFileFor
 
     All data files are expected to resolve to the same file format.
     """
-    file_formats: List[SupportedFileFormats] = []
+    file_formats: list[SupportedFileFormats] = []
     for path in NestedDataStructure(data_files).flatten():
         file_format = __resolve_path_file_format(path)
         file_formats.append(file_format)
@@ -144,10 +144,10 @@ def _resolve_file_system_for_data_files(data_files: HFDataFiles) -> FileSystem:
 
 
 def save_dataset_to_store(
-    dataset: Union[Dataset, DatasetDict],
+    dataset: Dataset | DatasetDict,
     path: PathLike,
-    format: Optional[SupportedFileFormats] = None,
-    fs: Optional[FileSystem] = None,
+    format: SupportedFileFormats | None = None,
+    fs: FileSystem | None = None,
     **kwargs: Any,
 ) -> None:
     """Save a dataset to persistent storage.
@@ -321,7 +321,7 @@ def _resolve_expected_dataset_dict_dir_data_files(
     dest_dataset_dict_path: str,
     format: SupportedFileFormats,
     fs: FileSystem,
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """Expands the path to a DatasetDict directory into its expected DataFiles.
 
     This works by extracting the split names from the persisted DatasetDict json
@@ -352,11 +352,11 @@ def _resolve_expected_dataset_dict_dir_data_files(
 
 def load_dataset_from_store(
     source: DataFiles,
-    format: Optional[SupportedFileFormats] = None,
-    fs: Optional[FileSystem] = None,
-    split: Optional[str] = None,
+    format: SupportedFileFormats | None = None,
+    fs: FileSystem | None = None,
+    split: str | None = None,
     **kwargs: Any,
-) -> Union[Dataset, DatasetDict, IterableDataset, IterableDatasetDict]:
+) -> Dataset | DatasetDict | IterableDataset | IterableDatasetDict:
     """Loads a dataset from persisted storage.
 
     Args:

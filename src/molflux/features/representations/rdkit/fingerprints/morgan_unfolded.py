@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from rdkit.Chem.AllChem import GetMorganFingerprint
@@ -32,16 +32,16 @@ class MorganUnfolded(RepresentationBase):
         self,
         *columns: MolArray,
         radius: int = 3,
-        invariants: Optional[List] = None,
-        from_atoms: Optional[List] = None,
+        invariants: list | None = None,
+        from_atoms: list | None = None,
         use_chirality: bool = False,
         use_bond_types: bool = True,
         use_features: bool = False,
         use_counts: bool = False,
-        bit_info: Optional[Dict] = None,
+        bit_info: dict | None = None,
         include_redundant_environments: bool = False,
         **kwargs: Any,
-    ) -> Dict[str, List[Dict[str, int]]]:
+    ) -> dict[str, list[dict[str, int]]]:
         """Featurises the input molecules as unfolded Morgan fingerprints.
 
         Args:
@@ -93,7 +93,7 @@ class MorganUnfolded(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        unfolded_morgan_fp_list: List[Dict[str, int]] = []
+        unfolded_morgan_fp_list: list[dict[str, int]] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

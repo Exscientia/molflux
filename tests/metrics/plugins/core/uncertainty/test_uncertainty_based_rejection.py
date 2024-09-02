@@ -40,7 +40,7 @@ def test_default_compute(fixture_metric):
     result = metric.compute(
         predictions=predictions,
         references=references,
-        uncertainties=uncertainties,
+        standard_deviations=uncertainties,
         metric_name=metric_name,
     )
 
@@ -75,7 +75,7 @@ def test_different_metric_name(fixture_metric):
     result = metric.compute(
         predictions=predictions,
         references=references,
-        uncertainties=uncertainties,
+        standard_deviations=uncertainties,
         metric_name=metric_name,
     )
 
@@ -100,7 +100,7 @@ def test_raise_error_different_length(fixture_metric):
         metric.compute(
             predictions=predictions,
             references=references,
-            uncertainties=uncertainties,
+            standard_deviations=uncertainties,
             metric_name=metric_name,
         )
 
@@ -115,7 +115,7 @@ def test_num_of_threshold_steps(fixture_metric):
     result = metric.compute(
         predictions=predictions,
         references=references,
-        uncertainties=uncertainties,
+        standard_deviations=uncertainties,
         metric_name=metric_name,
         num_of_threshold_steps=2,
     )
@@ -134,12 +134,12 @@ def test_compute_works_with_prediction_intervals(fixture_metric):
     references = [3, -0.0, 3, 6]
     lower_bound = [0.0, 0.0, 1, 2]
     upper_bound = [5.0, 0.9, 4.0, 15.0]
-    prediction_intervals = list(zip(lower_bound, upper_bound))
+    prediction_intervals = list(zip(lower_bound, upper_bound, strict=False))
     metric_name = "mean_squared_error"
     result = metric.compute(
         predictions=predictions,
         references=references,
-        uncertainties=None,
+        standard_deviations=None,
         prediction_intervals=prediction_intervals,
         metric_name=metric_name,
     )

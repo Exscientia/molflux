@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from rdkit.Chem.MACCSkeys import GenMACCSKeys
@@ -33,7 +33,7 @@ class MACCSRdkit(RepresentationBase):
         self,
         *columns: MolArray,
         **kwargs: Any,
-    ) -> Dict[str, List[Fingerprint]]:
+    ) -> dict[str, list[Fingerprint]]:
         """Generates MACCS fingerprints for each input molecule.
 
         Args:
@@ -51,7 +51,7 @@ class MACCSRdkit(RepresentationBase):
         """
         assert_n_positional_args(*columns, expected_size=1)
         samples = columns[0]
-        maccs_fp_list: List[List] = []
+        maccs_fp_list: list[list] = []
         for sample in samples:
             with featurisation_error_harness(sample):
                 smile = to_smiles(sample)

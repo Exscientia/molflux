@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Any
 
 from molflux.modelzoo.info import ModelInfo
 from molflux.modelzoo.models.lightning.mlp_regressor.mlp_config import MLPConfig
@@ -22,11 +22,11 @@ class LightningMLPRegressor(LightningModelBase[MLPConfig]):
         )
 
     @property
-    def _datamodule_builder(self) -> Type[MLPDataModule]:
+    def _datamodule_builder(self) -> type[MLPDataModule]:
         return MLPDataModule
 
     @property
-    def _config_builder(self) -> Type[MLPConfig]:
+    def _config_builder(self) -> type[MLPConfig]:
         return MLPConfig
 
     def _instantiate_module(self) -> MLPModule:

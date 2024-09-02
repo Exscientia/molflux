@@ -1,7 +1,7 @@
 """Computes an ROC curve over SMILES strings, i.e. "is the correct synthesis product in top-k predictions"."""
 
 import logging
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import evaluate
 import numpy as np
@@ -73,9 +73,9 @@ class TopKAccuracyRoc(HFMetric):
 
     def _pre_process_inputs(
         self,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
-    ) -> Tuple[Optional[ArrayLike], ...]:
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
+    ) -> tuple[ArrayLike | None, ...]:
         """Converts None inputs to strings to allow using None as invalid token.
 
         Otherwise, None molfluxs would raise as they do not count as string features.
@@ -102,13 +102,13 @@ class TopKAccuracyRoc(HFMetric):
 
         max_k = len(predictions[0])
 
-        def get_pred_idx(preds: List[str], correct: str) -> int:
+        def get_pred_idx(preds: list[str], correct: str) -> int:
             # Return max_k if none of the predictions match
             return next((i for i, pred in enumerate(preds) if pred == correct), max_k)
 
         idxs = [
             get_pred_idx(preds, product)
-            for preds, product in zip(predictions, references)
+            for preds, product in zip(predictions, references, strict=False)
         ]
 
         # first for each idx in idxs define a vector that is 0 until idx (exclusive) and 1 after
@@ -120,6 +120,6 @@ class TopKAccuracyRoc(HFMetric):
         if average:
             present_at_idx = present_at_idx.mean(axis=0, keepdims=True)
 
-        accuracy_roc: List[float] = present_at_idx.tolist()
+        accuracy_roc: list[float] = present_at_idx.tolist()
 
         return {self.tag: accuracy_roc}

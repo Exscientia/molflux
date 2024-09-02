@@ -14,7 +14,7 @@
 """Accuracy metric."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
 from sklearn.metrics import accuracy_score
@@ -95,7 +95,7 @@ class Accuracy(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         normalize: bool = True,
         **kwargs: Any,
     ) -> MetricResult:

@@ -1,7 +1,7 @@
 """Mean absolute error regression loss."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
 from sklearn.metrics import mean_absolute_error
@@ -101,7 +101,7 @@ class MeanAbsoluteError(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         multioutput: str = "uniform_average",
         **kwargs: Any,
     ) -> MetricResult:

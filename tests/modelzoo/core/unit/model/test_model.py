@@ -1,5 +1,4 @@
 import warnings
-from typing import Dict
 
 import pandas as pd
 import pytest
@@ -62,7 +61,7 @@ def test_unexpected_validation_data_in_model_train_multi_data() -> None:
         x_features=["x1"],
         y_features=["y1"],
     )
-    dataset: Dict[str, DataFrameLike] = {"foo": train_df}
+    dataset: dict[str, DataFrameLike] = {"foo": train_df}
     with pytest.warns(UserWarning):
         model.train(train_data=dataset, validation_data=dataset)
 
@@ -73,6 +72,6 @@ def test_expected_validation_data_in_model_train_multi_data() -> None:
         x_features=["x1"],
         y_features=["y1"],
     )
-    dataset: Dict[str, DataFrameLike] = {"foo": train_df}
+    dataset: dict[str, DataFrameLike] = {"foo": train_df}
     with warnings.catch_warnings():
         model.train(train_data=dataset, validation_data=dataset)

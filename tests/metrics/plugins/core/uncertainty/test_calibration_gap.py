@@ -35,7 +35,7 @@ def test_implements_protocol(fixture_metric):
     assert isinstance(metric, Metric)
 
 
-def test_calibration_gap_uncalibrated(fixture_metric):
+def test_standard_deviations(fixture_metric):
     predictions = [0, 0, 0, 1, 1, 1]
     references = [5, 5, 5, 10, 10, 10]
     standard_deviations = [1, 1, 1, 1, 1, 1]

@@ -103,7 +103,13 @@ def test_deterministic(fixture_sample_inputs, fixture_test_strategy):
     train_indices_b2, validation_indices_b2, _ = next(indices_b)
 
     # Check that we get the same results across folds
-    assert all(i == j for i, j in zip(train_indices_a1, train_indices_b1))
-    assert all(i == j for i, j in zip(validation_indices_a1, validation_indices_b1))
-    assert all(i == j for i, j in zip(train_indices_a2, train_indices_b2))
-    assert all(i == j for i, j in zip(validation_indices_a2, validation_indices_b2))
+    assert all(i == j for i, j in zip(train_indices_a1, train_indices_b1, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices_a1, validation_indices_b1, strict=False)
+    )
+    assert all(i == j for i, j in zip(train_indices_a2, train_indices_b2, strict=False))
+    assert all(
+        i == j
+        for i, j in zip(validation_indices_a2, validation_indices_b2, strict=False)
+    )

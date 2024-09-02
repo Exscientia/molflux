@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from molflux.features.bases import RepresentationBase
 from molflux.features.info import RepresentationInfo
@@ -15,7 +15,7 @@ class Sum(RepresentationBase):
             description=_DESCRIPTION,
         )
 
-    def _featurise(self, *columns: ArrayLike, **kwargs: Any) -> Dict[str, List[Any]]:
+    def _featurise(self, *columns: ArrayLike, **kwargs: Any) -> dict[str, list[Any]]:
         """Sums every input column.
 
         Args:
@@ -32,4 +32,4 @@ class Sum(RepresentationBase):
             {'sum': [111, 222, 333, 444]}
         """
 
-        return {f"{self.tag}": [sum(t) for t in zip(*columns)]}
+        return {f"{self.tag}": [sum(t) for t in zip(*columns, strict=False)]}

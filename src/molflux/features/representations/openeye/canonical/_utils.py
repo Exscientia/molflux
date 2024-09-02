@@ -1,6 +1,5 @@
 import logging
 from functools import reduce
-from typing import List, Optional
 
 try:
     from openeye import oechem, oequacpac
@@ -41,8 +40,8 @@ def standardise_oemol(
     sd_title_tag: str = "",
     clear_sd_data: bool = False,
     gen_2d_coords: bool = False,
-    tautomer_options: Optional[oequacpac.OETautomerOptions] = None,
-    tautomer_timeouts: Optional[List[float]] = None,
+    tautomer_options: oequacpac.OETautomerOptions | None = None,
+    tautomer_timeouts: list[float] | None = None,
 ) -> oechem.OEMolBase:
     """
     Returns a standardised OEMol object.

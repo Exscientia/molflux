@@ -1,13 +1,13 @@
 """Gaussain NLL (Gaussian Negative Log Likelihood) regression score function."""
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import evaluate
 import numpy as np
 
 import datasets
-from molflux.metrics.bases import PredictionIntervalMetric
+from molflux.metrics.bases import UncertaintyMetric
 from molflux.metrics.typing import ArrayLike, MetricResult
 from molflux.metrics.uncertainty.utils import _estimate_standard_deviation
 
@@ -55,7 +55,7 @@ None
 
 
 @evaluate.utils.file_utils.add_start_docstrings(_DESCRIPTION, _KWARGS_DESCRIPTION)
-class GaussianNLL(PredictionIntervalMetric):
+class GaussianNLL(UncertaintyMetric):
     def _info(self) -> evaluate.MetricInfo:
         return evaluate.MetricInfo(
             description=_DESCRIPTION,
@@ -75,31 +75,38 @@ class GaussianNLL(PredictionIntervalMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        prediction_intervals: Optional[ArrayLike] = None,
+        standard_deviations: ArrayLike | None = None,
+        prediction_intervals: ArrayLike | None = None,
         confidence: float = 0.9,
         eps: float = 1e-6,
         **kwargs: Any,
     ) -> MetricResult:
-        if prediction_intervals is None:
-            raise ValueError(
-                "Please provide prediction intervals in the form of lower and upper bounds.",
-            )
         mu = np.array(predictions)
-        lower_bound, upper_bound = zip(*prediction_intervals)
-        lower_bound = np.array(lower_bound)  # type: ignore[assignment]
-        upper_bound = np.array(upper_bound)  # type: ignore[assignment]
-        if (upper_bound < lower_bound).any():  # type: ignore[attr-defined]
-            raise ValueError("Please ensure upper bound is greater than lower bound.")
 
-        sigma = _estimate_standard_deviation(lower_bound, upper_bound, confidence)
+        if standard_deviations is None:
+            if prediction_intervals is None:
+                raise ValueError(
+                    "Please provide prediction intervals in the form of lower and upper bounds.",
+                )
+            lower_bound, upper_bound = zip(*prediction_intervals, strict=False)
+            lower_bound = np.array(lower_bound)  # type: ignore[assignment]
+            upper_bound = np.array(upper_bound)  # type: ignore[assignment]
+            if (upper_bound < lower_bound).any():  # type: ignore[attr-defined]
+                raise ValueError(
+                    "Please ensure upper bound is greater than lower bound.",
+                )
+
+            sigma = _estimate_standard_deviation(lower_bound, upper_bound, confidence)
+        else:
+            sigma = np.array(standard_deviations)
+
         sigma = np.clip(sigma, a_min=eps, a_max=None)
 
         gaussian_log_likelihood = (
             1
             / 2
             * np.mean(
-                np.log(2 * np.pi * (sigma**2))
-                + ((references - mu) ** 2) / (sigma**2),
+                np.log(2 * np.pi * (sigma**2)) + ((references - mu) ** 2) / (sigma**2),
             )
         )
 

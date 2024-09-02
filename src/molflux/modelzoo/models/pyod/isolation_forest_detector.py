@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Any, Dict, Literal, Type, Union
+from typing import Any, Literal
 
 import numpy as np
 from pydantic.v1 import dataclasses
@@ -96,12 +96,12 @@ class Config:
 @dataclasses.dataclass(config=Config)
 class IsolationForestDetectorConfig(PyODModelConfig):
     n_estimators: int = 100
-    max_samples: Union[float, int, Auto] = "auto"
+    max_samples: float | int | Auto = "auto"
     contamination: float = 0.1
     max_features: float = 1.0
     bootstrap: bool = False
     n_jobs: int = 1
-    random_state: Union[int, np.random.Generator, None] = None
+    random_state: int | np.random.Generator | None = None
     verbose: int = 0
 
 
@@ -110,11 +110,11 @@ class IsolationForestDetector(
     PyODModelBase[IsolationForestDetectorConfig],
 ):
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         return asdict(self.model_config)
 
     @property
-    def _config_builder(self) -> Type[IsolationForestDetectorConfig]:
+    def _config_builder(self) -> type[IsolationForestDetectorConfig]:
         return IsolationForestDetectorConfig
 
     def _info(self) -> ModelInfo:

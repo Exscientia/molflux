@@ -2,7 +2,7 @@ import functools
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 from cloudpathlib import AnyPath
 from pydantic.v1 import BaseModel, Field
@@ -18,9 +18,9 @@ _FEATURISATION_METADATA_FILENAME = "featurisation_metadata.json"
 
 class RepresentationConfig(BaseModel):
     name: str
-    config: Dict[str, Any] = Field(default_factory=dict)
-    presets: Dict[str, Any] = Field(default_factory=dict)
-    as_: Optional[Union[str, List[Optional[str]]]] = Field(
+    config: dict[str, Any] = Field(default_factory=dict)
+    presets: dict[str, Any] = Field(default_factory=dict)
+    as_: str | list[str | None] | None = Field(
         default_factory=lambda: [None],
         alias="as",
     )
@@ -28,27 +28,27 @@ class RepresentationConfig(BaseModel):
 
 class ColumnFeaturisationConfig(BaseModel):
     column: str
-    representations: List[RepresentationConfig]
+    representations: list[RepresentationConfig]
 
 
 class FeaturisationMetadataV1(BaseModel):
     version: int = Field(1, const=True)
-    config: List[ColumnFeaturisationConfig] = Field(default_factory=list)
-    runtime: Dict[str, Any] = Field(default_factory=pip_working_set)
+    config: list[ColumnFeaturisationConfig] = Field(default_factory=list)
+    runtime: dict[str, Any] = Field(default_factory=pip_working_set)
 
 
 class ColumnFeaturisationConfigV2(BaseModel):
-    columns: List[str]
-    representations: List[RepresentationConfig]
+    columns: list[str]
+    representations: list[RepresentationConfig]
 
 
 class FeaturisationMetadataV2(BaseModel):
     version: int = Field(2, const=True)
-    config: List[ColumnFeaturisationConfigV2] = Field(default_factory=list)
-    runtime: Dict[str, Any] = Field(default_factory=pip_working_set)
+    config: list[ColumnFeaturisationConfigV2] = Field(default_factory=list)
+    runtime: dict[str, Any] = Field(default_factory=pip_working_set)
 
 
-def _placeholder_featurisation_metadata() -> Dict[str, Any]:
+def _placeholder_featurisation_metadata() -> dict[str, Any]:
     """Returns an empty placeholder featurisation metadata payload"""
     return FeaturisationMetadataV2(version=2).dict(
         exclude_defaults=False,
@@ -58,8 +58,8 @@ def _placeholder_featurisation_metadata() -> Dict[str, Any]:
 
 
 def parse_featurisation_metadata(
-    featurisation_metadata: Dict[str, Any],
-) -> Tuple[Dict[str, Any], int]:
+    featurisation_metadata: dict[str, Any],
+) -> tuple[dict[str, Any], int]:
     """Performs soft validation of featurisation metadata based on schema version."""
 
     if "version" not in featurisation_metadata:
@@ -79,7 +79,7 @@ def parse_featurisation_metadata(
 
 
 def save_featurisation_metadata(
-    featurisation_metadata: Optional[Dict[str, Any]],
+    featurisation_metadata: dict[str, Any] | None,
     path: PathLike,
 ) -> str:
     """Saves featurisation metadata to disk.
@@ -100,7 +100,7 @@ def save_featurisation_metadata(
     return save_dict_to_json(featurisation_metadata, path=output_file)
 
 
-def fetch_model_featurisation_metadata(model_path: str) -> Dict[str, Any]:
+def fetch_model_featurisation_metadata(model_path: str) -> dict[str, Any]:
     """Retrieves the featurisation metadata associated with a given model.
 
     Args:
@@ -116,13 +116,13 @@ def fetch_model_featurisation_metadata(model_path: str) -> Dict[str, Any]:
     return load_featurisation_metadata(expected_metadata_path)
 
 
-def load_featurisation_metadata(path: str) -> Dict[str, Any]:
+def load_featurisation_metadata(path: str) -> dict[str, Any]:
     """Loads json featurisation metadata from a given path."""
     return _cached_load_featurisation_metadata(path).copy()
 
 
 @functools.lru_cache
-def _cached_load_featurisation_metadata(path: str) -> Dict[str, Any]:
+def _cached_load_featurisation_metadata(path: str) -> dict[str, Any]:
     """Loads json featurisation metadata from a given path, caching the result"""
 
     try:

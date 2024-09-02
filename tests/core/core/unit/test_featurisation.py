@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
@@ -25,7 +25,7 @@ def fixture_sample_dataset() -> datasets.Dataset:
 
 
 @pytest.fixture()
-def fixture_sample_featurisation_metadata_v1() -> Dict[str, Any]:
+def fixture_sample_featurisation_metadata_v1() -> dict[str, Any]:
     """A sample v1 featurisation metadata for a dataset with 'canonical_smiles'"""
     return {
         "version": 1,
@@ -52,7 +52,7 @@ def fixture_sample_featurisation_metadata_v1() -> Dict[str, Any]:
 
 
 @pytest.fixture()
-def fixture_sample_featurisation_metadata_v2() -> Dict[str, Any]:
+def fixture_sample_featurisation_metadata_v2() -> dict[str, Any]:
     """A sample v2 featurisation metadata for a dataset with 'canonical_smiles'"""
     return {
         "version": 2,

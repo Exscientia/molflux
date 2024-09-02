@@ -1,7 +1,7 @@
 """Balanced accuracy metric."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import evaluate
 from sklearn.metrics import balanced_accuracy_score
@@ -84,7 +84,7 @@ class BalancedAccuracy(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        sample_weight: Optional[List[float]] = None,
+        sample_weight: list[float] | None = None,
         adjusted: bool = False,
         **kwargs: Any,
     ) -> MetricResult:

@@ -2,7 +2,7 @@ import inspect
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import asdict
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 import evaluate
 import numpy as np
@@ -18,12 +18,12 @@ class HFMetric(evaluate.Metric, ABC):
 
     def __init__(
         self,
-        tag: Optional[str] = None,
-        config_name: Optional[str] = None,
+        tag: str | None = None,
+        config_name: str | None = None,
         keep_in_memory: bool = False,
-        seed: Optional[int] = None,
-        experiment_id: Optional[str] = None,
-        download_config: Optional[datasets.DownloadConfig] = None,
+        seed: int | None = None,
+        experiment_id: str | None = None,
+        download_config: datasets.DownloadConfig | None = None,
         **kwargs: Any,
     ) -> None:
         # Initialise the evaluate.Metric
@@ -46,7 +46,7 @@ class HFMetric(evaluate.Metric, ABC):
         self._tag = tag or self.name
 
         # Initialise a null state
-        self._state: Dict[str, Any] = {}
+        self._state: dict[str, Any] = {}
 
         # The metric-specific compute signature
         self._signature = inspect.signature(self._score)
@@ -72,7 +72,7 @@ class HFMetric(evaluate.Metric, ABC):
         )
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         return asdict(super().info)
 
     @abstractmethod
@@ -89,14 +89,14 @@ class HFMetric(evaluate.Metric, ABC):
         return self._tag
 
     @property
-    def state(self) -> Dict[str, Any]:
+    def state(self) -> dict[str, Any]:
         return self._state
 
     def add_batch(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
         **kwargs: Any,
     ) -> None:
         """Add a batch of predictions and references for the metric's stack."""
@@ -109,8 +109,8 @@ class HFMetric(evaluate.Metric, ABC):
     def compute(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         """
@@ -157,7 +157,7 @@ class HFMetric(evaluate.Metric, ABC):
         try:
             # This loads the data from the cache into self.data,
             # and then calls ._compute()
-            result: Optional[MetricResult] = super().compute(
+            result: MetricResult | None = super().compute(
                 predictions=predictions,
                 references=references,
                 **kwargs,
@@ -175,8 +175,8 @@ class HFMetric(evaluate.Metric, ABC):
     def _compute(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         """The callable invoked by .compute() to compute the metric."""
@@ -213,22 +213,26 @@ class HFMetric(evaluate.Metric, ABC):
 
     def _mask_by_references(
         self,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
-    ) -> Tuple[Optional[ArrayLike], ...]:
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
+    ) -> tuple[ArrayLike | None, ...]:
         if (references is not None) and (predictions is not None):
             # mask if None or NaN
             mask = [not (x is None or np.isnan(x)) for x in references]
-            references = [x for valid, x in zip(mask, references) if valid]
-            predictions = [x for valid, x in zip(mask, predictions) if valid]
+            references = [
+                x for valid, x in zip(mask, references, strict=False) if valid
+            ]
+            predictions = [
+                x for valid, x in zip(mask, predictions, strict=False) if valid
+            ]
 
         return predictions, references
 
     def _pre_process_inputs(
         self,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
-    ) -> Tuple[Optional[ArrayLike], ...]:
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
+    ) -> tuple[ArrayLike | None, ...]:
         """An optional callable used to process inputs before validation.
 
         For most use cases, there is no need to overwrite this function.
@@ -237,7 +241,7 @@ class HFMetric(evaluate.Metric, ABC):
         return predictions, references
 
 
-class PredictionIntervalMetric(HFMetric):
+class UncertaintyMetric(HFMetric):
     """
     A class for uncertainty metrics.
     Same as HFMetric but with a different signature (eg. for .compute()) so can take in prediction intervals
@@ -245,12 +249,12 @@ class PredictionIntervalMetric(HFMetric):
 
     def __init__(
         self,
-        tag: Optional[str] = None,
-        config_name: Optional[str] = None,
+        tag: str | None = None,
+        config_name: str | None = None,
         keep_in_memory: bool = False,
-        seed: Optional[int] = None,
-        experiment_id: Optional[str] = None,
-        download_config: Optional[datasets.DownloadConfig] = None,
+        seed: int | None = None,
+        experiment_id: str | None = None,
+        download_config: datasets.DownloadConfig | None = None,
         **kwargs: Any,
     ) -> None:
         # Initialise the HFMetric
@@ -267,9 +271,10 @@ class PredictionIntervalMetric(HFMetric):
     def compute(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
-        prediction_intervals: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
+        standard_deviations: ArrayLike | None = None,
+        prediction_intervals: ArrayLike | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         """Computes the metric."""
@@ -295,9 +300,10 @@ class PredictionIntervalMetric(HFMetric):
         try:
             # This loads the data from the cache into self.data,
             # and then calls ._compute()
-            result: Optional[MetricResult] = super().compute(
+            result: MetricResult | None = super().compute(
                 predictions=predictions,
                 references=references,
+                standard_deviations=standard_deviations,
                 prediction_intervals=prediction_intervals,
                 **kwargs,
             )
@@ -314,9 +320,10 @@ class PredictionIntervalMetric(HFMetric):
     def _compute(
         self,
         *,
-        predictions: Optional[ArrayLike] = None,
-        references: Optional[ArrayLike] = None,
-        prediction_intervals: Optional[ArrayLike] = None,
+        predictions: ArrayLike | None = None,
+        references: ArrayLike | None = None,
+        standard_deviations: ArrayLike | None = None,
+        prediction_intervals: ArrayLike | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         """The callable invoked by .compute() to compute the metric."""
@@ -330,6 +337,7 @@ class PredictionIntervalMetric(HFMetric):
         return self._score(
             predictions=predictions,
             references=references,
+            standard_deviations=standard_deviations,
             prediction_intervals=prediction_intervals,
             **kwargs,
         )
@@ -340,7 +348,8 @@ class PredictionIntervalMetric(HFMetric):
         *,
         predictions: ArrayLike,
         references: ArrayLike,
-        prediction_intervals: Optional[ArrayLike] = None,
+        standard_deviations: ArrayLike | None = None,
+        prediction_intervals: ArrayLike | None = None,
         **kwargs: Any,
     ) -> MetricResult:
         """The callable invoked to compute the metric. To be implemented by subclasses."""
