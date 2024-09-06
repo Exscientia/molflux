@@ -50,7 +50,7 @@ SUBMODULE_EXTRAS: dict[str, dict[str, list | None]] = {
             # "src/molflux/datasets/builders"
         ],
         "tests_target_dir_extras": ["tests/datasets/plugins"],
-        "extras": [None, "openeye", "rdkit"],
+        "extras": [None, "openeye", "rdkit", "tdc"],
     },
     "features": {
         "doctests_target_dir_core": [
@@ -93,6 +93,7 @@ SUBMODULE_EXTRAS: dict[str, dict[str, list | None]] = {
             "lightning",
             "mapie",
             "pyod",
+            "pystan",
             "sklearn",
             "xgboost",
         ],
@@ -463,7 +464,10 @@ def run_tests(
         tests_target_dirs = INVERTED_SUBMODULE_EXTRAS[extra]["tests_target_dir_core"]
 
     # Run tests
-    session.install(f".[{package_extras}]", "--constraint", str(lockfile_path))
+    install_cmd = f".[{package_extras}] --constraint {lockfile_path}"
+    if extra == "pystan":  # handle pystan SyntaxError on uv backend
+        install_cmd += " --compile"
+    session.install(*install_cmd.split(" "))
 
     coverage_datafile_path = resolve_coverage_datafile_path(
         python_version=session.python,

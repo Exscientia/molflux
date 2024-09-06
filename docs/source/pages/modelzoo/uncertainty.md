@@ -13,7 +13,7 @@ kernelspec:
 # Uncertainty for models
 
 
-Hopefully you have already read the [basic usage](basic_usage.md) and [ESOL tutorial](../tutorials/esol_training.md) and
+Hopefully you have already read the [basic usage](basic_usage.md) and [ESOL tutorial](../tutorials/esol_reg.md) and
 are now ready to learn about how to use ``molflux.modelzoo`` models that provide uncertainty measures.
 
 ## Uncertainty

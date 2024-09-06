@@ -25,9 +25,7 @@ dynamic = ['version']
 
 dependencies = [
     'botocore>=1.28.16',
-    'boto3>=1.28.16',
-    'urllib3>=1.25.4,<1.27; python_version<"3.10"',  # not strictly required - remove once boto>=1.34.0
-    'urllib3>=1.25.4,<2.1; python_version>="3.10"',  # not strictly required - remove once boto>=1.34.0
+    'boto3>=1.34.0',
     'cloudpathlib[s3]',
     'colorama',
     'datasets>=2.17.0',
@@ -43,7 +41,6 @@ dependencies = [
     'pydantic>=1.10.15,<3',
     'python-dateutil',
     'pyyaml',
-    'qlient',
     'requests',
     'scikit-learn>=1.4.0',
     'scipy>=1.7.0',
@@ -86,6 +83,9 @@ pystan = [
 ]
 sklearn = [
     'scikit-learn>=1.2.1',
+]
+tdc = [
+    'PyTDC'
 ]
 xgboost = [
     'scikit-learn>=1.2.1',
@@ -139,6 +139,9 @@ ani2x = 'molflux.datasets.builders.ani2x.ani2x'
 gdb9 = 'molflux.datasets.builders.gdb9.gdb9'
 pcqm4m_v2 = 'molflux.datasets.builders.pcqm4m_v2.pcqm4m_v2'
 spice = 'molflux.datasets.builders.spice.spice'
+
+[project.entry-points.'molflux.datasets.plugins.tdc']
+tdc_admet_benchmarks = 'molflux.datasets.builders.tdc.tdc_admet'
 
 ### Features entry points
 

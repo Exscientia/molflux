@@ -20,8 +20,6 @@ apeye==1.4.1
     # via sphinx-toolbox
 apeye-core==1.1.5
     # via apeye
-appnope==0.1.4
-    # via ipykernel
 asttokens==2.4.1
     # via stack-data
 async-timeout==4.0.3
@@ -48,13 +46,13 @@ beautifulsoup4==4.12.3
     #   sphinx-toolbox
 blinker==1.8.2
     # via flask
-boto3==1.35.3
+boto3==1.35.12
     # via
     #   molflux (pyproject.toml)
     #   aws-sam-translator
     #   cloudpathlib
     #   moto
-botocore==1.35.3
+botocore==1.35.12
     # via
     #   molflux (pyproject.toml)
     #   aws-xray-sdk
@@ -63,15 +61,15 @@ botocore==1.35.3
     #   s3transfer
 cachecontrol==0.14.0
     # via sphinx-toolbox
-catboost==1.2.5
+catboost==1.2.6
     # via molflux (pyproject.toml)
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   requests
     #   sphinx-prompt
-cffi==1.17.0
+cffi==1.17.1
     # via cryptography
-cfn-lint==1.10.3
+cfn-lint==1.12.3
     # via moto
 charset-normalizer==3.3.2
     # via requests
@@ -79,7 +77,7 @@ click==8.1.7
     # via
     #   flask
     #   jupyter-cache
-cloudpathlib==0.18.1
+cloudpathlib==0.19.0
     # via molflux (pyproject.toml)
 colorama==0.4.6
     # via molflux (pyproject.toml)
@@ -87,11 +85,11 @@ comm==0.2.2
     # via
     #   ipykernel
     #   ipywidgets
-contourpy==1.2.1
+contourpy==1.3.0
     # via matplotlib
 coverage==7.6.1
     # via molflux (pyproject.toml)
-cryptography==43.0.0
+cryptography==43.0.1
     # via
     #   joserfc
     #   moto
@@ -137,7 +135,7 @@ exceptiongroup==1.2.2
     # via
     #   ipython
     #   pytest
-executing==2.0.1
+executing==2.1.0
     # via stack-data
 fastjsonschema==2.20.0
     # via nbformat
@@ -151,7 +149,7 @@ flask==3.0.3
     # via
     #   flask-cors
     #   moto
-flask-cors==4.0.1
+flask-cors==5.0.0
     # via moto
 fonttools==4.53.1
     # via matplotlib
@@ -165,10 +163,12 @@ fsspec==2024.6.1
     #   datasets
     #   evaluate
     #   huggingface-hub
-graphql-core==3.2.3
+graphql-core==3.2.4
     # via moto
 graphviz==0.20.3
     # via catboost
+greenlet==3.0.3
+    # via sqlalchemy
 h5py==3.11.0
     # via molflux (pyproject.toml)
 html5lib==1.1
@@ -177,7 +177,7 @@ huggingface-hub==0.24.6
     # via
     #   datasets
     #   evaluate
-idna==3.7
+idna==3.8
     # via
     #   apeye-core
     #   requests
@@ -185,21 +185,20 @@ idna==3.7
     #   yarl
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==4.13.0
+importlib-metadata==8.4.0
     # via
     #   jupyter-cache
     #   myst-nb
-    #   qlient-core
 iniconfig==2.0.0
     # via pytest
 ipykernel==6.29.5
     # via myst-nb
-ipython==8.26.0
+ipython==8.27.0
     # via
     #   ipykernel
     #   ipywidgets
     #   myst-nb
-ipywidgets==8.1.3
+ipywidgets==8.1.5
     # via molflux (pyproject.toml)
 itsdangerous==2.2.0
     # via flask
@@ -222,7 +221,7 @@ joblib==1.4.2
     #   scikit-learn
 joserfc==1.0.0
     # via moto
-jsondiff==2.2.0
+jsondiff==2.2.1
     # via moto
 jsonpatch==1.33
     # via cfn-lint
@@ -254,15 +253,15 @@ jupyter-core==5.7.2
     #   jupyter-client
     #   nbclient
     #   nbformat
-jupyterlab-widgets==3.0.11
+jupyterlab-widgets==3.0.13
     # via ipywidgets
 jupytext==1.16.4
     # via molflux (pyproject.toml)
-kiwisolver==1.4.5
+kiwisolver==1.4.7
     # via matplotlib
 lazy-object-proxy==1.10.0
     # via openapi-spec-validator
-mapie==0.8.6
+mapie==0.9.0
     # via molflux (pyproject.toml)
 markdown-it-py==3.0.0
     # via
@@ -384,7 +383,7 @@ platformdirs==4.2.2
     # via
     #   apeye
     #   jupyter-core
-plotly==5.23.0
+plotly==5.24.0
     # via catboost
 pluggy==1.5.0
     # via pytest
@@ -422,7 +421,7 @@ pygments==2.18.0
     #   sphinx
     #   sphinx-prompt
     #   sphinx-tabs
-pyparsing==3.1.2
+pyparsing==3.1.4
     # via
     #   matplotlib
     #   moto
@@ -456,13 +455,9 @@ pyzmq==26.2.0
     # via
     #   ipykernel
     #   jupyter-client
-qlient==1.0.0
-    # via molflux (pyproject.toml)
-qlient-core==1.0.1
-    # via qlient
-rapidfuzz==3.9.6
+rapidfuzz==3.9.7
     # via thefuzz
-rdkit==2024.3.5
+rdkit==2024.3.2
     # via molflux (pyproject.toml)
 referencing==0.35.1
     # via
@@ -482,7 +477,6 @@ requests==2.32.3
     #   huggingface-hub
     #   jsonschema-path
     #   moto
-    #   qlient
     #   responses
     #   sphinx
 responses==0.25.3
@@ -509,7 +503,7 @@ scipy==1.14.1
     #   catboost
     #   mapie
     #   scikit-learn
-setuptools==73.0.1
+setuptools==74.1.2
     # via
     #   moto
     #   sphinx-togglebutton
@@ -540,7 +534,7 @@ sphinx==8.0.2
     #   sphinx-tabs
     #   sphinx-togglebutton
     #   sphinx-toolbox
-sphinx-autodoc-typehints==2.2.3
+sphinx-autodoc-typehints==2.3.0
     # via sphinx-toolbox
 sphinx-book-theme==1.1.3
     # via molflux (pyproject.toml)
@@ -572,7 +566,7 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-sqlalchemy==2.0.32
+sqlalchemy==2.0.34
     # via jupyter-cache
 stack-data==0.6.3
     # via ipython
@@ -634,9 +628,8 @@ typing-extensions==4.12.2
     #   sqlalchemy
 tzdata==2024.1
     # via pandas
-urllib3==2.0.7
+urllib3==2.2.2
     # via
-    #   molflux (pyproject.toml)
     #   botocore
     #   docker
     #   requests
@@ -646,15 +639,13 @@ wcwidth==0.2.13
     # via prompt-toolkit
 webencodings==0.5.1
     # via html5lib
-websocket-client==1.8.0
-    # via qlient
 werkzeug==3.0.4
     # via
     #   flask
     #   moto
 wheel==0.44.0
     # via sphinx-togglebutton
-widgetsnbextension==4.0.11
+widgetsnbextension==4.0.13
     # via ipywidgets
 wrapt==1.16.0
     # via aws-xray-sdk
@@ -664,7 +655,7 @@ xxhash==3.5.0
     # via
     #   datasets
     #   evaluate
-yarl==1.9.4
+yarl==1.9.11
     # via aiohttp
-zipp==3.20.0
+zipp==3.20.1
     # via importlib-metadata
