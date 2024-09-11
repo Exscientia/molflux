@@ -1,5 +1,7 @@
-![Logo Dark](docs/source/_static/MolFlux_logo_final_MolFlux%20logo%20name-cropped.svg#gh-dark-mode-only)
-![Logo Light](docs/source/_static/MolFlux_logo_final_MolFlux%20logo%20name%20Grey-cropped.svg#gh-light-mode-only)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/source/_static/MolFlux_logo_final_MolFlux%20logo%20name-cropped.svg">
+  <img alt="Molflux logo" src="docs/source/_static/MolFlux_logo_final_MolFlux%20logo%20name%20Grey-cropped.svg">
+</picture>
 
 ---
 
