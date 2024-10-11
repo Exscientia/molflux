@@ -70,6 +70,12 @@ lightning = [
     'lightning>=2.1',
     'class_resolver',
 ]
+lightning_gp = [
+    'torch>=2.0',
+    'lightning>=2.1',
+    'class_resolver',
+    'gpytorch',
+]
 mapie = [
     'mapie',
     'scikit-learn>=1.2.1',
@@ -238,6 +244,9 @@ fortuna_mlp_regressor = 'molflux.modelzoo.models.fortuna.fortuna_mlp_regressor:F
 
 [project.entry-points.'molflux.modelzoo.plugins.lightning']
 lightning_mlp_regressor = 'molflux.modelzoo.models.lightning.mlp_regressor.mlp_model:LightningMLPRegressor'
+
+[project.entry-points.'molflux.modelzoo.plugins.lightning_gp']
+lightning_gp_regressor = 'molflux.modelzoo.models.lightning_gp.gp_model:LightningGPRegressor'
 
 [project.entry-points.'molflux.modelzoo.plugins.mapie']
 mapie_regressor = 'molflux.modelzoo.models.mapie.mapie_regressor:MapieRegressor'

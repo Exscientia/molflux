@@ -91,6 +91,7 @@ SUBMODULE_EXTRAS: dict[str, dict[str, list | None]] = {
             "catboost",
             "ensemble",
             "lightning",
+            "lightning_gp",
             "mapie",
             "pyod",
             "pystan",
