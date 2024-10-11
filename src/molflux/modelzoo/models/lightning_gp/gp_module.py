@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
 try:
     import gpytorch
@@ -46,7 +46,7 @@ class GPModule(LightningModuleBase):
             self.likelihood,
             self.gp_model,
         )
-        self.validation_data: Optional[Tuple[torch.Tensor, torch.Tensor]] = None
+        self.validation_data: Optional[tuple[torch.Tensor, torch.Tensor]] = None
         self.train_data_set = False
 
     def forward(

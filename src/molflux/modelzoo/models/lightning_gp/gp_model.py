@@ -1,9 +1,9 @@
 import logging
 import os
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
-from datasets import Dataset
 import molflux
+from datasets import Dataset
 
 try:
     import lightning.pytorch as pl
@@ -164,21 +164,21 @@ class LightningGPRegressor(StandardDeviationMixin, LightningModelBase[GPConfig])
 
     def _train_multi_data(
         self,
-        train_data: Dict[Optional[str], Dataset],
+        train_data: dict[Optional[str], Dataset],
         validation_data: Union[
-            Dict[Optional[str], Dataset],
+            dict[Optional[str], Dataset],
             None,
         ] = None,
-        datamodule_config: Union[DataModuleConfig, Dict[str, Any], None] = None,
-        trainer_config: Union[TrainerConfig, Dict[str, Any], None] = None,
-        optimizer_config: Union[OptimizerConfig, Dict[str, Any], None] = None,
-        scheduler_config: Union[SchedulerConfig, Dict[str, Any], None] = None,
+        datamodule_config: Union[DataModuleConfig, dict[str, Any], None] = None,
+        trainer_config: Union[TrainerConfig, dict[str, Any], None] = None,
+        optimizer_config: Union[OptimizerConfig, dict[str, Any], None] = None,
+        scheduler_config: Union[SchedulerConfig, dict[str, Any], None] = None,
         transfer_learning_config: Union[
             TransferLearningConfigBase,
-            Dict[str, Any],
+            dict[str, Any],
             None,
         ] = None,
-        compile_config: Union[CompileConfig, Dict[str, Any], bool, None] = None,
+        compile_config: Union[CompileConfig, dict[str, Any], bool, None] = None,
         ckpt_path: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -191,7 +191,7 @@ class LightningGPRegressor(StandardDeviationMixin, LightningModelBase[GPConfig])
             strategy = molflux.splits.load_from_dict(
                 self.model_config.validation_config.splitting_strategy_config,
             )
-            split_datasets: Dict[str, Dict[Any, Any]] = {
+            split_datasets: dict[str, dict[Any, Any]] = {
                 "train": {},
                 "validation": {},
             }

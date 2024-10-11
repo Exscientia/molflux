@@ -1,7 +1,6 @@
 from typing import Any, cast
 
 import datasets
-
 from molflux.modelzoo.models.lightning.datamodule import LightningDataModule
 from molflux.modelzoo.models.lightning_gp.gp_config import GPConfig
 
