@@ -423,6 +423,12 @@ filterwarnings = [
     "ignore:Total length of `dict` across ranks is zero. Please make sure this was your intention:UserWarning",
     "ignore: Starting from v1.9.0, `tensorboardX` has been removed as a dependency of the `lightning.pytorch` package:UserWarning",
     "ignore: GPU available but not used.",
+    # [modelzoo.lightning_gp]
+    # ignore warnings on predicting using GPyTorch models on their training data
+    "ignore:The input matches the stored training data. Did you forget to call model.train()?",
+    # ignore warnings on empty DataLoaders in lightning models
+    "ignore:Total length of `DataLoader` across ranks is zero. Please make sure this was your intention.",
+    "ignore:Total length of `CombinedLoader` across ranks is zero. Please make sure this was your intention.",
     # [modelzoo.mapie]
     # ignore unhandled DataConversionWarning raised internally by mapie
     "ignore:A column-vector y was passed when a 1d array was expected. Please change the shape of y::sklearn.utils.validation",
