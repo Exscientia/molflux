@@ -9,6 +9,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ---------------------------------------------------------
+## [0.8.0] - 2024-10-11
+
+## Added
+
+- Added `lightning_gp`
+
 ## [0.7.0] - 2024-09-05
 
 ## Added
