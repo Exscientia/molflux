@@ -12,8 +12,8 @@ kernelspec:
 
 ```{code-cell} ipython3
 :tags: [remove-cell]
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
+from rdkit import RDLogger 
+RDLogger.DisableLog('rdApp.*')
 ```
 
 # QM9 Regression
