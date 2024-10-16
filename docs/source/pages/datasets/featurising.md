@@ -10,6 +10,12 @@ kernelspec:
   name: python3
 ---
 
+```{code-cell} ipython3
+:tags: [remove-cell]
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+```
+
 # Featurising
 
 The ``molflux`` modules are built to plug into each other seamlessly. If you would like to featurise your datasets

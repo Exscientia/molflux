@@ -10,6 +10,12 @@ kernelspec:
   name: python3
 ---
 
+```{code-cell} ipython3
+:tags: [remove-cell]
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+```
+
 # ESOL regression
 
 In this tutorial we provide a simple example of training a random forest model on the [ESOL dataset](https://pubs.acs.org/doi/10.1021/ci034243x),

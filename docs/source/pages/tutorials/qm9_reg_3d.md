@@ -10,6 +10,12 @@ kernelspec:
   name: python3
 ---
 
+```{code-cell} ipython3
+:tags: [remove-cell]
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+```
+
 # QM9 Regression
 In this tutorial we provide a 3D example using the qm9-dataset. We use the 3D molecules in the dataset for featurization and train a random forest regressor to predict one of the target properties (here: `cv`, heat capacity) in the dataset.
 

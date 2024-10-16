@@ -10,6 +10,12 @@ kernelspec:
   name: python3
 ---
 
+```{code-cell} ipython3
+:tags: [remove-cell]
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+```
+
 # Basic usage
 
 
